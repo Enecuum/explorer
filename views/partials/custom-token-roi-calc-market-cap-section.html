@@ -1,0 +1,155 @@
+<div class="row mb-3">
+	<div class="col-12">
+		<div class="h5 text-uppercase">{{'MARKET_CAP' | translate}}</div>
+	</div>			    		
+</div>
+
+<div class="row mb-xl-3">
+	<div class="col-lg-2 h5">{{'TARGET_PRICE' | translate}}</div>
+	<div class="col-lg-2">
+	    <div id="setTokenTargetPriceUSDWrapper" class="flex-column w-100">
+	      <div class="input-group d-flex flex-row">
+	        <input class="form-control" ng-model="customToken.targetPriceUSD.value" autocomplete="off">
+	        <div class="input-group-append">
+	          <span class="input-group-text">$</span>
+	        </div>
+	      </div>
+	      <div class="errMsg mt-1"></div>
+	    </div>			    			
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-lg-2 h5">{{'MAX_SUPPLY' | translate}}</div>
+	<div class="col-lg-4 offset-lg-2">
+	    <div id="setTokenMaxSupplyWrapper" class="flex-column w-100 mb-2">
+	      <div class="input-group d-flex flex-row">
+	        <input class="form-control" ng-model="customToken.maxSupply.tokens.value" autocomplete="off">
+	        <div class="input-group-append">
+	          <span class="input-group-text">Token</span>
+	        </div>
+	      </div>
+	      <div class="errMsg mt-1"></div>
+	    </div>			    			
+	</div>
+	<div class="col-lg-4">
+		<div class="output-box-group">
+			<div class="output-box output-box-info">
+				{{customToken.maxSupply.usd | US_COMMAS_2}}
+			</div>
+			<div class="output-box-append">
+				<div class="output-group-text">
+					$
+				</div>									
+			</div>				    				
+		</div>	    		
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-lg-2 h5">{{'PREMINE' | translate}}</div>
+	<div class="col-lg-2">
+	    <div id="setTokenPremineWrapper" class="flex-column w-100 mb-2">
+	      <div class="input-group d-flex flex-row">
+	        <input class="form-control" ng-model="customToken.premine.percent.value" autocomplete="off">
+	        <div class="input-group-append">
+	          <span class="input-group-text">%</span>
+	        </div>						        
+	      </div>
+	      <div>{{'FROM_MAX_SUPPLY' | translate}}</div>
+	      <div class="errMsg mt-1"></div>
+	    </div>			    			
+	</div>
+	<div class="col-lg-4">
+		<div class="output-box-group">
+			<div class="output-box output-box-info">
+				{{customToken.premine.tokens | US_COMMAS_2}}
+			</div>
+			<div class="output-box-append">
+				<div class="output-group-text">
+					Token
+				</div>									
+			</div>				    				
+		</div>	    		
+	</div>
+	<div class="col-lg-4">
+		<div class="output-box-group">
+			<div class="output-box output-box-info">
+				{{customToken.premine.usd | US_COMMAS_2}}
+			</div>
+			<div class="output-box-append">
+				<div class="output-group-text">
+					$
+				</div>									
+			</div>				    				
+		</div>	    		
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-lg-2 h5">{{'TOKENS_FOR_MINING' | translate}}</div>
+	<div class="col-lg-4 offset-lg-2">
+		<div class="output-box-group">
+			<div class="output-box output-box-info">
+				{{customToken.tokensForMining.tokens | US_COMMAS_2}}
+			</div>
+			<div class="output-box-append">
+				<div class="output-group-text">
+					Token
+				</div>									
+			</div>				    				
+		</div>	    		
+	</div>
+	<div class="col-lg-4">
+		<div class="output-box-group">
+			<div class="output-box output-box-info">
+				{{customToken.tokensForMining.usd | US_COMMAS_2}}
+			</div>
+			<div class="output-box-append">
+				<div class="output-group-text">
+					$
+				</div>									
+			</div>				    				
+		</div>	    		
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-lg-2 h5">{{'REFERRAL_PROGRAM_BUDGET' | translate}}</div>
+	<div class="col-lg-2">
+	    <div id="setTokenReferralProgramBudgetWrapper" class="flex-column w-100 mb-2">
+	      <div class="input-group d-flex flex-row">
+	        <input class="form-control" ng-model="customToken.referralProgramBudget.percent.value" autocomplete="off">
+	        <div class="input-group-append">
+	          <span class="input-group-text">%</span>
+	        </div>						        
+	      </div>
+	      <div>{{'FROM_BLOCK_REWARD' | translate}}</div>
+	      <div class="errMsg mt-1"></div>
+	    </div>			    			
+	</div>
+	<div class="col-lg-4">
+		<div class="output-box-group">
+			<div class="output-box output-box-info">
+				{{customToken.referralProgramBudget.tokens | US_COMMAS_2}}
+			</div>
+			<div class="output-box-append">
+				<div class="output-group-text">
+					Token
+				</div>									
+			</div>				    				
+		</div>	    		
+	</div>
+	<div class="col-lg-4">
+		<div class="output-box-group">
+			<div class="output-box output-box-info">
+				{{customToken.referralProgramBudget.usd | US_COMMAS_2}}
+			</div>
+			<div class="output-box-append">
+				<div class="output-group-text">
+					$
+				</div>									
+			</div>				    				
+		</div>	    		
+	</div>
+</div>

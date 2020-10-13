@@ -1,0 +1,22 @@
+<div class="col-12" data-simplebar data-simplebar-lg data-simplebar-auto-hide="false">
+    <table class="table table-centered ordinary-table table-hover animate-show-hide" style="table-layout: auto;">
+        <thead>
+        <tr>
+            <th>{{'NAME' | translate}}</th>
+            <th>{{'TOKEN_TYPE' | translate}}</th>
+            <th>{{'TOTAL_SUPPLY' | translate}}</th>
+            <th>{{'HOLDERS' | translate}}</th>
+            <th>{{'TOKEN_ID' | translate}}</th>
+        </tr>
+        </thead>
+        <tbody style="font-size: 12px;">
+            <tr ng-repeat="token in my_tokens_list">
+                <td><a ng-href="#!/token/{{token.token_hash}}">{{token.caption}} ({{tickers[token.token_hash]}})</a></td>
+                <td>{{token.type}}</td>                
+                <td class="text-nowrap">{{token.total_supply | US_COMMAS_BIGINT_DECIMALS : token.decimals : token.decimals}} {{tickers[token.token_hash]}}</td>
+                <td>{{token.holders_count | US_COMMAS_INT}}</td>
+                <td><a class="d-block fit responsive-hash" ng-href="#!/tx/{{token.token_hash}}">{{token.token_hash}}</a></td>
+            </tr>
+        </tbody>
+    </table>
+</div>

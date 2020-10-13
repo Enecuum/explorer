@@ -1,0 +1,34 @@
+<div class="col-12" data-simplebar data-simplebar-lg data-simplebar-auto-hide="false">
+    <table class="table table-centered ordinary-table table-hover animate-show-hide" style="table-layout: auto;">
+        <thead>
+        <tr>
+            <th>{{'RANK' | translate}}</th>
+            <th>{{'NAME' | translate}}</th>
+            <th>{{'STATUS' | translate}}</th>            
+            <th class="text-nowrap">{{'STAKE_POWER'| translate}} <i class="fas fa-exclamation-circle text-blue" data-html="true" data-toggle="tooltip" title="" data-original-title="<div>{{'STAKE_POWER_EXPLANATION_P1' | translate}}</div> <div>{{'STAKE_POWER_EXPLANATION_P2' | translate}}</div>"></i></th>
+            <th><div style="width: 100px;">{{'PROVIDER_FEE' | translate}}</div></th>
+            <th>{{'ROI' | translate}}</th>
+            <th>{{'TOTAL_STAKE' | translate}}</th>
+            <th>{{'SELF_STAKED' | translate}}</th>
+            <th>{{'POS_ID' | translate}}</th>            
+        </tr>
+        </thead>
+        <tbody style="font-size: 12px;">
+            <tr ng-repeat="staking_provider in my_pos_list_data | orderBy: 'rank'">
+                <td>{{staking_provider.rank}}</td>
+                <td><a ng-href="#!/pos-contract/{{staking_provider.pos_id}}" class="d-flex overflow-hidden">{{staking_provider.name}}</a></td>
+                <td>
+                    <span class="px-1 rounded" ng-class="staking_provider.active === 1 ? 'badge-success-lighten' : 'badge-danger-lighten'">
+                        {{staking_provider.active === 1 ? 'ACTIVE' : 'INACTIVE' | translate}}
+                    </span>
+                </td>
+                <td class="text-nowrap">{{staking_provider.active === 1 ? (staking_provider.active_stake_power * 100 | US_COMMAS_2) : (staking_provider.active_stake_share  * 100 | US_COMMAS_2)}} %</td>
+                <td class="text-nowrap">{{staking_provider.fee | US_COMMAS_BIGINT_DECIMALS : 2 : 2}} %</td>
+                <td class="text-nowrap">{{staking_provider.roi | US_COMMAS_BIGINT_DECIMALS : 2 : 2}} %</td>
+                <td class="text-nowrap">{{staking_provider.stake | US_COMMAS_BIGINT_DECIMALS : mainToken.decimals : 2}} {{mainToken.ticker}}</td>
+                <td class="text-nowrap">{{staking_provider.selfDelegatedAmount | US_COMMAS_BIGINT_DECIMALS : mainToken.decimals : 2}} {{mainToken.ticker}}</td>
+                <td><a class="d-block fit" style="width: 100px;" ng-href="#!/pos-contract/{{staking_provider.pos_id}}">{{staking_provider.pos_id}}</a></td>
+            </tr>
+        </tbody>
+    </table>
+</div>

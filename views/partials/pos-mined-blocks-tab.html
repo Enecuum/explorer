@@ -1,0 +1,29 @@
+<div class="col-12" data-simplebar data-simplebar-lg data-simplebar-auto-hide="false">
+    <table class="table table-centered ordinary-table table-hover animate-show-hide" style="table-layout: auto;">
+        <thead>
+        <tr>
+            <th>{{'TIME' | translate}}</th>
+            <th>{{'HEIGHT' | translate}}</th>
+            <th>{{'S_BLOCK_HASH' | translate}}</th>
+            <th>{{'REWARD' | translate}}</th>
+        </tr>
+        </thead>
+        <tbody style="font-size: 12px;">
+            <tr ng-repeat="record in posRewards.records">
+                <td>{{get_time(record.time)}}</td>
+                <td>{{record.height}}</td>
+                <td><a class="d-block fit responsive-hash" ng-href="#!/sblock/{{record.hash}}">{{record.hash}}</a></td>
+                <td class="text-nowrap">{{record.sreward | US_COMMAS_BIGINT_DECIMALS : mainToken.decimals : mainToken.decimals}} {{mainToken.ticker}}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<div ng-if="posRewards.page_count > 1" class="col-12 col-lg text-right">
+    <div class="btn-group float-right" aria-label="Rewind records">
+        <a class="btn-sm btn btn-secondary text-nowrap" ng-class="pos_rewards_page_num == 0 ? 'disabled' : ''" role="button" ng-click="getPOSRewards(0)">{{'FRST' | translate}}</a>
+        <a class="btn-sm btn btn-secondary" ng-class="pos_rewards_page_num == 0 ? 'disabled' : ''" role="button" ng-click="getPOSRewards(pos_rewards_page_num - 1)"><i class="fas fa-chevron-left"></i></a>
+        <a class="btn-sm fit btn btn-secondary disabled text-nowrap" role="button" style="opacity: 1;">{{'PAGE' | translate : {current: pos_rewards_page_num + 1, total: posRewards.page_count} }}</a>
+        <a class="btn-sm btn btn-secondary" ng-class="pos_rewards_page_num == posRewards.page_count-1 ? 'disabled' : ''" role="button" ng-click="getPOSRewards(pos_rewards_page_num + 1)"><i class="fas fa-chevron-right"></i></a>
+        <a class="btn-sm btn btn-secondary text-nowrap" ng-class="pos_rewards_page_num == posRewards.page_count-1 ? 'disabled' : ''" role="button" ng-click="getPOSRewards(posRewards.page_count-1)">{{'LAST' | translate}}</a>
+    </div>
+</div>

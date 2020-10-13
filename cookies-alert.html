@@ -1,0 +1,9 @@
+<div class="alert cookies-alert alert-dark fixed-bottom row rounded-0 mb-0 animate-if ng-scope" role="alert" ng-if="!existCookies()">
+    <div class="col-12 col-lg-10 offset-lg-1 col-xl-8 offset-xl-2 d-flex flex-column flex-md-row justify-content-md-center align-items-center">
+        <div  class="mr-sm-3 text-center text-md-left">{{'COOKIES_ALERT_TEXT' | translate}}</div>
+        <div class="d-flex flex-nowrap mt-2 mt-md-0">
+            <button type="button" class="btn btn-light mr-1 text-nowrap" ng-click="setCookies()">{{'I_AGREE' | translate}}</button>
+            <a class="btn btn-primary text-nowrap" href="https://enecuum.com/docs/privacy.pdf" target="_blank" role="button">{{'MORE_DETAILS' | translate}}</a>
+        </div>
+    </div>
+</div>

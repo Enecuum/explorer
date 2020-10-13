@@ -1,0 +1,183 @@
+<div class="row">
+	<div class="col-12">
+		<div class="h4 mb-3 pl-2 pl-sm-0">{{'TOKEN_DETAILS' | translate}}</div>
+	</div>	
+</div>
+<div class="row">
+	<div class="col-xl-6 col-md-12">
+		<div class="card">
+		    <div class="card-body" id="tokenDescriptionCard">
+		    	<div class="d-flex justify-content-between">
+			    	<div class="d-flex justify-content-start flex-grow-1">
+			    		<div>
+			    			<div class="item-avatar-blank-wrapper d-flex align-items-center justify-content-center mr-2 flex-shrink-0 flex-grow-0">
+				    			<span class="item-avatar-blank-content flex-shrink-0 flex-grow-0">{{token.ticker.charAt(0)}}</span>
+				    		</div>
+			    		</div>
+			    		<div class="pt-2 mr-2 flex-grow-1">
+		    				<div class="text-uppercase mb-2 header-title">{{token.caption}} ({{token.ticker}})</div>
+		    				<div data-simplebar1 data-simplebar-lg1 data-simplebar-auto-hid1e="false" class="pr-2" style="max-height: 110px;"></div>
+			    		</div>
+			    	</div>
+	    			<div class="pt-2 ml-3">
+	    				<div class="mb-2 text-nowrap font-size-15">{{'TOKEN_TYPE' | translate}}:</div>
+	    				<div class="text-nowrap font-size-15">{{token.type}}</div>
+	    			</div>		    			
+		    	</div>
+		    </div>
+		</div>		
+	</div>
+	<div class="col-xl-6 col-md-12">
+		<div class="row">
+			<div class="col-12 col-sm-6 col-xl-12">
+				<div class="card">
+				    <div class="card-body">
+				    	<div class="d-flex mb-2 justify-content-between align-items-center">
+			                <div class="header-title mb-0 mr-2 text-uppercase">{{'OWNER' | translate}}</div>
+			                <div>
+			    				<a href="" data-copy-from-id="tokenOwnerIDStorage" rel="btnTooltip" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="{{'COPY' | translate}}" class="mr-3">
+		                            <i class="mdi mdi-content-copy"></i>
+		                        </a>
+		                        <a data-toggle="modal" data-target="#qrTokenOwnerModal" href="">
+		                            <i class="mdi mdi-qrcode-scan"></i>
+		                        </a>
+				    		</div>				    		
+				    	</div>
+						<div class="fit" id="tokenOwnerIDStorage"><a ng-href="#!/account/{{token.owner}}/0">{{token.owner}}</a></div>
+				    </div>
+				</div>
+			</div>
+			<div class="col-12 col-sm-6 col-xl-12">
+				<div class="card">
+				    <div class="card-body">
+				    	<div class="d-flex mb-2 justify-content-between align-items-center">
+			                <div class="header-title mb-0 mr-2 text-uppercase">{{'TOKEN_ID' | translate}}</div>
+			                <div>
+			    				<a href="" data-copy-from-id="tokenIDStorage" rel="btnTooltip" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="{{'COPY' | translate}}" class="mr-3">
+		                            <i class="mdi mdi-content-copy"></i>
+		                        </a>
+		                        <a data-toggle="modal" data-target="#qrTokenIDModal" href="">
+		                            <i class="mdi mdi-qrcode-scan"></i>
+		                        </a>
+				    		</div>				    		
+				    	</div>
+				    	<div class="fit" id="tokenIDStorage">{{token.hash}}</div>
+				    </div>
+				</div>
+			</div>			
+		</div>		
+	</div>		
+</div>
+<div class="row">
+	<div class="col-12 col-lg-6">
+		<div class="card">
+			<div class="card-body">
+				<div class="header-title mr-2 text-uppercase">{{'OVERVIEW' | translate}}</div>
+				<div>
+					<table class="table table-centered ordinary-table animate-show-hide table-td-font-size-15 mb-0" style="table-layout: auto;">
+						<tr>
+							<td class="border-top-0">{{'TOTAL_SUPPLY' | translate}}</td>
+							<td class="text-nowrap text-right font-weight-bolder border-top-0">{{token.total_supply | US_COMMAS_BIGINT_DECIMALS : token.decimals : token.decimals}} {{token.ticker}}</td>
+						</tr>
+						<tr>
+							<td>{{'CIRC_SUPPLY' | translate}}</td>
+							<td class="text-nowrap text-right font-weight-bolder">{{tokenCsup !== undefined ? tokenCsup : '---'}}</td>
+						</tr>						
+						<tr>
+							<td>{{'TRANSFERS' | translate}}</td>
+							<td class="text-nowrap text-right font-weight-bolder">{{'---' | US_COMMAS_INT}}</td>
+						</tr>
+						<tr>
+							<td>{{'HOLDERS' | translate}}</td>
+							<td class="text-nowrap text-right font-weight-bolder">{{tokenHoldersCount}}</td>
+						</tr>												
+					</table>
+				</div>
+			</div>
+		</div>	
+	</div>
+	<div class="col-12 col-lg-6">
+		<div class="card">
+			<div class="card-body">
+				<div class="header-title mr-2 text-uppercase">{{'PRICE_OVERVIEW' | translate}}</div>
+				<div>
+					<table class="table table-centered ordinary-table animate-show-hide table-td-font-size-15 mb-0">
+						<tr>
+							<td class="border-top-0">{{'PRICE' | translate}}</td>
+							<td class="text-nowrap text-right font-weight-bolder border-top-0">{{tokenPrice !== undefined ? tokenPrice + ' USD': '---'}}</td>
+						</tr>
+						<tr>
+							<td>{{'MARKET_CAP' | translate}}</td>
+							<td class="text-nowrap text-right font-weight-bolder">{{marketCapUSDValue !== undefined ? marketCapUSDValue : '---'}}</td>
+						</tr>						
+						<tr>
+							<td>{{'FULLY_MC' | translate}}</td>
+							<td class="text-nowrap text-right">---</td>
+						</tr>												
+					</table>
+					<div class="d-none d-lg-block" style="height: 53px;"> </div>					
+				</div>
+			</div>
+		</div>		
+	</div>
+</div>
+<div class="row">
+	<div class="col-12 col-lg-6">
+		<div class="card">
+			<div class="card-body">
+				<div class="header-title mr-2 text-uppercase">{{'TRX_COST_DETAILS' | translate}}</div>
+				<div>
+					<table class="table table-centered ordinary-table animate-show-hide table-td-font-size-15 mb-0">
+						<tr>
+							<td class="border-top-0">{{'FEE_TYPE' | translate}}</td>
+							<td class="text-nowrap text-right border-top-0">{{token.fee_type | translate}}</td>
+						</tr>
+						<tr>
+							<td>{{'FEE_VALUE' | translate}}</td>
+							<td class="text-nowrap text-right">{{token.fee_value}}</td>
+						</tr>						
+						<tr>
+							<td>{{'FEE_MIN' | translate}}</td>
+							<td class="text-nowrap text-right">{{token.fee_type === 'FEE_TYPE_FLAT' ? '---' : token.fee_min + ' ' + token.ticker}}</td>
+						</tr>
+						<tr>
+							<td>{{'DECIMALS' | translate}}</td>
+							<td class="text-nowrap text-right">{{token.decimals}}</td>
+						</tr>												
+					</table>
+				</div>
+			</div>
+		</div>	
+	</div>
+	<div class="col-12 col-lg-6">
+		<div class="card">
+			<div class="card-body">
+				<div class="header-title mr-2 text-uppercase">{{'MORE' | translate}}</div>
+				<div class="table-like">
+					<div class="d-flex justify-content-start w-100">
+						<div class="d-flex flex-column">
+							<div class="d-flex align-items-center py-095">
+								<i class="dripicons-web mr-1" style="color: #CAD8E6;"></i>
+								<div class="pr-2">{{'OFFICIAL_SITE' | translate}}:</div> 
+							</div>
+							<div class="d-flex align-items-center py-095" style="border-top: 1px solid rgb(227, 234, 239);">
+								<i class="dripicons-document mr-1" style="color: #CAD8E6;"></i>
+								<div class="pr-2">{{'WHITEPAPER' | translate}}:</div> 
+							</div>						
+						</div>
+						<div class="d-flex flex-column flex-grow-1">
+							<div class="py-095">
+								<a ng-href="{{additionalTokenData.officialSiteLink}}">{{additionalTokenData.officialSiteText}}</a>
+							</div>
+							<div class="py-095" style="border-top: 1px solid rgb(227, 234, 239);">
+								<a ng-href="{{additionalTokenData.whitepaperLink}}">{{additionalTokenData.whitepaperLinkText}}</a>
+							</div>						
+						</div>												
+					</div>
+					<div class="d-none d-lg-block" style="height: 55px;"> </div>					
+				</div>
+				<div class="rounded p-2 d-flex align-items-center" id="tokenMedia" style="background: #F9F9FD; font-size: 19px;" ng-include="'views/partials/media-links/' + mediaWidgetNamePrefix + '-media-links.html'"></div>
+			</div>
+		</div>		
+	</div>
+</div>

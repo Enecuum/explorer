@@ -1,0 +1,31 @@
+<div class="col-12 mb-3" data-simplebar data-simplebar-lg data-simplebar-auto-hide="false">
+    <table class="table table-centered ordinary-table table-hover animate-show-hide" style="table-layout: auto;">
+        <thead>
+        <tr>
+            <th>{{'RANK' | translate}}</th>
+            <th>{{'ADDRESS' | translate}}</th>
+            <th>{{'AMOUNT' | translate}}</th>
+            <th  ng-if="mainToken.ticker === 'ENQ'">{{'VALUE' | translate}}, USD</th>
+            <th>{{'PERCENTAGE' | translate}}</th>
+        </tr>
+        </thead>
+        <tbody style="font-size: 12px;">
+            <tr ng-repeat="acc in accs.accounts">
+                <td>{{acc.rank}}</td>
+                <td><a ng-href="#!/account/{{acc.id}}/0" class="d-block fit responsive-hash">{{acc.id}}</a></td>
+                <td class="text-nowrap">{{acc.amount | US_COMMAS_BIGINT_DECIMALS : token.decimals : token.decimals}} {{token.ticker}}</td>
+                <td class="text-nowrap" ng-if="mainToken.ticker === 'ENQ'">{{multipleBigintOnFloat(acc.amount, token.decimals, tokenPrice, 2)}} USD</td>
+                <td class="text-nowrap">{{acc.percentage}}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<div ng-if="accs.page_count > 1" class="col-12 col-lg text-right">
+    <div class="btn-group" aria-label="Rewind records">
+        <a class="btn-sm btn btn-secondary text-nowrap" ng-class="page_num == 0 ? 'disabled' : ''" role="button" ng-click="getHistory(0)">{{'FRST' | translate}}</a>
+        <a class="btn-sm btn btn-secondary" ng-class="page_num == 0 ? 'disabled' : ''" role="button" ng-click="getHistory(page_num - 1)"><i class="fas fa-chevron-left"></i></a>
+        <a class="btn-sm fit btn btn-secondary disabled text-nowrap" role="button" style="opacity: 1;">{{'PAGE' | translate : {current: page_num + 1, total: accs.page_count} }}</a>
+        <a class="btn-sm btn btn-secondary" ng-class="page_num == accs.page_count-1 ? 'disabled' : ''" role="button" ng-click="getHistory(page_num + 1)"><i class="fas fa-chevron-right"></i></a>
+        <a class="btn-sm btn btn-secondary text-nowrap" ng-class="page_num == accs.page_count-1 ? 'disabled' : ''" role="button" ng-click="getHistory(accs.page_count-1)">{{'LAST' | translate}}</a>
+    </div>
+</div>

@@ -1,0 +1,176 @@
+<div class="row">
+	<div class="col-12">
+		<div class="h4 mb-3 pl-2 pl-sm-0">{{'POS_DETAILS' | translate}}</div>
+	</div>	
+</div>
+<div class="row">
+	<div class="col-xl-6 col-md-12">
+		<div class="card">
+		    <div class="card-body" id="posDescriptionCard">
+		    	<div class="d-block d-xl-flex justify-content-between">
+			    	<div class="d-flex justify-content-start">
+			    		<div class="item-avatar-blank-wrapper d-flex align-items-center justify-content-center mr-2 flex-shrink-0 flex-grow-0">
+		    				<div class="mb-2 text-nowrap">
+	                            <span id="posRankBadge" class="cusom-badge badge-pill font-weight-bolder" ng-class="posContract.active === 1 ? 'badge-success' : 'badge-danger'">
+		    						#{{posContract.rank}}
+	                            </span>
+	                        </div>			    			
+			    			<span class="item-avatar-blank-content flex-shrink-0 flex-grow-0">{{posContract.name.charAt(0)}}</span>
+			    		</div>
+			    		<div class="pt-2 mr-2" id="posTitle">
+		    				<div class="text-uppercase mb-2 header-title fit w-100">{{posContract.name}}</div>
+		    				<div class="mb-2 text-nowrap font-size-15">
+		    					<span class="cusom-badge badge-pill" ng-class="posContract.active === 1 ? 'badge-success' : 'badge-danger'">
+		    						<i class="fas"ng-class="posContract.active === 1 ? 'fa-check' : 'fa-times'"></i> {{posContract.active === 1 ? 'ACTIVE' : 'INACTIVE' | translate}}
+	                            </span>
+	                        </div>
+		    				<a ng-if="posContract.customerInfo.webSite !== undefined" class="pr-2 fit d-block" id="posWebSite" ng-href="{{posContract.customerInfo.webSite}}" target="_blank">{{posContract.customerInfo.webSite}}</a>
+			    		</div>
+			    	</div>
+	    			<div data-simplebar data-simplebar-lg data-simplebar-auto-hide="false" id="posDescriptionText" ng-if="posDescriptionText !== undefined" class="mt-2 mt-xl-0">
+	    				{{posDescriptionText}}
+	    			</div>		    			
+		    	</div>
+		    	<div ng-if="posContract.customerInfo.media !== undefined" id="posMedia" class="rounded p-2 mt-2 d-flex align-items-center" style="background: #F9F9FD; font-size: 19px;" ng-include="'views/partials/media-links/enecuum-media-links.html'"></div>
+		    </div>
+		</div>		
+	</div>
+	<div class="col-xl-6 col-md-12">
+		<div class="row">
+			<div class="col-12 col-sm-6 col-xl-12">
+				<div class="card">
+				    <div class="card-body">
+				    	<div class="d-flex mb-2 justify-content-between align-items-center">
+			                <div class="header-title mb-0 mr-2 text-uppercase">{{'OWNER' | translate}}</div>
+			                <div>
+			    				<a href="" data-copy-from-id="posOwnerIDStorage" rel="btnTooltip" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="{{'COPY' | translate}}" class="mr-3">
+		                            <i class="mdi mdi-content-copy"></i>
+		                        </a>
+		                        <a data-toggle="modal" data-target="#qrPOSOwnerModal" href="">
+		                            <i class="mdi mdi-qrcode-scan"></i>
+		                        </a>
+				    		</div>				    		
+				    	</div>
+						<div class="text-muted fit" id="posOwnerIDStorage"><a ng-href="#!/account/{{posContract.owner}}/0">{{posContract.owner}}</a></div>
+				    </div>
+				</div>
+			</div>
+			<div class="col-12 col-sm-6 col-xl-12">
+				<div class="card">
+				    <div class="card-body">
+				    	<div class="d-flex mb-2 justify-content-between align-items-center">
+			                <div class="header-title mb-0 mr-2 text-uppercase">POS id</div>
+			                <div>
+			    				<a href="" data-copy-from-id="posIDStorage" rel="btnTooltip" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="{{'COPY' | translate}}" class="mr-3">
+		                            <i class="mdi mdi-content-copy"></i>
+		                        </a>
+		                        <a data-toggle="modal" data-target="#qrPOSIDModal" href="">
+		                            <i class="mdi mdi-qrcode-scan"></i>
+		                        </a>
+				    		</div>				    		
+				    	</div>
+				    	<div class="text-muted fit" id="posIDStorage">{{posContract.pos_id}}</div>
+				    </div>
+				</div>
+			</div>			
+		</div>		
+	</div>		
+</div>
+<div class="row">
+	<div class="col-12 col-lg-6">
+		<div class="card">
+			<div class="card-body" style="min-height: 254px;">
+				<div>
+					<table class="table table-centered ordinary-table animate-show-hide table-td-font-size-15 mb-0">
+						<tr>
+							<td class="border-top-0">{{posContract.active === 1 ? 'STAKE_POWER' : 'ACTIVE_STAKE_SHARE' | translate}}</td>
+							<td class="text-nowrap text-right font-weight-bolder border-top-0">{{posContract.active === 1 ? posContract.active_stake_power : posContract.active_stake_share}}</td>
+						</tr>
+						<tr>
+							<td class="text-nowrap">{{'PROVIDER_FEE' | translate}}</td>
+							<td class="text-nowrap text-right font-weight-bolder">{{posContract.fee | US_COMMAS_BIGINT_DECIMALS : 2 : 2}}%</td>
+						</tr>						
+						<tr>
+							<td>{{'ROI' | translate}}</td>
+							<td class="text-nowrap text-right font-weight-bolder">{{posContract.roi | US_COMMAS_BIGINT_DECIMALS : 2 : 2}}%</td>
+						</tr>
+						<tr>
+							<td>{{'PERFORMANCE' | translate}}</td>
+							<td class="text-nowrap text-right font-weight-bolder">{{posContract.uptime}}</td>
+						</tr>												
+					</table>
+				</div>
+			</div>
+		</div>	
+	</div>
+	<div class="col-12 col-lg-6">
+		<div class="card">
+		    <div class="card-body" style="min-height: 254px;">
+		    	<div class="row px-1">
+		    		<div class="col-12">
+		    			<div class="d-flex align-items-center justify-content-between">
+				    		<div class="mb-0 d-flex align-items-center position-absolute pt-3">
+				    			<div class="header-title mr-2 text-uppercase mb-0">{{'TOTAL_STAKE' | translate}}:</div>
+				    			<div class="d-flex">
+					    			<div class="font-size-20 font-weight-bolder text-nowrap mr-2">{{posContract.stake | US_COMMAS_BIGINT_DECIMALS : mainToken.decimals : 2}} {{mainToken.ticker}}</div>
+					    			<div ng-if="mainToken.ticker === 'ENQ'" class="font-size-20 font-weight-bolder text-nowrap">($ {{multipleBigintOnFloat(posContract.stake, mainToken.decimals, mainTokenPrice, 2)}})</div>
+				    			</div>
+    			
+				    		</div>		    			
+				    	</div>
+		    		</div>
+					<div class="col-12 col-md-8 col-lg-7 col-xl-8 pr-lg-0 pt-lg-4 pt-xl-0 pt-md-4 pt-4">
+				    	<div class="h-100 d-flex align-items-xl-center pt-lg-2 pt-md-3">
+				    		<table id="totalPOSStakeTable" class="table no-border table-centered mb-0" style="table-layout: auto;" ng-class="{'three-rows': !delegatorIsOwner && usePOSChallengeAddress}">
+								<tbody>
+									<tr class="d-none d-lg-table-row d-xl-none" ng-if="!delegatorIsOwner">
+										<td class="font-size-15 text-muted p-0 text-nowrap">{{'DELEGATED_BY_OWNER' | translate}}:</td>
+									</tr>
+									<tr ng-if="!delegatorIsOwner">
+										<td class="d-table-cell d-lg-none d-xl-table-cell font-size-15 text-muted">{{'DELEGATED_BY_OWNER' | translate}}:</td>
+										<td class="font-weight-bolder text-nowrap">{{selfDelegatedAmount | US_COMMAS_BIGINT_DECIMALS : mainToken.decimals : 2}} {{mainToken.ticker}}</td>
+										<td>
+											<div class="d-flex align-items-center">
+												<div class="apex-chart-legend blue mr-1"></div>
+												<span class="text-nowrap">{{selfDelegatedPercentage.str}}</span>												
+											</div>
+										</td>
+									</tr>
+									<tr class="d-none d-lg-table-row d-xl-none" ng-if="usePOSChallengeAddress">
+										<td class="font-size-15 text-muted px-0 pb-0 pt-2 text-nowrap">{{'STAKING_CHALLENGE' | translate}}:</td>
+									</tr>
+									<tr ng-if="usePOSChallengeAddress">
+										<td class="d-table-cell d-lg-none d-xl-table-cell font-size-15 text-muted">{{'STAKING_CHALLENGE' | translate}}:</td>
+										<td class="font-weight-bolder text-nowrap">{{ENQDelegatedAmount | US_COMMAS_BIGINT_DECIMALS : mainToken.decimals : 2}} {{mainToken.ticker}}</td>
+										<td>
+											<div class="d-flex align-items-center">
+												<div class="apex-chart-legend light-green mr-1"></div>
+												<span class="text-nowrap">{{ENQDelegatedPercentage.str}}</span>												
+											</div>
+										</td>
+									</tr>									
+									<tr class="d-none d-lg-table-row d-xl-none">
+										<td class="font-size-15 text-muted px-0 pb-0 pt-2 text-nowrap">{{'BY_OTHERS' | translate}}:</td>
+									</tr>
+									<tr>
+										<td class="d-table-cell d-lg-none d-xl-table-cell font-size-15 text-muted">{{'BY_OTHERS' | translate}}:</td>
+										<td class="font-weight-bolder text-nowrap">{{othersDelegatedAmount | US_COMMAS_BIGINT_DECIMALS : mainToken.decimals : 2}} {{mainToken.ticker}}</td>
+										<td>
+											<div class="d-flex align-items-center">
+												<div class="apex-chart-legend pink mr-1"></div>
+												<span class="text-nowrap">{{othersDelegatedPercentage.str}}</span>												
+											</div>
+										</td>
+									</tr>									
+								</tbody>							
+							</table>				    		
+				    	</div>
+					</div>
+					<div class="col-12 col-md-4 col-lg-5 col-xl-4 d-flex align-items-center px-0 pt-md-3 pt-lg-4">
+						<div id="delegatedBalanceChart" class="mx-auto"></div>
+					</div>		    		
+		    	</div>		    	
+		    </div>
+		</div>		
+	</div>
+</div>

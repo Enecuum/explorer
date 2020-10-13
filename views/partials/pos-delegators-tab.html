@@ -1,0 +1,29 @@
+<div class="col-12" data-simplebar data-simplebar-lg data-simplebar-auto-hide="false">
+    <table class="table table-centered ordinary-table table-hover animate-show-hide" style="table-layout: auto;">
+        <thead>
+        <tr>
+            <th>{{'DELEGATOR' | translate}}</th>
+            <th>{{'AMOUNT' | translate}}</th>
+            <th  ng-if="mainToken.ticker === 'ENQ'">{{'VALUE' | translate}}, USD</th>
+            <th>{{'SHARE' | translate}}</th>
+        </tr>
+        </thead>
+        <tbody style="font-size: 12px;">
+            <tr ng-repeat="record in delegators.pos_delegators">
+                <td><a class="d-block fit responsive-hash" ng-href="#!/account/{{record.delegator}}/0">{{record.delegator}}</a></td>
+                <td class="text-nowrap">{{record.amount | US_COMMAS_BIGINT_DECIMALS : mainToken.decimals : mainToken.decimals}} {{mainToken.ticker}}</td>
+                <td class="text-nowrap" ng-if="mainToken.ticker === 'ENQ'">{{multipleBigintOnFloat(record.amount, mainToken.decimals, mainTokenPrice, 2)}} USD</td>
+                <td class="text-nowrap">{{record.share.str}}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<div ng-if="delegators_page_count > 1" class="col-12 col-lg text-right">
+    <div class="btn-group float-right" aria-label="Rewind records">
+        <a class="btn-sm btn btn-secondary text-nowrap" ng-class="delegator_page_num == 0 ? 'disabled' : ''" role="button" ng-click="getDelegators(0)">{{'FRST' | translate}}</a>
+        <a class="btn-sm btn btn-secondary" ng-class="delegator_page_num == 0 ? 'disabled' : ''" role="button" ng-click="getDelegators(delegator_page_num - 1)"><i class="fas fa-chevron-left"></i></a>
+        <a class="btn-sm fit btn btn-secondary disabled text-nowrap" role="button" style="opacity: 1;">{{'PAGE' | translate : {current: delegator_page_num + 1, total: delegators_page_count} }}</a>
+        <a class="btn-sm btn btn-secondary" ng-class="delegator_page_num == delegators_page_count-1 ? 'disabled' : ''" role="button" ng-click="getDelegators(delegator_page_num + 1)"><i class="fas fa-chevron-right"></i></a>
+        <a class="btn-sm btn btn-secondary text-nowrap" ng-class="delegator_page_num == delegators_page_count-1 ? 'disabled' : ''" role="button" ng-click="getDelegators(delegators_page_count-1)">{{'LAST' | translate}}</a>
+    </div>
+</div>

@@ -1,0 +1,314 @@
+body {
+    font-family: 'Roboto', sans-serif;
+    font-weight: 300;
+}
+
+.col, .col-1, .col-10, .col-11, .col-12, .col-2, .col-3, .col-4, .col-5, .col-6, .col-7, .col-8, .col-9, .col-auto, .col-lg, .col-lg-1, .col-lg-10, .col-lg-11, .col-lg-12, .col-lg-2, .col-lg-3, .col-lg-4, .col-lg-5, .col-lg-6, .col-lg-7, .col-lg-8, .col-lg-9, .col-lg-auto, .col-md, .col-md-1, .col-md-10, .col-md-11, .col-md-12, .col-md-2, .col-md-3, .col-md-4, .col-md-5, .col-md-6, .col-md-7, .col-md-8, .col-md-9, .col-md-auto, .col-sm, .col-sm-1, .col-sm-10, .col-sm-11, .col-sm-12, .col-sm-2, .col-sm-3, .col-sm-4, .col-sm-5, .col-sm-6, .col-sm-7, .col-sm-8, .col-sm-9, .col-sm-auto, .col-xl, .col-xl-1, .col-xl-10, .col-xl-11, .col-xl-12, .col-xl-2, .col-xl-3, .col-xl-4, .col-xl-5, .col-xl-6, .col-xl-7, .col-xl-8, .col-xl-9, .col-xl-auto {
+    padding-right: 11px;
+    padding-left: 11px;
+}
+
+
+.h1, .h2, .h3, .h4, .h5, .h6, h1, h2, h3, h4, h5, h6{
+    font-weight: 500;
+}
+
+.h4, h4 {
+    font-size: 17px;
+}
+
+@media (min-width: 1400px) {
+    .container {
+        max-width: 1270px;
+    }  
+}
+
+
+
+.navbar-brand {
+    margin-right: 2rem;
+}
+
+table {
+    table-layout: fixed;    
+}
+
+.card {
+    margin-bottom: 22px;
+}
+
+.card-body {
+    padding-top: 16px;
+    padding-bottom: 16px;
+    padding-left: 18px;
+    padding-right: 18px;
+}
+
+.font-weight-bolder {
+    font-weight: 500!important;
+}
+
+
+.fit {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+.animate-show-hide.ng-hide {
+    opacity: 0;
+}
+
+.animate-show-hide.ng-hide-add,
+.animate-show-hide.ng-hide-remove {
+    transition: all linear 0.5s;
+}
+
+@media (min-width: 991.99px) {
+    .navbar-nav li.nav-item {
+        flex-shrink: 10;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .app-search {
+        min-width: 180px;
+    }
+}
+
+#accountDetailsCard table td,
+#referralStatsCard table td {
+    height: 51px!important;
+}
+
+@media (min-width: 991.99px) and (max-width: 1200px) {
+    .topnav .navbar-nav .nav-link {
+        padding: 0.4rem 0.6rem !important;
+    }
+    .topnav .navbar-nav .nav-link * {
+        flex-shrink: 3;
+        padding-left: 0px!important;
+    }
+}
+
+#qrModal .modal-content {
+    background: #ffffff;
+}
+
+#refqrModal .modal-content {
+    background: #7380F2;
+}
+
+#exchanges a.exchange-logo-link,
+#bankCardProcessing a.card-processing-logo-link {
+    display: block;
+    margin: auto;
+    height: 100px;
+    width: 70%;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+
+#exchanges a.exchange-logo-link.graviex-logo-link {
+    height: 120px;
+    background-size: 50%;
+}
+
+#bankCardProcessing a.card-processing-logo-link.suex-logo-link {
+    max-width: 300px;
+}
+
+@media (max-width: 699px){
+    #accountDetailsCard th, #referralStatsCard th {
+        white-space: normal;
+        width: 130px;
+    }
+
+    #accountDetailsCard table th,
+    #accountDetailsCard table td,
+    #referralStatsCard table th,
+    #referralStatsCard table td {
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+        font-size: 0.8rem;
+    }
+}
+
+@media (min-width: 700px) {
+    #accountDetailsCard th, #referralStatsCard th {
+        width: 225px;
+    }
+}
+
+.line-height-normal {
+    line-height: normal;
+}
+
+/*Tables to cards*/
+
+table.table-to-cards .scope-col {
+    display: none;
+}
+
+.nav-filters a.nav-link {
+     cursor: pointer;
+}
+
+.nav-filters a.nav-link:hover {
+    background: #353c45;
+}
+
+.nav-filters a.nav-link.active:hover {
+    background: #4e5bf2;
+}
+
+[aria-label="Rewind records"].btn-group .btn,
+[aria-label="Rewind kblocks"].btn-group .btn,
+#swapFromERCForm .col-form-label {
+    white-space: nowrap;
+}
+
+[aria-label="Rewind records"].btn-group .btn:not(.disabled),
+[aria-label="Rewind kblocks"].btn-group .btn:not(.disabled) {
+    cursor: pointer;
+}
+
+@media (max-width: 576px) {
+    [aria-label="Rewind records"].btn-group .btn,
+    [aria-label="Rewind kblocks"].btn-group .btn {
+        font-size: 0.7rem;
+    }
+}
+
+@media (max-width: 991.98px) {
+    #exchanges a.exchange-logo-link.graviex-logo-link {
+        background-size: 100%;
+    }
+
+    #navTxHistory {
+        margin-left: -0.8rem;
+        margin-right: -0.8rem;
+    }
+
+    table.table-to-cards thead {
+        display: none;
+    }
+
+    table.table-to-cards tr {
+        display: flex;
+        flex-direction: column;
+        padding: 1.2rem 0.5rem;
+    }
+
+    table.table-to-cards tr:nth-child(odd) {
+        background-color: rgba(62,72,83,0.6);
+    }
+
+    table.table-to-cards tr:hover {
+        background-color: rgba(62,72,83,1);
+    }
+
+    table.table-to-cards td {
+        white-space: nowrap;
+        flex-grow: 1;
+        border: none;
+        padding: 0.2rem;
+    }
+
+    table.table-to-cards .scope-col {
+        display: inline-block;
+        width: 85px;
+        margin-right: 1rem;
+        font-weight: bold;
+        text-align: left;
+        white-space: normal;
+    }
+
+    table.table-to-cards .scope-col.w-130-px {
+        width: 130px;
+    }    
+
+    table.table-to-cards .cell-status .badge {
+        font-size: 0.8rem;
+    }
+
+    .topnav .dropdown .dropdown-menu {
+        border: none!important;
+    }
+
+    .topnav .nav-item .nav-link {
+        padding: .75rem 1.3rem!important;
+    }
+}
+/*Tables to cards end*/
+
+.cookies-alert {
+    background: #464f5b;
+    -webkit-box-shadow: 0 0 35px 0 rgba(49,57,66,.5);
+    box-shadow: 0 0 35px 0 rgba(49,57,66,.5);
+    color: #aab8c5;
+    border: none;
+}
+
+.topnav .nav-item .nav-link {
+    padding: 24px 1.3rem;
+}
+
+.topnav .nav-item .nav-link span {
+    white-space: normal;
+}
+
+#topbar-languagedrop + .dropdown-menu,
+.nav-item.dropdown .dropdown-menu {
+    border-top: 3px solid rgb(77, 87, 100);;
+}
+
+#powElectricityCoastAppend, #powPowerConsumptionAppend, #powHashrateAppend {
+    width: 85px;
+    border-top-right-radius: 0.15rem;
+    border-bottom-right-radius: 0.15rem;
+    padding-left: 0.2rem;
+    padding-right: 0.2rem;
+}
+
+.alert-text {
+    color: #cc7079;
+}
+
+#tokenBalancesListDropdown {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+@media (max-height: 500px) {
+    #dropdownTelegramForFooter {
+        width: 302px;
+    }
+
+    #dropdownTelegramForFooter a {
+        width: 150px;
+        float: left;
+        clear: none!important;
+    }  
+}
+
+@media (min-width: 992px) {
+   .w-lg-65-px {
+        width: 65px!important; 
+    }
+    .w-lg-100-px {
+        width: 100px!important; 
+    }    
+}
+
+a.disabled{
+    pointer-events: none;
+    cursor: default;
+}

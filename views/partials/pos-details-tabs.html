@@ -1,0 +1,42 @@
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body p-2 p-sm-3">
+                <div class="row justify-content-between align-items-center">
+                    <div class="col-12 mb-3 mb-lg-0" style="flex-grow: 3;">
+                        <ul class="nav nav-tabs nav-bordered mb-3 nav-filters">
+                            <li class="nav-item">
+                                <a href="javascript;" data-target="#posDelegatorsTab" data-toggle="tab" aria-expanded="true" data-toggle="tab" class="nav-link h-100 d-flex align-items-center rounded-0 active pl-0 pr-lg-3">
+                                    <span>{{'DELEGATORS' | translate}}</span>
+                                </a>
+                            </li>                            
+                            <li class="nav-item">
+                                <a href="javascript;" data-target="#posTransactionsTab" data-toggle="tab" aria-expanded="false" class="nav-link h-100 d-flex align-items-center justify-content-center disabled text-muted px-lg-5">
+                                    <span>{{'TRANSACTIONS' | translate}}</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="javascript;" data-target="#posMinedBlocksTab" data-toggle="tab" aria-expanded="false" class="nav-link h-100 d-flex align-items-center justify-content-center px-lg-5">
+                                    <span>{{'MINED_BLOCKS' | translate}}</span>
+                                </a>
+                            </li>                                                                                   
+                        </ul>
+                    </div>
+                </div>
+                <div class="tab-content">
+                    <div class="tab-pane active show" id="posDelegatorsTab">
+                        <div ng-if="delegators.pos_delegators.length === 0" ng-include="'views/partials/common-no-records.html'"></div>
+                        <div ng-if="delegators.pos_delegators.length > 0" class="row" ng-include="'views/partials/pos-delegators-tab.html'"></div>
+                    </div>
+                    <div class="tab-pane" id="posTransactionsTab">
+                        <!-- <div class="row" ng-include="'views/partials/pos-transactions-tab.html'"></div> -->
+                    </div>
+                    <div class="tab-pane" id="posMinedBlocksTab">
+                        <div ng-if="posRewards.records.length === 0" ng-include="'views/partials/common-no-records.html'"></div>
+                        <div ng-if="posRewards.records.length > 0" class="row" ng-include="'views/partials/pos-mined-blocks-tab.html'"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

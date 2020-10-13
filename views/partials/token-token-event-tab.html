@@ -1,0 +1,24 @@
+<div class="col-12" data-simplebar data-simplebar-lg data-simplebar-auto-hide="false">
+    <table class="table table-centered ordinary-table table-hover animate-show-hide" style="table-layout: auto;">
+        <thead>
+            <tr>
+                <th>{{'TIME' | translate}}</th>
+                <th>{{'TYPE' | translate}}</th>
+                <th>{{'AMOUNT' | translate}}</th>
+                <th>{{'TRX_FEE' | translate}}</th>
+                <th>{{'HASH_TRX' | translate}}</th>
+                <th>{{'STATUS' | translate}}</th>
+            </tr>
+        </thead>
+        <tbody style="font-size: 12px;">
+            <tr>
+                <td class="text-nowrap">{{token.issue_time !== undefined ? get_time(token.issue_time) : '---'}}</td>
+                <td class="text-nowrap">{{'TOKEN_ISSUE' | translate}}</td>
+                <td class="text-nowrap">{{token.total_supply | US_COMMAS_BIGINT_DECIMALS : token.decimals : token.decimals}} {{token.ticker}}</td>
+                <td class="text-nowrap">{{issue_token_tx.fee | US_COMMAS_BIGINT_DECIMALS : token.decimals : token.decimals}} {{tx.ticker}}</td>
+                <td><a ng-href="#!/tx/{{token.hash}}" class="d-block fit responsive-hash">{{token.hash}}</a></td>
+                <td>{{issue_token_tx.status | TX_STATUS | translate}}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>

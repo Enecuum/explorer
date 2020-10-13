@@ -1,0 +1,117 @@
+<div class="col-lg-10 offset-lg-1 col-sm-12">
+    <div class="row" id="stakingMetrics">
+        <div class="col-12 col-md-6 col-xl-3">
+            <div class="card widget-flat">
+                <div class="card-body" ng-if="currentPreset.tokenName !== 'ENQ'">
+                    <h5 class="text-muted font-weight-normal mt-0" title="Revenue">{{'CIRC_SUPPLY_SHORT' | translate}}</h5>
+                    <h3 class="mt-3 fit">{{stats.csup !== undefined ? stats.csup : "N/A" | US_COMMAS_BIGINT_DECIMALS : mainToken.decimals : 0}} {{mainToken.ticker}}</h3>
+                </div>
+                <div class="card-body" ng-if="currentPreset.tokenName === 'ENQ'">
+                    <h5 class="text-muted font-weight-normal mt-0" title="Revenue">{{'TOKEN_PRICE' | translate}}</h5>
+                    <h3 class="mt-3" ng-class="(currentPreset.tokenName === 'ENQ') ? 'mb-3' : 'mb-2'">{{stats.cg_usd | USD}}</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-6 col-xl-3">
+            <div class="card widget-flat">
+                <div class="card-body">
+                    <h5 class="text-muted font-weight-normal mt-0" title="Revenue">{{'ACTIVE_POS_NUM' | translate}}</h5>
+                    <h3 class="mt-3" ng-class="(currentPreset.tokenName === 'ENQ') ? 'mb-3' : 'mb-2'">{{activePOSCount !== undefined ? activePOSCount : '---'}}</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-6 col-xl-3">
+            <div class="card widget-flat">
+                <div class="card-body">
+                    <h5 class="text-muted font-weight-normal mt-0" title="Revenue">{{'POS_STAKE_TOTAL' | translate}}</h5>
+                    <h3 class="mt-3" ng-class="(currentPreset.tokenName === 'ENQ') ? 'mb-2' : 'mb-2'">{{allPOSTotalStake !== undefined ? allPOSTotalStake : '---'  | US_COMMAS_BIGINT_DECIMALS : mainToken.decimals : 0}} {{mainToken.ticker}}</h3>
+                    <h6 class="mb-0" ng-if="currentPreset.tokenName === 'ENQ'">{{convertValueToUSD(allPOSTotalStake) | US_COMMAS_BIGINT_DECIMALS : mainTokenToUSDDecimals : 5}} USD</h6>                    
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-md-6 col-xl-3">
+            <div class="card widget-flat">
+                <div class="card-body">
+                    <h5 class="text-muted font-weight-normal mt-0 fit" title="Revenue">{{'AVG_NETWORK_PERFORMANCE' | translate}}</h5>
+                    <h3 class="mt-3" ng-class="(currentPreset.tokenName === 'ENQ') ? 'mb-3' : 'mb-2'">{{avgUptime !== undefined ? avgUptime * 100 : '---' | US_COMMAS_2}}%</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row" id="calculator">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="header-title mb-3">{{'POS_DELEGATOR_CALC' | translate}}</h4>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="form-row align-items-md-start">
+                                <div class="col-md-5 form-group mb-3" style="padding-top: 1px;">
+                                    <label for="roi_stake">{{'ROI_STAKE' | translate: translationData}}</label>
+                                    <input type="text" id="roi_pos_stake" class="form-control" ng-model="posCalc.inputData.stake">
+                                    <small ng-if="!posStakeIsValid" class="errMsg">{{'POS_STAKE_ERR_MSG' | translate : posStakeParams}}</small>
+                                </div>
+                                <div class="col-md-5 form-group mb-3" style="padding-top: 1px;">
+                                    <label for="posInput">{{'CHOOSE_POS' | translate}}</label>
+                                    <ui-select ng-model="posCalc.inputData.posContract">
+                                        <ui-select-match>
+                                            <span ng-bind="$select.selected.name"></span>
+                                        </ui-select-match>
+                                        <ui-select-choices group-by="'activeAlias'" repeat="pos in (posList | filter: $select.search) track by pos.pos_id" class="border-bottom" data-simplebar data-simplebar-auto-hide="false">
+                                            <span ng-bind="pos.name" class="font-weight-bolder"></span>
+                                            <div  class="mt-1">
+                                                <small>{{(pos.active === 1 ? 'STAKE_POWER' : 'ACTIVE_STAKE_SHARE') | translate}}</small>
+                                                <span class="mr-1 font-weight-bolder">{{(pos.active === 1 ? pos.active_stake_power*100 : pos.active_stake_share*100) | US_COMMAS_2}}%</span>
+                                                <small>{{'FEE_VALUE' | translate}}</small>
+                                                <span class="font-weight-bolder">{{pos.fee/10000*100}}%</span>
+                                            </div>
+                                        </ui-select-choices>
+                                    </ui-select>
+                                </div>
+                                <div class="col-6 col-md-2 mt-md-3 mb-2 mb-md-0 text-center mx-auto">
+                                    <button type="button" class="btn btn-primary w-100 px-1 mt-1" ng-click="posCalc.calculate()">{{'CALCULATE' | translate}}</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12 text-center">
+                            <hr>
+                            <h4 class="mt-3">
+                                <div>{{'POS_ROI_DESCR_P1' | translate}}</div>
+                                <div>{{'POS_ROI_DESCR_P2' | translate}}</div>
+                            </h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-10 offset-1 col-sm-6 offset-sm-0 col-md-6 col-lg-6 col-xl-3" ng-class="showPOSCalcResult ? 'd-block' : 'd-none'" ng-repeat="rec in posROIData">
+            <div class="card">
+                <div class="card-body text-center">
+                    <div class="roi-cards-period-label-wrapper">
+                        <div class="text-title text-nowrap">{{rec.period | translate}}</div>
+                    </div>
+                    <div class="pt-2 pb-2" ng-init="roiVal=rec.value.split('.')">
+                        <span class="h3">+ </span><span class="h3">{{roiVal[0]}}.</span><span class="h4">{{roiVal[1]}}</span>
+                    </div>
+                    <div class="pb-2" ng-if="mainToken.ticker === ENQ" ng-init="roiUSD=rec.usd.split('.')">
+                        <span class="h3">+ </span><span class="h3">{{roiUSD[0]}}.</span><span class="h4">{{roiUSD[1]}}</span>
+                    </div>                    
+                    <hr>
+                    <div class="table-responsive-sm">
+                        <h4 class="pt-2">ROI</h4>
+                        <h3 class="text-blue mb-2">{{rec.roi}}</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 align-items-center justify-content-center" ng-if="currentPreset.tokenName !== 'ENQ'">
+        <h3 class="text-center mb-3">{{'TOKEN_NOT_TRADING' | translate: translationData}}</h3>
+    </div>
+</div>

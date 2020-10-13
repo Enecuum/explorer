@@ -1,0 +1,34 @@
+<div class="col-12" data-simplebar data-simplebar-lg data-simplebar-auto-hide="false">
+    <table class="table table-centered ordinary-table table-hover animate-show-hide" style="table-layout: auto;">
+        <thead>
+            <tr>
+                <th>{{'TOKEN' | translate}}</th>
+                <th>{{'TOKEN_TYPE' | translate}}</th>
+                <th>{{'TOKEN_ID' | translate}}</th>
+                <th>{{'AMOUNT' | translate}}</th>
+                <th>{{'PRICE' | translate}} ($)</th>
+                <th>{{'VALUE' | translate}}</th>
+            </tr>
+        </thead>
+        <tbody style="font-size: 12px;">
+            <tr ng-repeat="token in balanceAll">
+                <td><a ng-href="#!/token/{{token.token}}">{{token.caption}} ({{tickers[token.token]}})</a></td>
+                <td>{{token.type}}</td>
+                <td><a class="d-block fit" style="width: 100px;" ng-href="#!/tx/{{token.token}}">{{token.token}}</a></td>
+                <td class="text-nowrap">{{token.amount | US_COMMAS_BIGINT_DECIMALS : token.decimals : token.decimals}} {{tickers[token.token]}}</td>
+                <td class="text-nowrap" ng-if="token.token !== mainToken.hash">
+                    $ {{token.price !== undefined ? token.price : 0 | US_COMMAS_4}}
+                </td>
+                <td class="text-nowrap" ng-if="token.token === mainToken.hash">
+                    $ {{stat.cg_usd !== undefined ? stat.cg_usd : 0 | US_COMMAS_4}}
+                </td>
+                <td class="text-nowrap" ng-if="token.token !== mainToken.hash">
+                    $ {{token.usdValue  !== undefined ? token.usdValue : 0 | US_COMMAS_BIGINT_DECIMALS : token.tokenToUSDDecimals : 2}}
+                </td>
+                <td class="text-nowrap" ng-if="token.token === mainToken.hash">
+                    $ {{mainTokenBalance.amount.toUSD  !== undefined ? mainTokenBalance.amount.toUSD : 0 | US_COMMAS_BIGINT_DECIMALS : mainTokenToUSDDecimals : 2}}
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>

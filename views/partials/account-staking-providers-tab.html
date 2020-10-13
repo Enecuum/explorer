@@ -1,0 +1,30 @@
+<div class="col-12" data-simplebar data-simplebar-lg data-simplebar-auto-hide="false">
+    <table class="table table-centered ordinary-table table-hover animate-show-hide" style="table-layout: auto;">
+        <thead>
+        <tr>
+            <th>{{'RANK' | translate}}</th>
+            <th>{{'NAME' | translate}}</th>
+            <th>{{'STATUS' | translate}}</th>
+            <th>{{'DELEGATED' | translate}}</th>
+            <th>{{'UNDELEGATED' | translate}}</th>
+            <th>{{'TRANSIT' | translate}}</th>
+            <th>{{'REWARD' | translate}}</th>
+        </tr>
+        </thead>
+        <tbody style="font-size: 12px;">
+            <tr ng-repeat="staking_provider in my_delegation_list | orderBy: 'rank'">
+                <td>{{staking_provider.rank}}</td>
+                <td><a ng-href="#!/pos-contract/{{staking_provider.pos_id}}" class="d-flex overflow-hidden">{{staking_provider.name}}</a></td>
+                <td>
+                    <span class="px-1 rounded" ng-class="staking_provider.status === 1 ? 'badge-success-lighten' : 'badge-danger-lighten'">
+                        {{staking_provider.status === 1 ? 'ACTIVE' : 'INACTIVE' | translate}}
+                    </span>
+                </td>
+                <td class="text-nowrap">{{staking_provider.delegated | US_COMMAS_BIGINT_DECIMALS : mainToken.decimals : 2}} {{mainToken.ticker}}</td>
+                <td class="text-nowrap">{{staking_provider.undelegated | US_COMMAS_BIGINT_DECIMALS : mainToken.decimals : 2}} {{mainToken.ticker}}</td>
+                <td class="text-nowrap">{{staking_provider.transit | US_COMMAS_BIGINT_DECIMALS : mainToken.decimals : 2}} {{mainToken.ticker}}</td>
+                <td class="text-nowrap">{{staking_provider.reward | US_COMMAS_BIGINT_DECIMALS : mainToken.decimals : mainToken.decimals}} {{mainToken.ticker}}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>

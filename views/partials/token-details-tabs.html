@@ -1,0 +1,49 @@
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body p-2 p-sm-3">
+                <div class="row justify-content-between align-items-center">
+                    <div class="col-12 mb-3 mb-lg-0"  style="flex-grow: 3;">
+                        <ul class="nav nav-tabs nav-bordered mb-3 nav-filters">
+                            <li class="nav-item">
+                                <a href="javascript;" data-target="#tokenTransfersTab" data-toggle="tab" aria-expanded="false" data-toggle="tab" class="nav-link h-100 d-flex align-items-center rounded-0 disabled text-muted pl-0 pr-lg-3">
+                                    <span>{{'TRANSFERS' | translate}}</span>
+                                </a>
+                            </li>                            
+                            <li class="nav-item">
+                                <a href="javascript;" data-target="#tokenHoldersTab" data-toggle="tab" aria-expanded="true" class="nav-link h-100 d-flex align-items-center active px-lg-5">
+                                    <span>{{'HOLDERS' | translate}}</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="javascript;" data-target="#tokenInfoTab" data-toggle="tab" aria-expanded="false" class="nav-link h-100 d-flex align-items-center px-lg-5" ng-class="{'text-muted' : token.type !== 'Mineable', 'disabled' : token.type !== 'Mineable'}">
+                                    <span>{{'INFO' | translate}}</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="javascript;" data-target="#tokenEventsTab" data-toggle="tab" aria-expanded="false" class="nav-link h-100 d-flex align-items-center px-lg-5" ng-class="token.hash === mainToken.hash ? 'disabled' : ''">
+                                    <span>{{'TOKEN_EVENT' | translate}}</span>
+                                </a>
+                            </li>                                                                                    
+                        </ul>
+                    </div>
+                </div>
+                <div class="tab-content">
+                    <div class="tab-pane" id="tokenTransfersTab">
+                        <!-- <div class="row" ng-include="'views/partials/token-transfers-tab.html'"></div> -->
+                    </div>
+                    <div class="tab-pane active show" id="tokenHoldersTab">
+                        <div ng-if="accs.accounts.length === 0" ng-include="'views/partials/common-no-records.html'"></div>
+                        <div ng-if="accs.accounts.length > 0" class="row" ng-include="'views/partials/token-holders-tab.html'"></div>
+                    </div>
+                    <div class="tab-pane" id="tokenInfoTab">
+                        <div class="row" ng-if="token.type === 'Mineable'" ng-include="'views/partials/token-info-tab.html'"></div>
+                    </div>
+                    <div class="tab-pane" id="tokenEventsTab">
+                        <div class="row" ng-include="'views/partials/token-token-event-tab.html'"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
