@@ -143,7 +143,7 @@
     "ROI_DAILY":"Quotidien",
     "ROI_WEEKLY":"Hebdomadaire",
     "ROI_MONTHLY":"Mensuel",
-    "ROI_ANNUAL":"Annuel",
+    "ROI_ANNUALLY":"Annuel",
     "MODAL_SWAP_DISCLAIMER":"En appuyant sur Confirmer, vous envoyez une transaction au réseau Enecuum avec la quantité spécifiée d’ENQ. Après 3 confirmations de la transaction, le même montant de jetons ERC-20 ENQ sera envoyé à votre adresse Ethereum. Le fait du transfert sera affiché dans l'état de l'historique des échanges.",
     "CONNECT_WALLET":"Connecter le portefeuille",
     "SWAP_ERC_ADDR":"Votre adresse Ethereum :",

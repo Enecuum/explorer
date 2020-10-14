@@ -139,7 +139,7 @@
     "ROI_DAILY":"Diario",
     "ROI_WEEKLY":"Semanal",
     "ROI_MONTHLY":"Mensual",
-    "ROI_ANNUAL":"Anual",
+    "ROI_ANNUALLY":"Anual",
     "MODAL_SWAP_DISCLAIMER":"Al presionar Confirmar, enviarás una transacción en la red de Enecuum con la cantidad especificada de ENQ. Después de 3 confirmaciones de la transacción, se enviará la misma cantidad de token ERC-20 ENQ a tu dirección de Ethereum. La transferencia aparecerá en el estado del historial de intercambio.",
     "CONNECT_WALLET":"Conectar cartera",
     "SWAP_ERC_ADDR":"Tu dirección de Ethereum:",

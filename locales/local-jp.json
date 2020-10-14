@@ -139,7 +139,7 @@
     "ROI_DAILY":"毎日",
     "ROI_WEEKLY":"毎週",
     "ROI_MONTHLY":"毎月",
-    "ROI_ANNUAL":"年次",
+    "ROI_ANNUALLY":"年次",
     "MODAL_SWAP_DISCLAIMER":"確認を押すと、指定した額のENQでEnecuum にトランザクションが送信されます。 3回の取引確認後、同額のERC-20 ENQトークンがあなたのEthereumアドレスに送信されます。転送の事実はスワップ履歴ステータスに表示されます。",
     "CONNECT_WALLET":"ウォレットに接続",
     "SWAP_ERC_ADDR":"あなたのEthereumアドレス：",

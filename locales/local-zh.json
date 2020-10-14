@@ -139,7 +139,7 @@
     "ROI_DAILY":"每日",
     "ROI_WEEKLY":"每周",
     "ROI_MONTHLY":"每月",
-    "ROI_ANNUAL":"每年",
+    "ROI_ANNUALLY":"每年",
     "MODAL_SWAP_DISCLAIMER":"按确认，您将在Enecuum网中发送包含特定ENQ数量的交易。在3次交易确认后，相同数量的ERC-20 ENQ代币将被发送到您的以太坊地址。转移事件将显示在兑换历史状态中。",
     "CONNECT_WALLET":"连接钱包",
     "SWAP_ERC_ADDR":"您的以太坊地址：",
