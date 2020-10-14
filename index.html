@@ -1292,7 +1292,7 @@
         .constant('GLOBAL_APP_CONFIG', {
             presetName: 'ENQ',            
             POSChallenge: {
-                on: true,  
+                on: false,  
                 address: '03c91e88967465c44aa2afeab3b87dbeede9bd63dbe4a0121ea02fa3f0f4a4e2a8'
             },
             tokenPresets: {
@@ -1456,12 +1456,6 @@
             controller: 'sblockCtrl'
         }).when('/map', {
 			templateUrl: 'map'
-		}).when('/account/:id/:page_num', {
-			templateUrl: 'account',
-            controller: 'accountCtrl'
-        }).when('/account/:id/:page_num/:filter', {
-            templateUrl: 'account',
-            controller: 'accountCtrl'
 		}).when('/account/:id', {
 			templateUrl: 'account',
 			controller: 'accountCtrl'
@@ -1863,6 +1857,8 @@
             get_delegators_list : $resource('/api/v1/get_delegators_list?pos_id=:pos_id', {pos_id:'@pos_id'}, {query: {method: 'GET', isArray: true}}),
             get_delegated_list : $resource('/api/v1/get_delegated_list?delegator=:delegator', {delegator:'@delegator'}, {query: {method: 'GET', isArray: true}}),
             get_pos_active_total_stake : $resource('/api/v1/get_pos_active_total_stake'),
+            account_transactions : $resource('api/v1/account_transactions?id=:id&page=:page', {id:'@id', page:'@page'}),
+            account_rewards : $resource('api/v1/account_rewards?id=:id&page=:page', {id:'@id', page:'@page'})
 		};
 	});
 
@@ -3477,28 +3473,52 @@
                     }
                 });
 
-                $scope.getHistory = function(page){
+                // $scope.getHistory = function(page){
+                //     $scope.isLoading = true;
+                //     provider.account.get({id:$routeParams.id, filter:$scope.historyFilter, page:page}, function(account){
+                //         //getBalanceAll();                
+                //         $scope.account.records = account.records;
+                //         $scope.account.page_count = account.page_count;
+                //         $scope.isLoading = false;
+                //     });
+                //     $scope.page_num = page;
+                // };
+
+                // $scope.page_num = 0;
+                // $scope.historyFilter = '';
+                // $scope.getHistory(0);
+
+                // $scope.setFilter = function(val){
+                //     let filtersArr = ['_in','_out','_kreward','_mreward','_sreward','_refreward',''];
+                //     $scope.historyFilter = (filtersArr.includes(val)) ? $scope.historyFilter = val : '';
+                //     $scope.getHistory(0);
+                // };
+
+                // $scope.page_num = Number($routeParams.page_num) | 0;
+                $scope.account_txs = {}
+                $scope.getAccTxs = function(page){
                     $scope.isLoading = true;
-                    provider.account.get({id:$routeParams.id, filter:$scope.historyFilter, page:page}, function(account){
-                        //getBalanceAll();                
-                        $scope.account.records = account.records;
-                        $scope.account.page_count = account.page_count;
+                    provider.account_transactions.get({id:$routeParams.id, page:page}, function(account_txs){             
+                        $scope.account_txs.records = account_txs.records;
+                        $scope.account_txs.page_count = account_txs.page_count;
                         $scope.isLoading = false;
                     });
-                    $scope.page_num = page;
+                    $scope.acc_tx_page_num = page;
                 };
 
-                $scope.page_num = 0;
-                $scope.historyFilter = '';
-                $scope.getHistory(0);
+                $scope.account_rewards = {}
+                $scope.getAccRewards = function(page){
+                    $scope.isLoading = true;
+                    provider.account_rewards.get({id:$routeParams.id, page:page}, function(account_rewards){             
+                        $scope.account_rewards.records = account_rewards.records;
+                        $scope.account_rewards.page_count = account_rewards.page_count;
+                        $scope.isLoading = false;
+                    });
+                    $scope.acc_rewards_page_num = page;
+                };                
 
-                $scope.setFilter = function(val){
-                    let filtersArr = ['_in','_out','_kreward','_mreward','_sreward','_refreward',''];
-                    $scope.historyFilter = (filtersArr.includes(val)) ? $scope.historyFilter = val : '';
-                    $scope.getHistory(0);
-                };
-
-                $scope.page_num = Number($routeParams.page_num) | 0;
+                $scope.getAccTxs(0);
+                $scope.getAccRewards(0);
             }                        
         });        
 	});
