@@ -143,7 +143,7 @@
     "ROI_DAILY":"Günlük",
     "ROI_WEEKLY":"Haftalık",
     "ROI_MONTHLY":"Aylık",
-    "ROI_ANNUAL":"Yıllık",
+    "ROI_ANNUALLY":"Yıllık",
     "MODAL_SWAP_DISCLAIMER":"Onayla tuşuna basarak, Enecuum ağında belirtilen miktarda ENQ ile bir işlem gönderirsiniz. İşlem 3 kez onaylandıktan sonra, aynı miktarda ERC-20 ENQ token Ethereum adresinize gönderilecektir. Transferin yapıldığı, takas geçmişi durumunda gösterilecektir.",
     "CONNECT_WALLET":"Cüzdan bağlayın",
     "SWAP_ERC_ADDR":"Ethereum adresiniz:",

@@ -301,9 +301,11 @@
     "FROM_PREMINE": "from Premine",
     "ROI_DAILY": "ROI daily",
     "ROI_MONTHLY": "ROI monthly",
-    "ROI_WEEKLY": "ROI monthly",
-    "ROI_ANNUAL": "ROI annually",
+    "ROI_WEEKLY": "ROI weekly",
+    "ROI_ANNUALLY": "ROI annually",
     "TOKEN_CALC": "Token calculator",
     "BY_OTHERS": "By others",
-    "BY_OWNER": "By owner"
+    "BY_OWNER": "By owner",
+    "TOKEN_EMISSION" : "Emission",
+    "DAYS" : "Days"
 }

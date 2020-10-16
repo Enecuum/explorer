@@ -149,7 +149,7 @@
     "ROI_DAILY":"Hàng ngày",
     "ROI_WEEKLY":"Hàng tuần",
     "ROI_MONTHLY":"Hàng tháng",
-    "ROI_ANNUAL":"Hàng năm",
+    "ROI_ANNUALLY":"Hàng năm",
     "MODAL_SWAP_DISCLAIMER":"Khi ấn vào Xác nhận, bạn sẽ xác nhận giao dịch trên mạng Enecuum với một số lượng ENQ đã chọn.  Sau 3 lần xác nhận giao dịch với cùng 1 số lượng ENQ ERC-20, token sẽ được gửi tới địa chỉ ví Eth của bạn. Chi tiết giao dịch sẽ được hiển thị tại phần lịch sử.",
     "CONNECT_WALLET":"Kết nối với ví",
     "SWAP_ERC_ADDR":"Địa chỉ ví Eth của bạn:",

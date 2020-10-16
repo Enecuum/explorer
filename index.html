@@ -1096,7 +1096,6 @@
                                                             <h5> {{'ROI_DESC1' | translate}} - <a href="https://app.enecuum.com/">app.enecuum.com</a></h5>
                                                             <h5> {{'ROI_DESC2' | translate}}</h5>
                                                             <h5> {{'ROI_DESC3' | translate}}</h5>
-                                                            <h5> {{'ROI_DESC4' | translate}} - <a href="https://wallet.enecuum.com/">wallet.enecuum.com</a></h5>
                                                             <h5> {{'ROI_DESC5' | translate}}</h5>
                                                         </div>
                                                         <div class="col-lg-4 d-lg-block d-none">
@@ -2154,7 +2153,7 @@
                     roi: "+ " + (ratio * 30 * 100).toFixed(2) + " %"
                 },
                 {
-                    period: "ROI_ANNUAL",
+                    period: "ROI_ANNUALLY",
                     values: $scope.convert(stake * ratio * 365),
                     roi: "+ " + (ratio * 365 * 100).toFixed(2) + " %"
                 }
@@ -2231,7 +2230,7 @@
                                     profit: [{value: commas((dailyProfitToken * 30).toFixed(2)), ticker: $scope.currentPreset.tokenName}, {value: commas((dailyProfitUSD * 30).toFixed(2)), ticker: "USD"}]
                                 },
                                 {
-                                    period: "ROI_ANNUAL",
+                                    period: "ROI_ANNUALLY",
                                     revenue: [{value: commas((dailyRevenueToken * 365).toFixed(2)), ticker: $scope.currentPreset.tokenName}, {value: commas((dailyRevenueUSD * 365).toFixed(2)), ticker: "USD"}],
                                     profit: [{value: commas((dailyProfitToken * 365).toFixed(2)), ticker: $scope.currentPreset.tokenName}, {value: commas((dailyProfitUSD * 365).toFixed(2)), ticker: "USD"}]
                                 }
@@ -2340,7 +2339,7 @@
                                                 roi: "+ " + commas((dailyRewardInPercent * 30).toFixed(2)) + " %"
                                             },
                                             {
-                                                period: "ROI_ANNUAL",
+                                                period: "ROI_ANNUALLY",
                                                 value:  commas((posDailyReward * 365).toFixed(2)) +' '+ $scope.currentPreset.tokenName,
                                                 usd: commas((posDailyReward * 365 * $scope.stats.cg_usd).toFixed(2)) + ' USD',
                                                 roi: "+ " + commas((dailyRewardInPercent * 365).toFixed(2)) + " %"
@@ -3602,11 +3601,11 @@
             //     id : 'zh',
             //     name : '简体中文'
             // },
-            // {
-            //     flag : 'kr',
-            //     id : 'ko',
-            //     name : '한국어'
-            // },
+            {
+                flag : 'kr',
+                id : 'ko',
+                name : '한국어'
+            },
             {
                 flag : 'vn',
                 id : 'vi',

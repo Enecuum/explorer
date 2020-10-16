@@ -139,7 +139,7 @@
     "ROI_DAILY":"Harian",
     "ROI_WEEKLY":"Mingguan",
     "ROI_MONTHLY":"Bulanan",
-    "ROI_ANNUAL":"Tahunan",
+    "ROI_ANNUALLY":"Tahunan",
     "MODAL_SWAP_DISCLAIMER":"Dengan menekan Konfirmasi, Anda mengirim transaksi ke jaringan Enecuum dengan jumlah ENQ yang ditentukan. Setelah 3 konfirmasi transaksi, jumlah token ERC-20 ENQ yang sama akan dikirimkan ke alamat Ethereum Anda. Bukti transfer akan ditampilkan dalam status riwayat tukar.",
     "CONNECT_WALLET":"Hubungkan wallet",
     "SWAP_ERC_ADDR":"Alamat Ethereum Anda:",
