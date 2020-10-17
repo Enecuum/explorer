@@ -3,9 +3,12 @@
 		<div class="col">
 			<div class="h4 mb-3 pl-2 pl-sm-0">{{'CUSTOM_TOKEN_ROI_CALC' | translate}}</div>
 		</div>
-		<div class="col text-right">
-			<button id="printBtn" class="btn btn-info" ng-click="printTokenROICalc()">Save as PDF</button>
-		</div>	
+		<div class="col-12 col-lg text-right">
+			<button id="printBtn" class="btn btn-info mb-2 mb-lg-0" ng-click="printTokenROICalc()" ng-disabled="!showExportControl">{{'SAVE_AS_PDF' | translate}}</button>
+			<button id="saveAsJSONBtn" class="btn btn-info mb-2 mb-lg-0" ng-click="saveTokenROICalc()"  ng-disabled="!showExportControl">{{'SAVE_AS_JSON' | translate}}</button>
+			<input type="file" id="fileElem" accept="application/JSON" style="display:none" on-load-file="loadTokenROICalcJSON(file)"> 
+			<label class="btn btn-info mb-2 mb-lg-0  onhover-pointer" for="fileElem">{{'IMPORT_TOKENOMICS' | translate}}</label> 
+		</div>		
 	</div>
 	<div class="row">
 

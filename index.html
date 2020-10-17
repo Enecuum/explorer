@@ -1866,6 +1866,26 @@
 		};
 	});
 
+    app.directive('onLoadFile', function ($parse) {
+        return {
+            restrict: 'A',
+            scope: {
+                onLoadFile : "&"
+            },
+            link: function(scope, element, attrs) {
+                element.on('change', function(e) {
+                    let reader = new FileReader();
+                    reader.onload = function(e) {
+                        scope.$apply(function() {
+                           scope.onLoadFile({file:e.target.result});
+                        });
+                    };
+                    reader.readAsText((e.srcElement || e.target).files[0]);
+                });
+            }
+        };
+    });
+
     app.controller('documentHeadCtrl', function(GLOBAL_APP_CONFIG, $scope) {
        let currentPreset = GLOBAL_APP_CONFIG.tokenPresets[GLOBAL_APP_CONFIG.presetName];
        let themeName = currentPreset.theme;
@@ -2360,7 +2380,9 @@
         });   
     });
 
-    app.controller('tokenROICtrl', function($scope, $routeParams, provider, dataValidator) {
+    app.controller('tokenROICtrl', function($scope, $routeParams, provider, dataValidator, $translate) {
+        let maxBigInt = 1800000000;
+
         $scope.customToken = {
             targetPriceUSD: {
                 value: 0.1,
@@ -2611,18 +2633,6 @@
                             args: {str: $scope.customToken.minStake.tokens.value, regExpObj: /^([0-9]*\.?([0-9]*)){1}$/},
                             desiredResult: true,
                             errMsg: 'INVALID_SYMBOLS_IN_DIGITAL_VALUE'                                
-                        },
-                        {
-                        method: 'inIntervalBothClosed',
-                        args: {value: $scope.customToken.minStake.tokens.value, min: $scope.customToken.minStake.tokens.minValue, max: $scope.customToken.premine.tokens},
-                        desiredResult: true,
-                        errMsg: {
-                                    msg: 'NOT_IN_RANGE',
-                                    params: {
-                                        min: $scope.customToken.minStake.tokens.minValue,
-                                        max: 'value of Premine'
-                                    }
-                                }
                         }
                     ],
                     errMsgSelector: '#customTokenROICalc #setTokenMinStakeWrapper .errMsg'
@@ -2658,17 +2668,141 @@
                 }
             };
             return validationRules;       
+        }
+
+        function getThirdStepValidationRules() {
+            let validationRules = {
+                minStake: {
+                    checks: [
+                        {
+                            method: 'lessOrEqualThan',
+                            args: {value: $scope.customToken.minStake.tokens.value, max: $scope.customToken.premine.tokens},
+                            desiredResult: true,
+                            errMsg: {
+                                        msg: 'MUST_BE_LESS_OR_EQUAL_THAN_NAMED_VALUE',
+                                        params: {
+                                            name: $translate.instant('PREMINE')
+                                        }
+                                    }
+                        },                    
+                        {
+                            method: 'lessOrEqualThan',
+                            args: {value: $scope.customToken.minStake.tokens.value, max: $scope.customToken.maxSupply.tokens.value},
+                            desiredResult: true,
+                            errMsg: {
+                                        msg: 'MUST_BE_LESS_OR_EQUAL_THAN_NAMED_VALUE',
+                                        params: {
+                                            name: $translate.instant('TOKEN_MAX_SUPPLY')
+                                        }
+                                    }
+                        },                    
+                        {
+                            method: 'lessOrEqualThan',
+                            args: {value: $scope.customToken.minStake.tokens.value, max: maxBigInt},
+                            desiredResult: true,
+                            errMsg: {
+                                        msg: 'EXEED_MAX_VALUE_IN_TOKENS',
+                                        params: {
+                                            maxValue: maxBigInt,
+                                            ticker: ''
+                                        }
+                                    }
+                        }
+                    ],
+                    errMsgSelector: '#customTokenROICalc #setTokenMinStakeWrapper .errMsg'        
+                },
+                premine: {
+                    checks: [
+                        {
+                            method: 'moreOrEqualThan',
+                            args: {value: $scope.customToken.premine.tokens, max: $scope.customToken.minStake.tokens.value},
+                            desiredResult: true,
+                            errMsg: {
+                                        msg: 'MUST_BE_GREATER_OR_EQUAL_THAN_NAMED_VALUE',
+                                        params: {
+                                            name: $translate.instant('MINIMAL_STAKE')
+                                        }
+                                    }
+                        },                    
+                        {
+                            method: 'lessOrEqualThan',
+                            args: {value: $scope.customToken.premine.tokens, max: $scope.customToken.maxSupply.tokens.value},
+                            desiredResult: true,
+                            errMsg: {
+                                        msg: 'MUST_BE_LESS_OR_EQUAL_THAN_NAMED_VALUE',
+                                        params: {
+                                            name: $translate.instant('TOKEN_MAX_SUPPLY')
+                                        }
+                                    }
+                        },                    
+                        {
+                            method: 'lessOrEqualThan',
+                            args: {value: $scope.customToken.premine.tokens, max: maxBigInt},
+                            desiredResult: true,
+                            errMsg: {
+                                        msg: 'EXEED_MAX_VALUE_IN_TOKENS',
+                                        params: {
+                                            maxValue: maxBigInt,
+                                            ticker: ''
+                                        }
+                                    }
+                        }
+                    ],
+                    errMsgSelector: '#customTokenROICalc #outputTokenPremineWrapper .errMsg'        
+                },
+                maxSupply: {
+                    checks: [
+                        {
+                            method: 'moreOrEqualThan',
+                            args: {value: $scope.customToken.maxSupply.tokens.value, max: $scope.customToken.minStake.tokens.value},
+                            desiredResult: true,
+                            errMsg: {
+                                        msg: 'MUST_BE_GREATER_OR_EQUAL_THAN_NAMED_VALUE',
+                                        params: {
+                                            name: $translate.instant('MINIMAL_STAKE')
+                                        }
+                                    }
+                        },
+                        {
+                            method: 'moreOrEqualThan',
+                            args: {value: $scope.customToken.maxSupply.tokens.value, max: $scope.customToken.premine.tokens},
+                            desiredResult: true,
+                            errMsg: {
+                                        msg: 'MUST_BE_LESS_OR_EQUAL_THAN_NAMED_VALUE',
+                                        params: {
+                                            name: $translate.instant('PREMINE')
+                                        }
+                                    }
+                        },
+                        {
+                            method: 'lessOrEqualThan',
+                            args: {value: $scope.customToken.maxSupply.tokens.value, max: maxBigInt},
+                            desiredResult: true,
+                            errMsg: {
+                                        msg: 'EXEED_MAX_VALUE_IN_TOKENS',
+                                        params: {
+                                            maxValue: maxBigInt,
+                                            ticker: ''
+                                        }
+                                    }
+                        }
+                    ],
+                    errMsgSelector: '#customTokenROICalc #setTokenMaxSupplyWrapper .errMsg'        
+                }            
+            };
+            return validationRules;       
         }        
 
         $scope.calculate = function() {
+            $scope.showExportControl = false;
             $('#customTokenROICalc .output-box-group').css({'opacity': 0.25});
             let firstStepValidationRules = getFirstStepValidationRules();
-            let checkDataFirstStep = dataValidator.batchValidate($scope.customToken, firstStepValidationRules);
-            if (checkDataFirstStep) {              
+            $scope.checkDataFirstStep = dataValidator.batchValidate($scope.customToken, firstStepValidationRules);
+            if ($scope.checkDataFirstStep) {              
                 $scope.customToken.premine.tokens = ($scope.customToken.maxSupply.tokens.value * $scope.customToken.premine.percent.value/100);
                 let secondStepValidationRules = getSecondStepValidationRules();
-                let checkDataSecondStep = dataValidator.batchValidate($scope.customToken, secondStepValidationRules);
-                if (checkDataSecondStep) {
+                $scope.checkDataSecondStep = dataValidator.batchValidate($scope.customToken, secondStepValidationRules);
+                if ($scope.checkDataSecondStep) {
                     $('#customTokenROICalc .output-box-group').css({'opacity': 1});
                     $scope.customToken.maxSupply.usd = toUSD($scope.customToken.maxSupply.tokens.value);
                     //Market Capitalization                
@@ -2692,7 +2826,11 @@
                     $scope.customToken.stakedTokens.usd = toUSD($scope.customToken.stakedTokens.tokens);
                     $scope.customToken.roi.percent.daily = $scope.customToken.dailyEmission.tokens/$scope.customToken.stakedTokens.tokens*100;
                     $scope.customToken.roi.percent.monthly = $scope.customToken.monthlyEmission.tokens/$scope.customToken.stakedTokens.tokens*100;
-                    $scope.customToken.roi.percent.annually = $scope.customToken.annualEmission.tokens/$scope.customToken.stakedTokens.tokens*100;                  
+                    $scope.customToken.roi.percent.annually = $scope.customToken.annualEmission.tokens/$scope.customToken.stakedTokens.tokens*100;
+
+                    $scope.checkDataThirdStep = dataValidator.batchValidate($scope.customToken, getThirdStepValidationRules());
+                    if (dataValidator.batchValidate($scope.customToken, $scope.checkDataThirdStep))
+                        $scope.showExportControl = true;
                 } 
             }
         }
@@ -2708,7 +2846,25 @@
         $scope.calculate();
 
         $scope.printTokenROICalc = function () {
-          window.print()
+          window.print();
+        }
+
+        $scope.saveTokenROICalc = function () {
+            let url = window.URL || window.webkitURL;
+            let content = JSON.stringify($scope.customToken);
+            let blob = new Blob([ content ], { type:"application/json;charset=utf-8;" });
+            const objectURL = url.createObjectURL(blob);
+            let tmpLinkDOMElement = angular.element('<a></a>');
+            tmpLinkDOMElement.attr('href', objectURL);
+            tmpLinkDOMElement.attr('download', 'customToken.json');
+            tmpLinkDOMElement[0].click();
+            url.revokeObjectURL(objectURL);
+        }
+
+        $scope.loadTokenROICalcJSON = function(f) {
+            let tokenData = JSON.parse(f);
+            $scope.customToken = JSON.parse(JSON.stringify(tokenData));  
+            document.getElementById("fileElem").value = null;        
         }
     });
 

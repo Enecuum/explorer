@@ -290,5 +290,9 @@
     "WALLET_TITLE": "지갑",
     "WATT": "W",
     "WHITEPAPER": "백서",
-    "WITHDRAWAL": "다음 출금일은 2019년 4월 15일입니다"
+    "WITHDRAWAL": "다음 출금일은 2019년 4월 15일입니다",
+    "MUST_BE_GREATER_OR_EQUAL_THAN_NAMED_VALUE": "값은 {{name}}보다 크거나 같아야 합니다.",
+    "MUST_BE_GREATER_THAN": "값은 {{minValue}}보다 커야 합니다.",
+    "MUST_BE_LESS_OR_EQUAL_THAN_NAMED_VALUE": "값은 {{name}}보다 작거나 같아야 합니다.",
+    "MUST_BE_LESS_THAN_NAMED_VALUE": "값은 {{name}}보다 작아야 합니다."
 }
