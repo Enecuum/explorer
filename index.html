@@ -2484,7 +2484,7 @@
                         },
                         {
                         method: 'inIntervalBothClosed',
-                        args: {value: $scope.customToken.maxSupply.tokens.value, min: $scope.customToken.maxSupply.tokens.minValue, max: $scope.customToken.maxSupply.tokens.maxValue},
+                        args: {value: Number($scope.customToken.maxSupply.tokens.value), min: Number($scope.customToken.maxSupply.tokens.minValue), max: Number($scope.customToken.maxSupply.tokens.maxValue)},
                         desiredResult: true,
                         errMsg: {
                                     msg: 'NOT_IN_RANGE',
@@ -2514,7 +2514,7 @@
                         },
                         {
                         method: 'inIntervalBothClosed',
-                        args: {value: $scope.customToken.premine.percent.value, min: $scope.customToken.premine.percent.minValue, max: $scope.customToken.premine.percent.maxValue},
+                        args: {value: Number($scope.customToken.premine.percent.value), min: Number($scope.customToken.premine.percent.minValue), max: Number($scope.customToken.premine.percent.maxValue)},
                         desiredResult: true,
                         errMsg: {
                                     msg: 'NOT_IN_RANGE',
@@ -2549,7 +2549,7 @@
                         },
                         {
                         method: 'inIntervalBothClosed',
-                        args: {value: $scope.customToken.targetPriceUSD.value, min: $scope.customToken.targetPriceUSD.minValue, max: $scope.customToken.targetPriceUSD.maxValue},
+                        args: {value: Number($scope.customToken.targetPriceUSD.value), min: Number($scope.customToken.targetPriceUSD.minValue), max: Number($scope.customToken.targetPriceUSD.maxValue)},
                         desiredResult: true,
                         errMsg: {
                                     msg: 'NOT_IN_RANGE',
@@ -2578,7 +2578,7 @@
                         },
                         {
                         method: 'inIntervalBothClosed',
-                        args: {value: $scope.customToken.referralProgramBudget.percent.value, min: $scope.customToken.referralProgramBudget.percent.minValue, max: $scope.customToken.referralProgramBudget.percent.maxValue},
+                        args: {value: Number($scope.customToken.referralProgramBudget.percent.value), min: Number($scope.customToken.referralProgramBudget.percent.minValue), max: Number($scope.customToken.referralProgramBudget.percent.maxValue)},
                         desiredResult: true,
                         errMsg: {
                                     msg: 'NOT_IN_RANGE',
@@ -2607,7 +2607,7 @@
                         },
                         {
                         method: 'inIntervalBothClosed',
-                        args: {value: $scope.customToken.miningPeriod.value, min: $scope.customToken.miningPeriod.minValue, max: $scope.customToken.miningPeriod.maxValue},
+                        args: {value: Number($scope.customToken.miningPeriod.value), min: Number($scope.customToken.miningPeriod.minValue), max: Number($scope.customToken.miningPeriod.maxValue)},
                         desiredResult: true,
                         errMsg: {
                                     msg: 'NOT_IN_RANGE',
@@ -2653,7 +2653,7 @@
                         },
                         {
                         method: 'inIntervalBothClosed',
-                        args: {value: $scope.customToken.stakedTokens.percent.value, min: $scope.customToken.stakedTokens.percent.minValue, max: $scope.customToken.stakedTokens.percent.maxValue},
+                        args: {value: Number($scope.customToken.stakedTokens.percent.value), min: Number($scope.customToken.stakedTokens.percent.minValue), max: Number($scope.customToken.stakedTokens.percent.maxValue)},
                         desiredResult: true,
                         errMsg: {
                                     msg: 'NOT_IN_RANGE',
@@ -2676,7 +2676,7 @@
                     checks: [
                         {
                             method: 'lessOrEqualThan',
-                            args: {value: $scope.customToken.minStake.tokens.value, max: $scope.customToken.premine.tokens},
+                            args: {value: Number($scope.customToken.minStake.tokens.value), max: Number($scope.customToken.premine.tokens)},
                             desiredResult: true,
                             errMsg: {
                                         msg: 'MUST_BE_LESS_OR_EQUAL_THAN_NAMED_VALUE',
@@ -2687,7 +2687,7 @@
                         },                    
                         {
                             method: 'lessOrEqualThan',
-                            args: {value: $scope.customToken.minStake.tokens.value, max: $scope.customToken.maxSupply.tokens.value},
+                            args: {value: Number($scope.customToken.minStake.tokens.value), max: Number($scope.customToken.maxSupply.tokens.value)},
                             desiredResult: true,
                             errMsg: {
                                         msg: 'MUST_BE_LESS_OR_EQUAL_THAN_NAMED_VALUE',
@@ -2698,7 +2698,7 @@
                         },                    
                         {
                             method: 'lessOrEqualThan',
-                            args: {value: $scope.customToken.minStake.tokens.value, max: maxBigInt},
+                            args: {value: Number($scope.customToken.minStake.tokens.value), max: maxBigInt},
                             desiredResult: true,
                             errMsg: {
                                         msg: 'EXEED_MAX_VALUE_IN_TOKENS',
@@ -2715,7 +2715,7 @@
                     checks: [
                         {
                             method: 'moreOrEqualThan',
-                            args: {value: $scope.customToken.premine.tokens, max: $scope.customToken.minStake.tokens.value},
+                            args: {value: Number($scope.customToken.premine.tokens), max: Number($scope.customToken.minStake.tokens.value)},
                             desiredResult: true,
                             errMsg: {
                                         msg: 'MUST_BE_GREATER_OR_EQUAL_THAN_NAMED_VALUE',
@@ -2726,7 +2726,7 @@
                         },                    
                         {
                             method: 'lessOrEqualThan',
-                            args: {value: $scope.customToken.premine.tokens, max: $scope.customToken.maxSupply.tokens.value},
+                            args: {value: Number($scope.customToken.premine.tokens), max: Number($scope.customToken.maxSupply.tokens.value)},
                             desiredResult: true,
                             errMsg: {
                                         msg: 'MUST_BE_LESS_OR_EQUAL_THAN_NAMED_VALUE',
@@ -2737,7 +2737,7 @@
                         },                    
                         {
                             method: 'lessOrEqualThan',
-                            args: {value: $scope.customToken.premine.tokens, max: maxBigInt},
+                            args: {value: Number($scope.customToken.premine.tokens), max: maxBigInt},
                             desiredResult: true,
                             errMsg: {
                                         msg: 'EXEED_MAX_VALUE_IN_TOKENS',
@@ -2754,7 +2754,7 @@
                     checks: [
                         {
                             method: 'moreOrEqualThan',
-                            args: {value: $scope.customToken.maxSupply.tokens.value, max: $scope.customToken.minStake.tokens.value},
+                            args: {value: Number($scope.customToken.maxSupply.tokens.value), max: Number($scope.customToken.minStake.tokens.value)},
                             desiredResult: true,
                             errMsg: {
                                         msg: 'MUST_BE_GREATER_OR_EQUAL_THAN_NAMED_VALUE',
@@ -2765,7 +2765,7 @@
                         },
                         {
                             method: 'moreOrEqualThan',
-                            args: {value: $scope.customToken.maxSupply.tokens.value, max: $scope.customToken.premine.tokens},
+                            args: {value: Number($scope.customToken.maxSupply.tokens.value), max: Number($scope.customToken.premine.tokens)},
                             desiredResult: true,
                             errMsg: {
                                         msg: 'MUST_BE_LESS_OR_EQUAL_THAN_NAMED_VALUE',
@@ -2776,7 +2776,7 @@
                         },
                         {
                             method: 'lessOrEqualThan',
-                            args: {value: $scope.customToken.maxSupply.tokens.value, max: maxBigInt},
+                            args: {value: Number($scope.customToken.maxSupply.tokens.value), max: maxBigInt},
                             desiredResult: true,
                             errMsg: {
                                         msg: 'EXEED_MAX_VALUE_IN_TOKENS',
