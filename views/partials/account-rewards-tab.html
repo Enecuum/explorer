@@ -25,10 +25,10 @@
 </div>
 <div ng-if="account_rewards.page_count > 1" class="col-12 col-lg text-right">
     <div class="btn-group" aria-label="Rewind records" ng-hide="account_rewards.page_count == null || account_rewards.page_count == undefined || account_rewards.page_count <= 0">
-        <a class="btn-sm btn btn-secondary text-nowrap" ng-click="getAccTxs(0)" ng-class="acc_rewards_page_num == 0 ? 'disabled' : ''" role="button">{{'FRST' | translate}}</a>
-        <a class="btn-sm btn btn-secondary" ng-click="getAccTxs(acc_rewards_page_num - 1)" ng-class="acc_rewards_page_num == 0 ? 'disabled' : ''" role="button"><i class="fas fa-chevron-left"></i></a>
+        <a class="btn-sm btn btn-secondary text-nowrap" ng-click="getAccRewards(0)" ng-class="acc_rewards_page_num == 0 ? 'disabled' : ''" role="button">{{'FRST' | translate}}</a>
+        <a class="btn-sm btn btn-secondary" ng-click="getAccRewards(acc_rewards_page_num - 1)" ng-class="acc_rewards_page_num == 0 ? 'disabled' : ''" role="button"><i class="fas fa-chevron-left"></i></a>
         <a class="btn-sm btn btn-secondary disabled text-nowrap" role="button" style="opacity: 1;"><span class="text-blue">{{'PAGE' | translate : {current: acc_rewards_page_num+1, total: account_rewards.page_count} }}</span></a>
-        <a class="btn-sm btn btn-secondary text-nowrap" ng-click="getAccTxs(acc_rewards_page_num + 1)" ng-class="acc_rewards_page_num == account_rewards.page_count-1 ? 'disabled' : ''" role="button"><i class="fas fa-chevron-right"></i></a>
-        <a class="btn-sm btn btn-secondary text-nowrap" ng-click="getAccTxs(account_rewards.page_count-1)" ng-class="acc_rewards_page_num == account_rewards.page_count-1 ? 'disabled' : ''" role="button">{{'LAST' | translate}}</a>
+        <a class="btn-sm btn btn-secondary text-nowrap" ng-click="getAccRewards(acc_rewards_page_num + 1)" ng-class="acc_rewards_page_num == account_rewards.page_count-1 ? 'disabled' : ''" role="button"><i class="fas fa-chevron-right"></i></a>
+        <a class="btn-sm btn btn-secondary text-nowrap" ng-click="getAccRewards(account_rewards.page_count-1)" ng-class="acc_rewards_page_num == account_rewards.page_count-1 ? 'disabled' : ''" role="button">{{'LAST' | translate}}</a>
     </div>
 </div>
