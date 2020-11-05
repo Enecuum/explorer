@@ -2,22 +2,24 @@
     <table class="table table-centered ordinary-table table-hover animate-show-hide" style="table-layout: auto;">
         <thead>
             <tr>
-                <th>{{'HASH_TRX' | translate}}</th>
                 <th>{{'TIME' | translate}}</th>
                 <th>{{'TYPE' | translate}}</th>
-                <th>{{'STATUS' | translate}}</th>
                 <th>{{'AMOUNT' | translate}}</th>
                 <th>{{'TRX_FEE' | translate}}</th>
+                <th>{{'HASH_TRX' | translate}}</th>
+                <th>{{'STATUS' | translate}}</th>
+                
+                
             </tr>
         </thead>
         <tbody style="font-size: 12px;">
             <tr ng-repeat="record in account_txs.records">
-                <td><a class="d-block fit" style="width: 100px;" ng-href="#!/tx/{{record.hash}}">{{record.hash}}</a></td>
                 <td>{{record.time === null ? 'null' : record.time}}</td>
                 <td>{{record.rectype}}</td>
-                <td>{{record.status | TX_STATUS | translate}}</td>
-                <td>{{tickers[record.token_hash]}}</td>
+                <td>{{record.amount | US_COMMAS_BIGINT_DECIMALS : token.decimals : token.decimals}} {{tickers[record.token_hash]}}</td>
                 <td>{{record.fee_value| US_COMMAS_BIGINT_DECIMALS : token.decimals : token.decimals}} {{tickers[record.token_hash]}}</td>
+                <td><a class="d-block fit" style="width: 100px;" ng-href="#!/tx/{{record.hash}}">{{record.hash}}</a></td>
+                <td>{{record.status | TX_STATUS | translate}}</td>                
             </tr>
         </tbody>
     </table>
