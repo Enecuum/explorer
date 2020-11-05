@@ -3495,11 +3495,29 @@
                 // };
 
                 // $scope.page_num = Number($routeParams.page_num) | 0;
+
+                function getRecType(rectype) {
+                    let rectypeArr = ['iin', 'iout'];
+                    if (rectypeArr.indexOf(rectype) != -1) {
+                        return rectype.slice(1);
+                    } else
+                        return incorrectValue;
+                }
+
+
                 $scope.account_txs = {}
                 $scope.getAccTxs = function(page){
                     $scope.isLoading = true;
-                    provider.account_transactions.get({id:$routeParams.id, page:page}, function(account_txs){             
+                    provider.account_transactions.get({id:$routeParams.id, page:page}, function(account_txs){
+                    console.log(account_txs)             
                         $scope.account_txs.records = account_txs.records;
+                        $scope.account_txs.records.forEach(function(record) {
+                            record.rectype = getRecType(record.rectype);
+                            record.time = dateTimeConverter.getTimestamp(record.time);
+                            provider.token_info.query({hash:record.token_hash}, function(token_info) {
+                                record.token_decimals = token_info[0].decimals;
+                            });                            
+                        });
                         $scope.account_txs.page_count = account_txs.page_count;
                         $scope.isLoading = false;
                     });

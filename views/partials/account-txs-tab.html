@@ -2,28 +2,22 @@
     <table class="table table-centered ordinary-table table-hover animate-show-hide" style="table-layout: auto;">
         <thead>
             <tr>
-                <th>i</th>
-                <th>hash</th>
-                <th>time</th>
-                <th>rectype</th>
-                <th>status</th>
-                <th>token_hash</th>
-                <th>fee_type</th>
-                <th>fee_value</th>
-                <th>fee_min</th>
+                <th>{{'HASH_TRX' | translate}}</th>
+                <th>{{'TIME' | translate}}</th>
+                <th>{{'TYPE' | translate}}</th>
+                <th>{{'STATUS' | translate}}</th>
+                <th>{{'AMOUNT' | translate}}</th>
+                <th>{{'TRX_FEE' | translate}}</th>
             </tr>
         </thead>
         <tbody style="font-size: 12px;">
             <tr ng-repeat="record in account_txs.records">
-                <th>{{record.i}}</th>
-                <th>{{record.hash}}</th>
-                <th>{{record.time === null ? 'null' : record.time}}</th>
-                <th>{{record.rectype}}</th>
-                <th>{{record.status}}</th>
-                <th>{{record.token_hash}}</th>
-                <th>{{record.fee_type}}</th>
-                <th>{{record.fee_value}}</th>
-                <th>{{record.fee_min}}</th>
+                <td><a class="d-block fit" style="width: 100px;" ng-href="#!/tx/{{record.hash}}">{{record.hash}}</a></td>
+                <td>{{record.time === null ? 'null' : record.time}}</td>
+                <td>{{record.rectype}}</td>
+                <td>{{record.status | TX_STATUS | translate}}</td>
+                <td>{{tickers[record.token_hash]}}</td>
+                <td>{{record.fee_value| US_COMMAS_BIGINT_DECIMALS : token.decimals : token.decimals}} {{tickers[record.token_hash]}}</td>
             </tr>
         </tbody>
     </table>
