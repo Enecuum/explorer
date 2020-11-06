@@ -2,23 +2,18 @@
     <table class="table table-centered ordinary-table table-hover animate-show-hide" style="table-layout: auto;">
         <thead>
             <tr>
-                <th>i</th>
-                <th>irew</th>
-                <th>hash</th>
-                <th>time</th>
-                <th>rectype</th>
-                <th>value</th>
-
+                <th>{{'TIME' | translate}}</th>
+                <th>{{'TYPE' | translate}}</th>
+                <th>{{'AMOUNT' | translate}}</th>
+                <th>{{'HASH_TRX' | translate}}</th>
             </tr>
         </thead>
         <tbody style="font-size: 12px;">
             <tr ng-repeat="record in account_rewards.records">
-                <th>{{record.i}}</th>
-                <th>{{record.irew}}</th>
-                <th>{{record.hash}}</th>
-                <th>{{record.time}}</th>
-                <th>{{record.rectype}}</th>
-                <th>{{record.value}}</th>
+                <td>{{record.time === null ? 'null' : record.time}}</td>
+                <td>{{record.rectype | translate}}</td>
+                <td>{{record.amount | US_COMMAS_BIGINT_DECIMALS : mainToken.decimals : mainToken.decimals}} {{mainToken.ticker}}</td>
+                <td><a class="d-block fit" style="width: 100px;" ng-href="#!/tx/{{record.hash}}">{{record.hash}}</a></td>
             </tr>
         </tbody>
     </table>

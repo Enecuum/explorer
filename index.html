@@ -1820,6 +1820,26 @@
                     translationsArr.push(instantTranslate[elem]);
                 });
                 return translationsArr;
+            },
+            resolveTxType : function(rectype, incorrectValue = '---') {
+                let recTypes = {
+                    iin : 'TX_IIN',
+                    iout : 'TX_IOUT',
+                    ik : 'REW_TX_IK',
+                    im : 'REW_TX_IM',
+                    iref : 'REW_TX_IREF',
+                    iv : 'REW_TX_IV',
+                    ic : 'STAKING_IC',
+                    ifk : 'REW_TX_IFK', 
+                    ifg : 'REW_TX_IFG',
+                    ifl : 'REW_TX_IFL',
+                    idust : 'REW_TX_DUST'
+                };
+
+                if (recTypes.hasOwnProperty(rectype)) {
+                    return recTypes[rectype];
+                } else
+                    return incorrectValue;
             }
         }    
     });  
@@ -3496,23 +3516,24 @@
 
                 // $scope.page_num = Number($routeParams.page_num) | 0;
 
-                function getRecType(rectype) {
-                    let rectypeArr = ['iin', 'iout'];
-                    if (rectypeArr.indexOf(rectype) != -1) {
-                        return rectype.slice(1);
-                    } else
-                        return incorrectValue;
+                $scope.statusBadge = function(status) {
+                    switch(status){
+                        case 'STATUS_SUCCESS' : return 'badge-success-lighten';
+                        case 'STATUS_PENDING' : return 'badge-primary-lighten';
+                        case 'STATUS_CONFIRMED' : return 'badge-info-lighten';
+                        case 'STATUS_REJECTED' : return 'badge-danger-lighten';
+                        case 'STATUS_DUPLICATE' : return 'badge-danger-lighten';
+                        default : return 'badge-primary-lighten';
+                    }
                 }
-
 
                 $scope.account_txs = {}
                 $scope.getAccTxs = function(page){
                     $scope.isLoading = true;
-                    provider.account_transactions.get({id:$routeParams.id, page:page}, function(account_txs){
-                    console.log(account_txs)             
+                    provider.account_transactions.get({id:$routeParams.id, page:page}, function(account_txs) {            
                         $scope.account_txs.records = account_txs.records;
                         $scope.account_txs.records.forEach(function(record) {
-                            record.rectype = getRecType(record.rectype);
+                            record.rectype = commonTools.resolveTxType(record.rectype);
                             record.time = dateTimeConverter.getTimestamp(record.time);
                             provider.token_info.query({hash:record.token_hash}, function(token_info) {
                                 record.token_decimals = token_info[0].decimals;
@@ -3527,8 +3548,12 @@
                 $scope.account_rewards = {}
                 $scope.getAccRewards = function(page){
                     $scope.isLoading = true;
-                    provider.account_rewards.get({id:$routeParams.id, page:page}, function(account_rewards){             
+                    provider.account_rewards.get({id:$routeParams.id, page:page}, function(account_rewards) {                                
                         $scope.account_rewards.records = account_rewards.records;
+                        $scope.account_rewards.records.forEach(function(record) {
+                            record.time = dateTimeConverter.getTimestamp(record.time);
+                            record.rectype = commonTools.resolveTxType(record.rectype);
+                        });
                         $scope.account_rewards.page_count = account_rewards.page_count;
                         $scope.isLoading = false;
                     });

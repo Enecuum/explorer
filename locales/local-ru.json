@@ -288,5 +288,16 @@
     "REQUIRED": "Обязательное значение",
     "INVALID_SYMBOLS_IN_DIGITAL_VALUE": "Недопустимые символы. Введненное значение не является целым или десятичным числом.",
     "NOT_IN_RANGE": "Неверное значение. Должно быть в пределе от {{min}} до {{max}}",
-    "BY_OTHERS": "Прочие делегаторы"
+    "BY_OTHERS": "Прочие делегаторы",
+    "TX_IIN" : "In",
+    "TX_IOUT" : "Out",
+    "REW_TX_IK" : "PoW",
+    "REW_TX_IM" : "PoA",
+    "REW_TX_IREF" : "Реферал.",
+    "REW_TX_IV" : "PoS",
+    "STAKING_IC" : "Стейкинг",
+    "REW_TX_IFK" : "PoW TX fee",
+    "REW_TX_IFG" : "Genesis TX fee",
+    "REW_TX_IFL" : "PoS leader fees",
+    "REW_TX_DUST" : "Dust"
 }
