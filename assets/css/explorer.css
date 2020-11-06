@@ -312,3 +312,7 @@ a.disabled{
     pointer-events: none;
     cursor: default;
 }
+
+.onhover-pointer:hover {
+    cursor: pointer;
+}

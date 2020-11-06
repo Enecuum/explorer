@@ -288,5 +288,13 @@
     "REQUIRED": "Обязательное значение",
     "INVALID_SYMBOLS_IN_DIGITAL_VALUE": "Недопустимые символы. Введненное значение не является целым или десятичным числом.",
     "NOT_IN_RANGE": "Неверное значение. Должно быть в пределе от {{min}} до {{max}}",
-    "BY_OTHERS": "Прочие делегаторы"
+    "BY_OTHERS": "Прочие делегаторы",
+    "IMPORT_TOKENOMICS" : "Импортировать токеномику",
+    "SAVE_AS_PDF" : "Сохранить в PDF",
+    "SAVE_AS_JSON" : "Сохранить в JSON",
+    "PASS_TOKENIOMICS_TO_FORM" : "Передать параметры в форму",
+    "MUST_BE_GREATER_THAN": "Значение должно быть больше {{minValue}}",
+    "MUST_BE_GREATER_OR_EQUAL_THAN_NAMED_VALUE": "Значение должно быть больше или равно, чем {{name}}",
+    "MUST_BE_LESS_THAN_NAMED_VALUE": "Значение должно быть меньше, чем {{name}}",
+    "MUST_BE_LESS_OR_EQUAL_THAN_NAMED_VALUE": "Значение должно быть меньше или равно, чем {{name}}"
 }
