@@ -492,7 +492,15 @@
                                     <tr>
                                         <td>{{'FEE_VALUE' | translate}}</td>
                                         <td>{{tx.fee | US_COMMAS_BIGINT_DECIMALS : tx.token.decimals : tx.token.decimals}} {{tx.token.ticker}}</td>
-                                    </tr>                                    
+                                    </tr>
+                                    <tr>
+                                        <td>{{'DATA' | translate}}</td>
+                                        <td>{{tx.data}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>{{'PARAMS' | translate}}</td>
+                                        <td>{{'METHOD' | translate}}: {{tx_method}}<br>{{'AMOUNT'| translate}}: {{tx_amount | US_COMMAS_BIGINT_DECIMALS : tx.token.decimals : tx.token.decimals}} {{tx.token.ticker}}</td>
+                                    </tr>
                                     <tr>
                                         <td>{{'STATUS' | translate}}</td>
                                         <td>{{tx.status | TX_STATUS | translate}}</td>
@@ -3661,15 +3669,65 @@
 
 	app.controller('transactionCtrl', function($scope, $routeParams, provider) {
         provider.transaction.get({hash:$routeParams.hash}, function(tx) {
+            function get_amount(data) {
+                let shemas = [
+                    {method: 'Create token', code: '0200'},
+                    {method: 'Delegate', code: '0300'},
+                    {method: 'Undelegate', code: '0400'},
+                    {method: 'hash', code: '0600'},
+                    {method: 'string', code: '0700'},
+                    {method: 'int', code: '0800'},
+                    {method: 'bigint', code: '0900'},
+                    {method: 'float', code: '0a00'},
+                    {method: 'object', code: '0c00'},
+                    {method: 'key', code: '0d00'},
+                    {method: 'procedure name', code: '0e00'},
+                    {method: 'parameters', code: '0f00'},
+                    {method: 'Create pos', code: '1000'},
+                    {method: 'Pos reward', code: '1100'},
+                    {method: 'Transfer', code: '1200'},
+                    {method: 'Mint', code: '1300'},
+                    {method: 'Burn', code: '1400'},
+                ]
+                if (data) {
+                    data = data.substr(4, 512);
+                    let string = data.substr(0, 4);
+                    for (let i = 0; i < shemas.length; i++) {
+                        if (string === shemas[i].code) {
+                            if (i === 1 || i === 2) {
+                                let pos_id = data.substr(34, 64);
+                                string = data.split('amount')
+                                string = string[1];
+                                let size = Number(string.substr(0, 4))
+                                let amount = Number(string.substr(6, size));
+                                return {method: shemas[i].method, pos_id: pos_id, amount: amount}
+                            }
+                            return {method: shemas[i].method}
+                        }
+                    }
+                    return null
+                } else {
+                    return {method: "Transaction"};
+                }
+            }
             $scope.tx = tx;
             $scope.tx.token = {
                 ticker: '',
                 decimals: null
             }
+
             provider.token_info.query({hash:tx.token_hash}, function(token_info) {
                 $scope.tx.token.ticker = token_info[0].ticker;
                 $scope.tx.token.decimals =  token_info[0].decimals;
             });
+            let params = get_amount(tx.data);
+            $scope.tx_method = params.method;
+            if(params.amount){
+                $scope.tx_amount = params.amount;
+            }else{
+                $scope.tx_amount = 0;
+            }
+
         });
     });
 
