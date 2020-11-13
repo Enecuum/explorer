@@ -471,8 +471,9 @@
                                 </ol>
                             </nav>
 
+                            <div class="h3 mb-3 mx-md-2" ng-if="showContractParams">{{txDataInit.type}}</div>
                             <table class="table table-centered table-hover">
-                                <tbody>
+                                <tbody id="singleTxInfo">
                                     <tr>
                                         <td>{{'HASH' | translate}}</td>
                                         <td class="fit">{{tx.hash}}</td>
@@ -495,11 +496,22 @@
                                     </tr>
                                     <tr>
                                         <td>{{'DATA' | translate}}</td>
-                                        <td>{{tx.data}}</td>
+                                        <td>
+                                            <div>
+                                                {{tx.data}} 
+                                            </div>
+                                        </td> 
                                     </tr>
-                                    <tr>
+                                    <tr ng-if="showContractParams">
                                         <td>{{'PARAMS' | translate}}</td>
-                                        <td>{{'METHOD' | translate}}: {{tx_method}}<br>{{'AMOUNT'| translate}}: {{tx_amount | US_COMMAS_BIGINT_DECIMALS : tx.token.decimals : tx.token.decimals}} {{tx.token.ticker}}</td>
+                                        <td>
+                                            <div class="mb-1"><span class="mr-1 font-weight-bolder">type:</span>{{txData.type}}</div>
+                                            <div ng-repeat="(key, value) in txDataInit.parameters" class="mb-1">
+                                                <span class="mr-1 font-weight-bolder">{{key}}:</span>{{value}}
+                                            </div>
+
+                                            <div ng-include="'views/partials/contracts-tx/' + txContractsTemplate"></div>
+                                        </td>
                                     </tr>
                                     <tr>
                                         <td>{{'STATUS' | translate}}</td>
@@ -1834,8 +1846,167 @@
                     translationsArr.push(instantTranslate[elem]);
                 });
                 return translationsArr;
+            },
+            getTokenType: function(token) {
+                let minEable = token.minable;
+                let tokenType = '---';
+                if (minEable === 1 && token.reissuable === 0)
+                    tokenType = 'Mineable';
+                else if (minEable === 0 && token.reissuable === 0)
+                    tokenType = "Non-reissuable";
+                else if (minEable === 0 && token.reissuable === 1) 
+                    tokenType = "Reissuable";
+
+                return tokenType;
+            },
+            getTokenFees: function(token) {
+                let res = {
+                    fee_type : '---',
+                    fee_value : '---',
+                    fee_min : '---'
+                }
+
+                if (token.fee_type === 0) {
+                    res.fee_type = 'FEE_TYPE_FLAT';
+                    res.fee_value = $filter('US_COMMAS_BIGINT_DECIMALS')(token.fee_value, token.decimals, token.decimals) +' '+ token.ticker;
+                    res.fee_min = token.fee_min;
+                } else if (token.fee_type === 1) {
+                    res.fee_type = 'FEE_TYPE_PERCENT';
+                    res.fee_min = $filter('US_COMMAS_BIGINT_DECIMALS')(token.fee_value, token.decimals, token.decimals);
+                    res.fee_value = $filter('US_COMMAS_BIGINT_DECIMALS')(token.fee_value, 2, 2) + '%';
+                }
+
+                return res;
             }
+            
         }    
+    });
+
+    app.factory('schema', function () {
+        let schema = {
+                    "root" :            "0000",
+                    "custom" :          "0100",
+                    "create_token" :    "0200",
+                    "delegate" :        "0300",
+                    "undelegate" :      "0400",
+                    "signature" :       "0500",
+                    "hash" :            "0600",
+                    "string" :          "0700",
+                    "int" :             "0800",
+                    "bigint" :          "0900",
+                    "float" :           "0a00",
+                    "object" :          "0c00",
+                    "key" :             "0d00",
+                    "procedure_name" :  "0e00",
+                    "parameters" :      "0f00",
+                    "create_pos" :      "1000",
+                    "pos_reward" :      "1100",
+                    "transfer" :        "1200",
+                    "mint" :            "1300",
+                    "burn" :            "1400"
+                };
+        return schema                
+    });
+
+    app.service('txParser', function () {
+        let schema, contract_pricelist = {};    
+
+        function getkey(object, value) {
+            return Object.keys(object).find(key => object[key] === value);
+        }
+        function getChunk(bin){
+            let size = parseInt(bin.substring(0, 4), 16);
+            let key = getkey(schema, bin.substring(4,8));
+            return {
+                size : size,
+                key : key,
+                data : bin.substr(8, size - 8)
+            }
+        }
+        function deserialize(bin){
+            let arr = [];
+            while(bin.length > 0){
+                let chunk = getChunk(bin);
+                if(bin.length === chunk.size){
+                    if((!contract_pricelist.hasOwnProperty(chunk.key))
+                        && (chunk.key !== "parameters")
+                        && (chunk.key !== "object")){
+                        arr.push([chunk.key, chunk.data]);
+                        return arr;
+                    }
+                    bin = bin.substring(8, bin.length);
+                }
+                if(bin.length > chunk.size)
+                    arr.push([chunk.key, chunk.data]);
+                else
+                    arr.push([chunk.key, deserialize(chunk.data)]);
+                bin = bin.substring(chunk.size);
+            }
+            return arr;
+        }
+        function prettify(data){
+            let res = {};
+            let arr = [];
+            for(let i = 0; i < (data.length); i++){
+                let el = data[i];
+                if(Array.isArray(el)){
+                    arr.push(prettify(el))
+                }
+                else{
+                    if(!Array.isArray(data[i+1])){
+                        res[el] = data[i+1];
+                        i++;
+                    }
+                    else{
+                        res[el] = prettify(data[i+1]);
+                        i++;
+                    }
+                }
+            }
+            if(arr.length > 0)
+                return arr;
+            return res;
+        }
+        
+        this.isContract = function(raw, txSchema = {}, contractPricelist={}) {
+            schema = txSchema;
+            contract_pricelist = contractPricelist;
+            if(raw === undefined || raw === null)
+                return false;
+            let chunk = getChunk(raw);
+            if((chunk.size === raw.length) && contract_pricelist.hasOwnProperty(chunk.key))
+                return chunk.key;
+            return false;
+        } 
+
+        this.parse = function(raw, txSchema = {}, contractPricelist={}){
+            schema = txSchema;
+            contract_pricelist = contractPricelist;
+            let data = {};
+            let input = (deserialize(raw))[0];
+            data.type = input[0];
+            input = prettify(input[1]);
+            //data.procedure_name = input[0].procedure_name;
+            let params = input[0].parameters;
+            data.parameters = {};
+            for(let i = 0; i < params.length; i+=2){
+                let value = (Object.keys(params[i+1]))[0];
+                if(value === "int" || value === "bigint" || value === "float"){
+                    if(value === "bigint"){
+                        value = BigInt(params[i+1][value]);
+                    }
+                    else {
+                        if(isNaN(params[i+1][value]))
+                            throw new Error("Not a number");
+                        value = parseInt(params[i+1][value]);
+                    }
+                }
+                else
+                    value = params[i+1][value];
+                data.parameters[params[i].key] = value;
+            }
+            return data;
+        }
     });  
 
     app.factory('provider', function ($resource){
@@ -1871,6 +2042,7 @@
             get_delegators_list : $resource('/api/v1/get_delegators_list?pos_id=:pos_id', {pos_id:'@pos_id'}, {query: {method: 'GET', isArray: true}}),
             get_delegated_list : $resource('/api/v1/get_delegated_list?delegator=:delegator', {delegator:'@delegator'}, {query: {method: 'GET', isArray: true}}),
             get_pos_active_total_stake : $resource('/api/v1/get_pos_active_total_stake'),
+            contract_pricelist : $resource('/api/v1/contract_pricelist')
 		};
 	});
 
@@ -2962,16 +3134,7 @@
         provider.token_info.query({hash:$routeParams.hash}, function(token_info) {
             $scope.token = token_info[0];
             $scope.media = currentPreset.externalLinks.projectMedia;
-            let mineable = $scope.token.minable;
-            let reissuable = $scope.token.reissuable;
-            let tokenType = '---';
-            if (mineable === 1 && reissuable === 0)
-                tokenType = 'Mineable';
-            else if (mineable === 0 && reissuable === 0)
-                tokenType = "Non-reissuable";
-            else if (mineable === 0 && reissuable === 1)
-                tokenType = "Reissuable";
-            $scope.token.type = tokenType;
+            $scope.token.type = commonTools.getTokenType($scope.token);
 
             provider.stats.get({}, function(stat) {
                 if ($routeParams.hash === $rootScope.mainToken.hash) {
@@ -3006,14 +3169,10 @@
                 let ticker = tickers_all.find(function(ticker) {return (ticker.hash === $scope.token.hash) ? true : false;});
                 $scope.token.ticker = ticker.ticker;
                 $scope.token.caption = ticker.caption;
-                if ($scope.token.fee_type === 0) {
-                    $scope.token.fee_type = 'FEE_TYPE_FLAT';
-                    $scope.token.fee_value = $filter('US_COMMAS_BIGINT_DECIMALS')($scope.token.fee_value, $scope.token.decimals, $scope.token.decimals) +' '+ $scope.token.ticker;
-                } else if ($scope.token.fee_type === 1) {
-                    $scope.token.fee_type = 'FEE_TYPE_PERCENT';
-                    $scope.token.fee_min = $filter('US_COMMAS_BIGINT_DECIMALS')($scope.token.fee_value, $scope.token.decimals, $scope.token.decimals);
-                    $scope.token.fee_value = $filter('US_COMMAS_BIGINT_DECIMALS')($scope.token.fee_value, 2, 2) + '%';
-                }
+                let feesObject = commonTools.getTokenFees($scope.token);
+                $scope.token.fee_type = feesObject.fee_type;
+                $scope.token.fee_value = feesObject.fee_value;
+                $scope.token.fee_min = feesObject.fee_min;
             });
             provider.transaction.get({hash:$routeParams.hash}, function(issue_token_tx) {
                 $scope.issue_token_tx = issue_token_tx;
@@ -3339,7 +3498,7 @@
                                         if (token.token === ticker.hash) {
                                             token.caption = ticker.caption;
                                             provider.token_info.query({hash:token.token}, function(token_info) {
-                                                token.type = getTokenType(token_info[0]);
+                                                token.type = commonTools.getTokenType(token_info[0]);
                                             }); 
                                         }
                                     });
@@ -3487,7 +3646,7 @@
                                 provider.get_tokens_by_owner.query({owner:$routeParams.id}, function(my_tokens_list) {
                                     my_tokens_list.forEach(function(token) {
                                         provider.token_info.query({hash:token.token_hash}, function(token_info) {
-                                            token.type = getTokenType(token_info[0]);
+                                            token.type = commonTools.getTokenType(token_info[0]);
                                             token.decimals = token_info[0].decimals;
                                          });   
                                         provider.get_token_holder_count.get({token_hash: token.token_hash}, function(holders) {
@@ -3547,21 +3706,6 @@
 
                     let radialChart = new ApexCharts(document.querySelector("#" + chartElementSelector), radialChartOptions);  
                     radialChart.render();
-                }
-
-                function getTokenType(token) {
-                    let mineable = token.minable;
-                    let reissuable = token.reissuable;
-                    let tokenType = '---';
-
-                    if ( mineable === 1 && reissuable === 0)
-                        tokenType = 'Mineable';
-                    else if (mineable === 0 && reissuable === 0)
-                        tokenType = "Non-reissuable";
-                    else if (mineable === 0 && reissuable === 1)
-                        tokenType = "Reissuable";
-                    
-                    return tokenType;
                 }
 
                 getBalanceAll();
@@ -3667,49 +3811,23 @@
         });        
 	});
 
-	app.controller('transactionCtrl', function($scope, $routeParams, provider) {
+	app.controller('transactionCtrl', function($scope, $routeParams, provider, schema, commonTools, txParser) {
+        $scope.showParams = false;
+        $scope.txDataInit = '---';
         provider.transaction.get({hash:$routeParams.hash}, function(tx) {
-            function get_amount(data) {
-                let shemas = [
-                    {method: 'Create token', code: '0200'},
-                    {method: 'Delegate', code: '0300'},
-                    {method: 'Undelegate', code: '0400'},
-                    {method: 'hash', code: '0600'},
-                    {method: 'string', code: '0700'},
-                    {method: 'int', code: '0800'},
-                    {method: 'bigint', code: '0900'},
-                    {method: 'float', code: '0a00'},
-                    {method: 'object', code: '0c00'},
-                    {method: 'key', code: '0d00'},
-                    {method: 'procedure name', code: '0e00'},
-                    {method: 'parameters', code: '0f00'},
-                    {method: 'Create pos', code: '1000'},
-                    {method: 'Pos reward', code: '1100'},
-                    {method: 'Transfer', code: '1200'},
-                    {method: 'Mint', code: '1300'},
-                    {method: 'Burn', code: '1400'},
-                ]
-                if (data) {
-                    data = data.substr(4, 512);
-                    let string = data.substr(0, 4);
-                    for (let i = 0; i < shemas.length; i++) {
-                        if (string === shemas[i].code) {
-                            if (i === 1 || i === 2) {
-                                let pos_id = data.substr(34, 64);
-                                string = data.split('amount')
-                                string = string[1];
-                                let size = Number(string.substr(0, 4))
-                                let amount = Number(string.substr(6, size));
-                                return {method: shemas[i].method, pos_id: pos_id, amount: amount}
-                            }
-                            return {method: shemas[i].method}
-                        }
-                    }
-                    return null
-                } else {
-                    return {method: "Transaction"};
-                }
-            }
+            console.log(tx)
+            provider.contract_pricelist.get(function(contract_pricelist) {
+                let txSchema = schema
+
+                if (txParser.isContract(tx.data, txSchema, contract_pricelist)) {
+                    $scope.showContractParams = true;
+                    $scope.txDataInit = txParser.parse(tx.data, txSchema, contract_pricelist);
+                    $scope.txData = txParser.parse(tx.data, txSchema, contract_pricelist);
+                    prettifyTxData($scope.txData);
+                    console.log($scope.txData)
+                } 
+            });
+
             $scope.tx = tx;
             $scope.tx.token = {
                 ticker: '',
@@ -3720,15 +3838,20 @@
                 $scope.tx.token.ticker = token_info[0].ticker;
                 $scope.tx.token.decimals =  token_info[0].decimals;
             });
-            let params = get_amount(tx.data);
-            $scope.tx_method = params.method;
-            if(params.amount){
-                $scope.tx_amount = params.amount;
-            }else{
-                $scope.tx_amount = 0;
-            }
-
         });
+
+        function prettifyTxData(txData) {
+            if (txData.type = "create_token") {
+                $scope.txData.parameters.decimals = 10;
+                $scope.txData.parameters.token_type = commonTools.getTokenType(txData.parameters);
+                let res = commonTools.getTokenFees(txData.parameters);
+                $scope.txData.parameters.fee_type = res.fee_type;
+                $scope.txData.parameters.fee_value = res.fee_value;
+                $scope.txData.parameters.fee_min = res.fee_min;
+                $scope.txContractsTemplate = 'tx-create-token.html';
+            }
+        }
+
     });
 
 	app.run(function($rootScope, $http, $location, $cookies, langService, provider) {

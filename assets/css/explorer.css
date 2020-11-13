@@ -316,3 +316,7 @@ a.disabled{
 .onhover-pointer:hover {
     cursor: pointer;
 }
+
+#singleTxInfo tr td:first-child {
+    width: 150px;
+}
