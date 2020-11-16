@@ -320,3 +320,8 @@ a.disabled{
 #singleTxInfo tr td:first-child {
     width: 150px;
 }
+
+.tx-data-table.table-sm th {
+    padding-left: 0px;
+    width: 150px;
+}

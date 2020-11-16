@@ -1,54 +1,56 @@
-<div ng-init="token=txData.parameters">
-    <div class="d-block d-md-flex align-items-start">
-        <div>{{'TICKER' | translate}}</div>
-        <div>{{token.ticker}}</div>
-    </div>
-    <div class="d-block d-md-flex align-items-start">
-        <div>{{'NAME' | translate}}</div>
-        <div>{{token.name}}</div>
-    </div>
-    <div class="d-block d-md-flex align-items-start">
-        <div>{{'TOKEN_TYPE' | translate}}</div>
-        <div>{{token.token_type}}</div>
-    </div>    
-    <div class="d-block d-md-flex align-items-start">
-        <div>{{token.token_type === 'Mineable'? 'PREMINE' : 'TOKEN_EMISSION' | translate }}</div>
-        <div>{{token.total_supply | US_COMMAS_BIGINT_DECIMALS : token.decimals : token.decimals}}</div>
-    </div>
-    <div class="d-block d-md-flex align-items-start">
-        <div>{{'MAX_SUPPLY' | translate}}</div>
-        <div>{{token.max_supply | US_COMMAS_BIGINT_DECIMALS : token.decimals : token.decimals}}</div>
-    </div>
-    <div class="d-block d-md-flex align-items-start">
-        <div>{{'BLOCK_REWARD' | translate}}</div>
-        <div>{{token.block_reward | US_COMMAS_BIGINT_DECIMALS : token.decimals : token.decimals}}</div>
-    </div>
-    <div class="d-block d-md-flex align-items-start">
-        <div>{{'MIN_STAKE' | translate}}</div>
-        <div>{{token.min_stake | US_COMMAS_BIGINT_DECIMALS : token.decimals : token.decimals}}</div>
-    </div>
-    <div class="d-block d-md-flex align-items-start">
-        <div>{{'REFERRER_STAKE' | translate}}</div>
-        <div>{{token.referrer_stake | US_COMMAS_BIGINT_DECIMALS : token.decimals : token.decimals}}</div>
-    </div>
-    <div class="d-block d-md-flex align-items-start">
-        <div>{{'REF_SHARE' | translate}}</div>
-        <div>{{token.ref_share | US_COMMAS_BIGINT_DECIMALS : 2 :2}}%</div>
-    </div>
-    <div class="d-block d-md-flex align-items-start">
-        <div>{{'DECIMALS' | translate}}</div>
-        <div>{{token.decimals}}</div>
-    </div>
-    <div class="d-block d-md-flex align-items-start">
-        <div>{{'FEE_TYPE' | translate}}</div>
-        <div>{{token.fee_type | translate}}</div>
-    </div>
-    <div class="d-block d-md-flex align-items-start">
-        <div>{{'FEE_VALUE' | translate}}</div>
-        <div>{{token.fee_value}}</div>
-    </div>
-    <div class="d-block d-md-flex align-items-start">
-        <div>{{'FEE_MIN' | translate}}</div>
-        <div>{{token.fee_min}}</div>
-    </div>
-</div>
+<table ng-init="token=txData.parameters" class="table table-sm tx-data-table no-border">
+    <tbody>
+        <tr>
+            <th class="pr-md-3">{{'TICKER' | translate}}</th>
+            <td class="fit">{{token.ticker}}</td>
+        </tr>
+        <tr>
+            <th class="pr-md-3">{{'NAME' | translate}}</th>
+            <td class="fit">{{token.name}}</td>
+        </tr>
+        <tr>
+            <th class="pr-md-3">{{'TOKEN_TYPE' | translate}}</th>
+            <td class="fit">{{token.token_type}}</td>
+        </tr>    
+        <tr>
+            <th class="pr-md-3">{{token.token_type === 'Mineable'? 'PREMINE' : 'TOKEN_EMISSION' | translate }}</th>
+            <td class="fit">{{token.total_supply | US_COMMAS_BIGINT_DECIMALS : token.decimals : token.decimals}} {{token.ticker}}</td>
+        </tr>
+        <tr>
+            <th class="pr-md-3">{{'MAX_SUPPLY' | translate}}</th>
+            <td class="fit">{{token.max_supply | US_COMMAS_BIGINT_DECIMALS : token.decimals : token.decimals}} {{token.ticker}}</td>
+        </tr>
+        <tr>
+            <th class="pr-md-3">{{'BLOCK_REWARD' | translate}}</th>
+            <td class="fit">{{token.block_reward | US_COMMAS_BIGINT_DECIMALS : token.decimals : token.decimals}} {{token.ticker}}</td>
+        </tr>
+        <tr>
+            <th class="pr-md-3">{{'MIN_STAKE' | translate}}</th>
+            <td class="fit">{{token.min_stake | US_COMMAS_BIGINT_DECIMALS : token.decimals : token.decimals}} {{token.ticker}}</td>
+        </tr>
+        <tr>
+            <th class="pr-md-3">{{'REFERRER_STAKE' | translate}}</th>
+            <td class="fit">{{token.referrer_stake | US_COMMAS_BIGINT_DECIMALS : token.decimals : token.decimals}} {{token.ticker}}</td>
+        </tr>
+        <tr>
+            <th class="pr-md-3">{{'REF_SHARE' | translate}}</th>
+            <td class="fit">{{token.ref_share | US_COMMAS_BIGINT_DECIMALS : 2 :2}}%</td>
+        </tr>
+        <tr>
+            <th class="pr-md-3">{{'DECIMALS' | translate}}</th>
+            <td class="fit">{{token.decimals}}</td>
+        </tr>
+        <tr>
+            <th class="pr-md-3">{{'FEE_TYPE' | translate}}</th>
+            <td class="fit">{{token.fee_type | translate}}</td>
+        </tr>
+        <tr>
+            <th class="pr-md-3">{{'FEE_VALUE' | translate}}</th>
+            <td class="fit">{{token.fee_value}}</td>
+        </tr>
+        <tr>
+            <th class="pr-md-3">{{'FEE_MIN' | translate}}</th>
+            <td class="fit">{{token.fee_min}}</td>
+        </tr>
+    </tbody>    
+</table>

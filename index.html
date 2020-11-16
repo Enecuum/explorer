@@ -505,11 +505,18 @@
                                     <tr ng-if="showContractParams">
                                         <td>{{'PARAMS' | translate}}</td>
                                         <td>
-                                            <div class="mb-1"><span class="mr-1 font-weight-bolder">type:</span>{{txData.type}}</div>
-                                            <div ng-repeat="(key, value) in txDataInit.parameters" class="mb-1">
-                                                <span class="mr-1 font-weight-bolder">{{key}}:</span>{{value}}
+                                            <div class="mb-2">
+                                                <span class="mr-1 font-weight-bolder">type</span>
+                                                <span>{{txData.type}}</span>
                                             </div>
-
+                                            <table class="table table-sm tx-data-table no-border">
+                                                <tbody>
+                                                    <tr ng-repeat="(key, value) in txDataInit.parameters" class="mb-1">
+                                                        <th class="pr-md-3">{{key}}</th>
+                                                        <td class="fit">{{value}}</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
                                             <div ng-include="'views/partials/contracts-tx/' + txContractsTemplate"></div>
                                         </td>
                                     </tr>
@@ -1869,7 +1876,7 @@
                 if (token.fee_type === 0) {
                     res.fee_type = 'FEE_TYPE_FLAT';
                     res.fee_value = $filter('US_COMMAS_BIGINT_DECIMALS')(token.fee_value, token.decimals, token.decimals) +' '+ token.ticker;
-                    res.fee_min = token.fee_min;
+                    res.fee_min = $filter('US_COMMAS_BIGINT_DECIMALS')(token.fee_min, token.decimals, token.decimals) +' '+ token.ticker;
                 } else if (token.fee_type === 1) {
                     res.fee_type = 'FEE_TYPE_PERCENT';
                     res.fee_min = $filter('US_COMMAS_BIGINT_DECIMALS')(token.fee_value, token.decimals, token.decimals);
@@ -3841,7 +3848,7 @@
         });
 
         function prettifyTxData(txData) {
-            if (txData.type = "create_token") {
+            if (txData.type === "create_token") {
                 $scope.txData.parameters.decimals = 10;
                 $scope.txData.parameters.token_type = commonTools.getTokenType(txData.parameters);
                 let res = commonTools.getTokenFees(txData.parameters);
