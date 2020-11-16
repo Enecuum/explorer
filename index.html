@@ -472,7 +472,7 @@
                             </nav>
 
                             <div class="h3 mb-3 mx-md-2" ng-if="showContractParams">{{txDataInit.type}}</div>
-                            <table class="table table-centered table-hover">
+                            <table class="table table-centered">
                                 <tbody id="singleTxInfo">
                                     <tr>
                                         <td>{{'HASH' | translate}}</td>
@@ -508,7 +508,17 @@
                                             <div class="mb-2">
                                                 <span class="mr-1 font-weight-bolder">type</span>
                                                 <span>{{txData.type}}</span>
+                                                <ul class="nav nav-tabs nav-bordered mb-3 nav-filters">
+                                                    <li class="nav-item mr-2">
+                                                        <a href="javascript;" data-target="#txDataInitTab" data-toggle="tab" aria-expanded="false" data-toggle="tab" class="nav-link active">Pretty</a>
+                                                    </li>
+                                                    <li class="nav-item">
+                                                        <a href="javascript;" data-target="#txDataTab" data-toggle="tab" aria-expanded="false" data-toggle="tab" class="nav-link">Raw</a>
+                                                    </li>
+                                                </ul>
                                             </div>
+                                            <div class="tab-content">
+                    <div class="tab-pane" id="txDataInitTab">
                                             <table class="table table-sm tx-data-table no-border">
                                                 <tbody>
                                                     <tr ng-repeat="(key, value) in txDataInit.parameters" class="mb-1">
@@ -517,7 +527,10 @@
                                                     </tr>
                                                 </tbody>
                                             </table>
+                                          </div> 
+                                          <div class="tab-pane active show" id="txDataTab"> 
                                             <div ng-include="'views/partials/contracts-tx/' + txContractsTemplate"></div>
+                                        </div>
                                         </td>
                                     </tr>
                                     <tr>
@@ -1719,7 +1732,9 @@
 
     app.filter('US_COMMAS_BIGINT_DECIMALS', function() {
         return function(input, decimals=10, fixed=10) {
-            if(typeof input === 'bigint' ||  !isNaN(input)) {          
+            if(typeof input === 'bigint' || !isNaN(input)) {
+                if (decimals === undefined || decimals === null || isNaN(decimals))
+                    return '---';          
                 let str = BigInt(input).toString();
                 let integerPart = '0';
                 let fractionalPart = '0';
@@ -3818,47 +3833,118 @@
         });        
 	});
 
-	app.controller('transactionCtrl', function($scope, $routeParams, provider, schema, commonTools, txParser) {
+	app.controller('transactionCtrl', function($scope, $routeParams, $translate, $filter, provider, schema, commonTools, txParser) {
         $scope.showParams = false;
         $scope.txDataInit = '---';
-        provider.transaction.get({hash:$routeParams.hash}, function(tx) {
+        provider.transaction.get({hash:$routeParams.hash}, function(tx) {            
             console.log(tx)
-            provider.contract_pricelist.get(function(contract_pricelist) {
-                let txSchema = schema
+            if (tx.hash !== undefined) {
+                $scope.tx = tx;
+                $scope.tx.token = {};
+                provider.token_info.query({hash:tx.token_hash}, function(token_info) {
+                    console.log(token_info)
+                    $scope.tx.token.ticker = token_info[0].ticker;
+                    $scope.tx.token.decimals =  token_info[0].decimals;
+                    provider.contract_pricelist.get(function(contract_pricelist) {
+                        let txSchema = schema;
 
-                if (txParser.isContract(tx.data, txSchema, contract_pricelist)) {
-                    $scope.showContractParams = true;
-                    $scope.txDataInit = txParser.parse(tx.data, txSchema, contract_pricelist);
-                    $scope.txData = txParser.parse(tx.data, txSchema, contract_pricelist);
-                    prettifyTxData($scope.txData);
-                    console.log($scope.txData)
-                } 
-            });
-
-            $scope.tx = tx;
-            $scope.tx.token = {
-                ticker: '',
-                decimals: null
+                        if (txParser.isContract(tx.data, txSchema, contract_pricelist)) {                    
+                            $scope.showContractParams = true;
+                            $scope.txDataInit = txParser.parse(tx.data, txSchema, contract_pricelist);
+                            $scope.txData = txParser.parse(tx.data, txSchema, contract_pricelist);
+                            prettifyTxData($scope.txData);
+                            console.log($scope.txData)
+                        } 
+                    });
+                });                
             }
-
-            provider.token_info.query({hash:tx.token_hash}, function(token_info) {
-                $scope.tx.token.ticker = token_info[0].ticker;
-                $scope.tx.token.decimals =  token_info[0].decimals;
-            });
         });
-
         function prettifyTxData(txData) {
             if (txData.type === "create_token") {
-                $scope.txData.parameters.decimals = 10;
-                $scope.txData.parameters.token_type = commonTools.getTokenType(txData.parameters);
+                $scope.paramsOrderArr = ["ticker", "name", "token_type", "total_supply", "max_supply", "block_reward", "min_stake", "referrer_stake", "ref_share", "decimals", "fee_type", "fee_value", "fee_min"];
+                let fieldsAsTokenValue = ["total_supply", "max_supply", "block_reward", "min_stake", "referrer_stake"];
+                $scope.paramsOrderArr.forEach(function(param) {
+                    if (txData.parameters[param] === undefined || txData.parameters[param] === null) {
+                        txData.parameters[param] = '---';
+                    }
+                });
+                txData.parameters.decimals = parseInt(txData.parameters.decimals);
+                txData.parameters.token_type = commonTools.getTokenType(txData.parameters);
                 let res = commonTools.getTokenFees(txData.parameters);
-                $scope.txData.parameters.fee_type = res.fee_type;
-                $scope.txData.parameters.fee_value = res.fee_value;
-                $scope.txData.parameters.fee_min = res.fee_min;
-                $scope.txContractsTemplate = 'tx-create-token.html';
+                txData.parameters.fee_type = $translate.instant(res.fee_type);
+                txData.parameters.fee_value = res.fee_value;
+                txData.parameters.fee_min = res.fee_min;
+                txData.parameters.ref_share = $filter('US_COMMAS_BIGINT_DECIMALS')(txData.parameters.ref_share, 2, 2) +'%';                
+                fieldsAsTokenValue.forEach(function(param) {
+                    txData.parameters[param] = $filter('US_COMMAS_BIGINT_DECIMALS')(txData.parameters[param], txData.parameters.decimals, txData.parameters.decimals) +' '+ txData.parameters.ticker;
+                });
+
+                $scope.txContractsTemplate = 'tx-create-token-contract.html';
+            } else if (txData.type === "mint" || txData.type === "burn") {
+                $scope.paramsOrderArr = ["amount"];
+                let fieldsAsTokenValue = ["amount"];
+                $scope.paramsOrderArr.forEach(function(param) {
+                    if (txData.parameters[param] === undefined || txData.parameters[param] === null) {
+                        txData.parameters[param] = '---';
+                    }
+                });
+
+                let token = {};
+                provider.token_info.query({hash:txData.parameters.token_hash}, function(token_info) {
+                    token.ticker = token_info[0].ticker;
+                    token.decimals =  token_info[0].decimals;    
+                    fieldsAsTokenValue.forEach(function(param) {                 
+                        txData.parameters[param] = $filter('US_COMMAS_BIGINT_DECIMALS')(txData.parameters[param], token.decimals, token.decimals) +' '+ token.ticker;
+                    });
+                    $scope.txContractsTemplate = 'tx-mint-burn-contract.html';
+                });                
+            } else if (txData.type === "delegate" || txData.type === "undelegate") {
+                $scope.paramsOrderArr = ["pos_id", "amount"];
+                let fieldsAsTokenValue = ["amount"];
+                $scope.paramsOrderArr.forEach(function(param) {
+                    if (txData.parameters[param] === undefined || txData.parameters[param] === null) {
+                        txData.parameters[param] = '---';
+                    }
+                });
+
+                $scope.$watch('tx.token', function(newValue, oldValue) {
+                    if (newValue.ticker !== '' && newValue.decimals !== null) {
+                        fieldsAsTokenValue.forEach(function(param) {                 
+                            txData.parameters[param] = $filter('US_COMMAS_BIGINT_DECIMALS')(txData.parameters[param], newValue.decimals, newValue.decimals) +' '+ newValue.ticker;
+                        });                        
+                    }                    
+                }, true);                
+                $scope.txContractsTemplate = 'tx-mint-burn-contract.html';
+            } else if (txData.type === "create_pos") {
+                $scope.paramsOrderArr = ["name", "fee"];
+                $scope.paramsOrderArr.forEach(function(param) {
+                    if (txData.parameters[param] === undefined || txData.parameters[param] === null) {
+                        txData.parameters[param] = '---';
+                    }
+                });
+
+                txData.parameters.fee = $filter('US_COMMAS_BIGINT_DECIMALS')(txData.parameters.fee, 2, 2) +'%';               
+                $scope.txContractsTemplate = 'tx-mint-burn-contract.html';
+            } else if (txData.type === "transfer") {
+                $scope.paramsOrderArr = ["undelegate_id"];
+                $scope.paramsOrderArr.forEach(function(param) {
+                    if (txData.parameters[param] === undefined || txData.parameters[param] === null) {
+                        txData.parameters[param] = '---';
+                    }
+                });
+                           
+                $scope.txContractsTemplate = 'tx-mint-burn-contract.html';
+            }  else if (txData.type === "pos_reward") {
+                $scope.paramsOrderArr = ["pos_id"];
+                $scope.paramsOrderArr.forEach(function(param) {
+                    if (txData.parameters[param] === undefined || txData.parameters[param] === null) {
+                        txData.parameters[param] = '---';
+                    }
+                });
+                           
+                $scope.txContractsTemplate = 'tx-mint-burn-contract.html';
             }
         }
-
     });
 
 	app.run(function($rootScope, $http, $location, $cookies, langService, provider) {
