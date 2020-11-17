@@ -781,7 +781,7 @@
                                                         <tbody style="font-size: 12px;" >
                                                         <tr ng-repeat="acc in accs.accounts ">
                                                             <td>{{acc.rank}}</td>
-                                                            <td><a class="d-block fit responsive-hash" ng-href="#!/account/{{acc.id}}/0">{{acc.id}}</a></td>
+                                                            <td><a class="d-block fit responsive-hash" ng-href="#!/account/{{acc.id}}">{{acc.id}}</a></td>
                                                             <td class="text-nowrap">{{acc.amount !== undefined ? acc.amount : "N/A" | US_COMMAS_BIGINT_DECIMALS : mainToken.decimals : mainToken.decimals}} {{mainToken.ticker}}</td>
                                                             <td class="text-nowrap" ng-if="mainToken.ticker === 'ENQ'">{{acc.valueUSD}}</td>
                                                             <td class="text-nowrap">{{acc.percentage}}</td>
@@ -1345,7 +1345,7 @@
         .constant('GLOBAL_APP_CONFIG', {
             presetName: 'ENQ',            
             POSChallenge: {
-                on: true,  
+                on: false,  
                 address: '03c91e88967465c44aa2afeab3b87dbeede9bd63dbe4a0121ea02fa3f0f4a4e2a8'
             },
             tokenPresets: {
@@ -1509,12 +1509,6 @@
             controller: 'sblockCtrl'
         }).when('/map', {
 			templateUrl: 'map'
-		}).when('/account/:id/:page_num', {
-			templateUrl: 'account',
-            controller: 'accountCtrl'
-        }).when('/account/:id/:page_num/:filter', {
-            templateUrl: 'account',
-            controller: 'accountCtrl'
 		}).when('/account/:id', {
 			templateUrl: 'account',
 			controller: 'accountCtrl'
@@ -1882,6 +1876,27 @@
                 });
                 return translationsArr;
             },
+
+            resolveTxType : function(rectype, incorrectValue = '---') {
+                let recTypes = {
+                    iin : 'TX_IIN',
+                    iout : 'TX_IOUT',
+                    ik : 'REW_TX_IK',
+                    im : 'REW_TX_IM',
+                    iref : 'REW_TX_IREF',
+                    iv : 'REW_TX_IV',
+                    ic : 'STAKING_IC',
+                    ifk : 'REW_TX_IFK', 
+                    ifg : 'REW_TX_IFG',
+                    ifl : 'REW_TX_IFL',
+                    idust : 'REW_TX_DUST'
+                };
+
+                if (recTypes.hasOwnProperty(rectype)) {
+                    return recTypes[rectype];
+                } else
+                    return incorrectValue;
+
             getTokenType: function(token) {
                 let minEable = token.minable;
                 let tokenType = '---';
@@ -2077,6 +2092,8 @@
             get_delegators_list : $resource('/api/v1/get_delegators_list?pos_id=:pos_id', {pos_id:'@pos_id'}, {query: {method: 'GET', isArray: true}}),
             get_delegated_list : $resource('/api/v1/get_delegated_list?delegator=:delegator', {delegator:'@delegator'}, {query: {method: 'GET', isArray: true}}),
             get_pos_active_total_stake : $resource('/api/v1/get_pos_active_total_stake'),
+            account_transactions : $resource('api/v1/account_transactions?id=:id&page=:page', {id:'@id', page:'@page'}),
+            account_rewards : $resource('api/v1/account_rewards?id=:id&page=:page', {id:'@id', page:'@page'}),
             contract_pricelist : $resource('/api/v1/contract_pricelist')
 		};
 	});
@@ -3820,28 +3837,75 @@
                     }
                 });
 
-                $scope.getHistory = function(page){
+                // $scope.getHistory = function(page){
+                //     $scope.isLoading = true;
+                //     provider.account.get({id:$routeParams.id, filter:$scope.historyFilter, page:page}, function(account){
+                //         //getBalanceAll();                
+                //         $scope.account.records = account.records;
+                //         $scope.account.page_count = account.page_count;
+                //         $scope.isLoading = false;
+                //     });
+                //     $scope.page_num = page;
+                // };
+
+                // $scope.page_num = 0;
+                // $scope.historyFilter = '';
+                // $scope.getHistory(0);
+
+                // $scope.setFilter = function(val){
+                //     let filtersArr = ['_in','_out','_kreward','_mreward','_sreward','_refreward',''];
+                //     $scope.historyFilter = (filtersArr.includes(val)) ? $scope.historyFilter = val : '';
+                //     $scope.getHistory(0);
+                // };
+
+                // $scope.page_num = Number($routeParams.page_num) | 0;
+
+                $scope.statusBadge = function(status) {
+                    switch(status){
+                        case 'STATUS_SUCCESS' : return 'badge-success-lighten';
+                        case 'STATUS_PENDING' : return 'badge-primary-lighten';
+                        case 'STATUS_CONFIRMED' : return 'badge-info-lighten';
+                        case 'STATUS_REJECTED' : return 'badge-danger-lighten';
+                        case 'STATUS_DUPLICATE' : return 'badge-danger-lighten';
+                        default : return 'badge-primary-lighten';
+                    }
+                }
+
+                $scope.account_txs = {}
+                $scope.getAccTxs = function(page){
                     $scope.isLoading = true;
-                    provider.account.get({id:$routeParams.id, filter:$scope.historyFilter, page:page}, function(account){
-                        //getBalanceAll();                
-                        $scope.account.records = account.records;
-                        $scope.account.page_count = account.page_count;
+                    provider.account_transactions.get({id:$routeParams.id, page:page}, function(account_txs) {            
+                        $scope.account_txs.records = account_txs.records;
+                        $scope.account_txs.records.forEach(function(record) {
+                            record.rectype = commonTools.resolveTxType(record.rectype);
+                            record.time = dateTimeConverter.getTimestamp(record.time);
+                            provider.token_info.query({hash:record.token_hash}, function(token_info) {
+                                record.token_decimals = token_info[0].decimals;
+                            });                            
+                        });
+                        $scope.account_txs.page_count = account_txs.page_count;
                         $scope.isLoading = false;
                     });
-                    $scope.page_num = page;
+                    $scope.acc_tx_page_num = page;
                 };
 
-                $scope.page_num = 0;
-                $scope.historyFilter = '';
-                $scope.getHistory(0);
+                $scope.account_rewards = {}
+                $scope.getAccRewards = function(page){
+                    $scope.isLoading = true;
+                    provider.account_rewards.get({id:$routeParams.id, page:page}, function(account_rewards) {                                
+                        $scope.account_rewards.records = account_rewards.records;
+                        $scope.account_rewards.records.forEach(function(record) {
+                            record.time = dateTimeConverter.getTimestamp(record.time);
+                            record.rectype = commonTools.resolveTxType(record.rectype);
+                        });
+                        $scope.account_rewards.page_count = account_rewards.page_count;
+                        $scope.isLoading = false;
+                    });
+                    $scope.acc_rewards_page_num = page;
+                };                
 
-                $scope.setFilter = function(val){
-                    let filtersArr = ['_in','_out','_kreward','_mreward','_sreward','_refreward',''];
-                    $scope.historyFilter = (filtersArr.includes(val)) ? $scope.historyFilter = val : '';
-                    $scope.getHistory(0);
-                };
-
-                $scope.page_num = Number($routeParams.page_num) | 0;
+                $scope.getAccTxs(0);
+                $scope.getAccRewards(0);
             }                        
         });        
 	});
