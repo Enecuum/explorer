@@ -511,10 +511,10 @@
                                                     <div class="dropdown-menu dropdown-menu-right">
                                                         <ul class="nav nav-tabs">
                                                             <li class="dropdown-item nav-item">
-                                                                <a class="dropdown-item nav-link active" href="javascript;" data-target="#txDataTab" data-toggle="tab" aria-expanded="true" data-toggle="tab">Формат</a>
+                                                                <a class="dropdown-item nav-link active" href="javascript;" data-target="#txDataTab" data-toggle="tab" aria-expanded="true" data-toggle="tab">{{"TX_DATA_FORMATTED" | translate}}</a>
                                                             </li>                            
                                                             <li class="dropdown-item nav-item">
-                                                                <a class="dropdown-item nav-link" href="javascript;" data-target="#txDataInitTab" data-toggle="tab" aria-expanded="false" data-toggle="tab">Как есть</a> 
+                                                                <a class="dropdown-item nav-link" href="javascript;" data-target="#txDataInitTab" data-toggle="tab" aria-expanded="false" data-toggle="tab">{{"TX_DATA_AS_IS" | translate}}</a> 
                                                             </li>
                                                         </ul>
                                                     </div>    
@@ -522,6 +522,13 @@
                                             </div>
 
                                             <div class="tab-content">
+                                                <div class="tab-pane active show" id="txDataTab"> 
+                                                    <div class="mb-2">
+                                                        <span class="mr-1 font-weight-bolder">{{"TYPE" | translate}}</span>
+                                                        <span class="mr-2">{{txData.type}}</span>
+                                                    </div>
+                                                    <div ng-include="'views/partials/contracts-tx/' + txContractsTemplate"></div>
+                                                </div>                                                
                                                 <div class="tab-pane" id="txDataInitTab">
                                                     <div class="mb-2">
                                                         <span class="mr-1 font-weight-bolder">type</span>
@@ -535,13 +542,6 @@
                                                             </tr>
                                                         </tbody>
                                                     </table>
-                                                    </div> 
-                                                <div class="tab-pane active show" id="txDataTab"> 
-                                                    <div class="mb-2">
-                                                        <span class="mr-1 font-weight-bolder">{{"TYPE" | translate}}</span>
-                                                        <span class="mr-2">{{txData.type}}</span>
-                                                    </div>
-                                                    <div ng-include="'views/partials/contracts-tx/' + txContractsTemplate"></div>
                                                 </div>
                                             </div>
                                         </td>

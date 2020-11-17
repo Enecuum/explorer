@@ -351,5 +351,5 @@ a.disabled{
 }
 
 #txDataShowToggler .dropdown-menu {
-    min-width: 3rem;
+    min-width: 0rem;
 }

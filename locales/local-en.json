@@ -319,5 +319,7 @@
     "GENERAL_TX_INFO": "General Tx Info",
     "FEE": "Fee",
     "DATA": "Data",
-    "PARAMS": "Parameters"
+    "PARAMS": "Parameters",
+    "TX_DATA_AS_IS": "Raw",
+    "TX_DATA_FORMATTED": "Formatted"
 }
