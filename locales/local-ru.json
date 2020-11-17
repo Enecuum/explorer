@@ -298,5 +298,7 @@
     "MUST_BE_LESS_THAN_NAMED_VALUE": "Значение должно быть меньше, чем {{name}}",
     "MUST_BE_LESS_OR_EQUAL_THAN_NAMED_VALUE": "Значение должно быть меньше или равно, чем {{name}}",
     "GENERAL_TX_INFO": "Общая информация о транзакции",
-    "FEE": "Комиссия"
+    "FEE": "Комиссия",
+    "DATA": "Данные",
+    "PARAMS": "Параметры"
 }

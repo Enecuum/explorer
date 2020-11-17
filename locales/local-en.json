@@ -317,5 +317,7 @@
     "MUST_BE_LESS_THAN_NAMED_VALUE": "The value must be less than {{name}}",
     "MUST_BE_LESS_OR_EQUAL_THAN_NAMED_VALUE": "The value must be less or equal than {{name}}",
     "GENERAL_TX_INFO": "General Tx Info",
-    "FEE": "Fee"
+    "FEE": "Fee",
+    "DATA": "Data",
+    "PARAMS": "Parameters"
 }

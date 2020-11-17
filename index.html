@@ -505,32 +505,45 @@
                                     <tr ng-if="showContractParams">
                                         <td>{{'PARAMS' | translate}}</td>
                                         <td>
-                                            <div class="mb-2">
-                                                <span class="mr-1 font-weight-bolder">type</span>
-                                                <span>{{txData.type}}</span>
-                                                <ul class="nav nav-tabs nav-bordered mb-3 nav-filters">
-                                                    <li class="nav-item mr-2">
-                                                        <a href="javascript;" data-target="#txDataInitTab" data-toggle="tab" aria-expanded="false" data-toggle="tab" class="nav-link active">Pretty</a>
-                                                    </li>
-                                                    <li class="nav-item">
-                                                        <a href="javascript;" data-target="#txDataTab" data-toggle="tab" aria-expanded="false" data-toggle="tab" class="nav-link">Raw</a>
-                                                    </li>
-                                                </ul>
+                                            <div class="mb-2 d-flex align-items-center justify-content-end">
+                                                <div class="btn-group" id="txDataShowToggler">
+                                                    <a class="dropdown-toggle btn btn-primary btn-sm bg-blue text-white" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="mdi mdi-eye-outline"></i></a>
+                                                    <div class="dropdown-menu dropdown-menu-right">
+                                                        <ul class="nav nav-tabs">
+                                                            <li class="dropdown-item nav-item">
+                                                                <a class="dropdown-item nav-link active" href="javascript;" data-target="#txDataTab" data-toggle="tab" aria-expanded="true" data-toggle="tab">Формат</a>
+                                                            </li>                            
+                                                            <li class="dropdown-item nav-item">
+                                                                <a class="dropdown-item nav-link" href="javascript;" data-target="#txDataInitTab" data-toggle="tab" aria-expanded="false" data-toggle="tab">Как есть</a> 
+                                                            </li>
+                                                        </ul>
+                                                    </div>    
+                                                </div>
                                             </div>
+
                                             <div class="tab-content">
-                    <div class="tab-pane" id="txDataInitTab">
-                                            <table class="table table-sm tx-data-table no-border">
-                                                <tbody>
-                                                    <tr ng-repeat="(key, value) in txDataInit.parameters" class="mb-1">
-                                                        <th class="pr-md-3">{{key}}</th>
-                                                        <td class="fit">{{value}}</td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                          </div> 
-                                          <div class="tab-pane active show" id="txDataTab"> 
-                                            <div ng-include="'views/partials/contracts-tx/' + txContractsTemplate"></div>
-                                        </div>
+                                                <div class="tab-pane" id="txDataInitTab">
+                                                    <div class="mb-2">
+                                                        <span class="mr-1 font-weight-bolder">type</span>
+                                                        <span class="mr-2">{{txData.type}}</span>
+                                                    </div>
+                                                    <table class="table table-sm tx-data-table no-border">
+                                                        <tbody>
+                                                            <tr ng-repeat="(key, value) in txDataInit.parameters" class="mb-1">
+                                                                <th class="pr-md-3">{{key}}</th>
+                                                                <td class="fit">{{value}}</td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                    </div> 
+                                                <div class="tab-pane active show" id="txDataTab"> 
+                                                    <div class="mb-2">
+                                                        <span class="mr-1 font-weight-bolder">{{"TYPE" | translate}}</span>
+                                                        <span class="mr-2">{{txData.type}}</span>
+                                                    </div>
+                                                    <div ng-include="'views/partials/contracts-tx/' + txContractsTemplate"></div>
+                                                </div>
+                                            </div>
                                         </td>
                                     </tr>
                                     <tr>
