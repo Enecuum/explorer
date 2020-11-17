@@ -61,16 +61,19 @@
 	    </div>			    			
 	</div>
 	<div class="col-lg-4">
-		<div class="output-box-group">
-			<div class="output-box output-box-info">
-				{{customToken.premine.tokens | US_COMMAS_2}}
+		<div id="outputTokenPremineWrapper" class="flex-column w-100 mb-2">
+			<div class="output-box-group">
+				<div class="output-box output-box-info">
+					{{customToken.premine.tokens | US_COMMAS_2}}
+				</div>
+				<div class="output-box-append">
+					<div class="output-group-text">
+						{{'TOKEN' | translate}}
+					</div>									
+				</div>				    				
 			</div>
-			<div class="output-box-append">
-				<div class="output-group-text">
-					{{'TOKEN' | translate}}
-				</div>									
-			</div>				    				
-		</div>	    		
+			<div class="errMsg mt-1"></div>
+		</div>	
 	</div>
 	<div class="col-lg-4">
 		<div class="output-box-group">
@@ -138,7 +141,7 @@
 					{{'TOKEN' | translate}}
 				</div>									
 			</div>				    				
-		</div>	    		
+		</div>	
 	</div>
 	<div class="col-lg-4">
 		<div class="output-box-group">

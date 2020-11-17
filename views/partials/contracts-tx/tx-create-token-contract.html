@@ -1,0 +1,8 @@
+<table class="table table-sm tx-data-table no-border" ng-init="data=txData.parameters">
+    <tbody>
+        <tr ng-repeat="param in paramsOrderArr">
+            <th class="pr-md-3">{{param.toUpperCase()  !== 'TOTAL_SUPPLY' ? (param.toUpperCase()) : (data.token_type === 'Mineable'? 'PREMINE' : 'TOKEN_EMISSION') | translate}}</th>
+            <td class="fit">{{data[param]}}</td>
+        </tr>
+    </tbody>    
+</table>

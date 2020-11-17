@@ -471,8 +471,9 @@
                                 </ol>
                             </nav>
 
-                            <table class="table table-centered table-hover">
-                                <tbody>
+                            <div class="h3 mb-3 mx-md-2" ng-if="showContractParams">{{txDataInit.type}}</div>
+                            <table class="table table-centered">
+                                <tbody id="singleTxInfo">
                                     <tr>
                                         <td>{{'HASH' | translate}}</td>
                                         <td class="fit">{{tx.hash}}</td>
@@ -492,7 +493,59 @@
                                     <tr>
                                         <td>{{'FEE_VALUE' | translate}}</td>
                                         <td>{{tx.fee | US_COMMAS_BIGINT_DECIMALS : tx.token.decimals : tx.token.decimals}} {{tx.token.ticker}}</td>
-                                    </tr>                                    
+                                    </tr>
+                                    <tr>
+                                        <td>{{'DATA' | translate}}</td>
+                                        <td>
+                                            <div>
+                                                {{tx.data}} 
+                                            </div>
+                                        </td> 
+                                    </tr>
+                                    <tr ng-if="showContractParams">
+                                        <td>{{'PARAMS' | translate}}</td>
+                                        <td>
+                                            <div class="mb-2 d-flex align-items-center justify-content-end">
+                                                <div class="btn-group" id="txDataShowToggler">
+                                                    <a class="dropdown-toggle btn btn-primary btn-sm bg-blue text-white" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="mdi mdi-eye-outline"></i></a>
+                                                    <div class="dropdown-menu dropdown-menu-right">
+                                                        <ul class="nav nav-tabs">
+                                                            <li class="dropdown-item nav-item">
+                                                                <a class="dropdown-item nav-link active" href="javascript;" data-target="#txDataTab" data-toggle="tab" aria-expanded="true" data-toggle="tab">{{"TX_DATA_FORMATTED" | translate}}</a>
+                                                            </li>                            
+                                                            <li class="dropdown-item nav-item">
+                                                                <a class="dropdown-item nav-link" href="javascript;" data-target="#txDataInitTab" data-toggle="tab" aria-expanded="false" data-toggle="tab">{{"TX_DATA_AS_IS" | translate}}</a> 
+                                                            </li>
+                                                        </ul>
+                                                    </div>    
+                                                </div>
+                                            </div>
+
+                                            <div class="tab-content">
+                                                <div class="tab-pane active show" id="txDataTab"> 
+                                                    <div class="mb-2">
+                                                        <span class="mr-1 font-weight-bolder">{{"TYPE" | translate}}</span>
+                                                        <span class="mr-2">{{txData.type}}</span>
+                                                    </div>
+                                                    <div ng-include="'views/partials/contracts-tx/' + txContractsTemplate"></div>
+                                                </div>                                                
+                                                <div class="tab-pane" id="txDataInitTab">
+                                                    <div class="mb-2">
+                                                        <span class="mr-1 font-weight-bolder">type</span>
+                                                        <span class="mr-2">{{txData.type}}</span>
+                                                    </div>
+                                                    <table class="table table-sm tx-data-table no-border">
+                                                        <tbody>
+                                                            <tr ng-repeat="(key, value) in txDataInit.parameters" class="mb-1">
+                                                                <th class="pr-md-3">{{key}}</th>
+                                                                <td class="fit">{{value}}</td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
                                     <tr>
                                         <td>{{'STATUS' | translate}}</td>
                                         <td>{{tx.status | TX_STATUS | translate}}</td>
@@ -1686,7 +1739,9 @@
 
     app.filter('US_COMMAS_BIGINT_DECIMALS', function() {
         return function(input, decimals=10, fixed=10) {
-            if(typeof input === 'bigint' ||  !isNaN(input)) {          
+            if(typeof input === 'bigint' || !isNaN(input)) {
+                if (decimals === undefined || decimals === null || isNaN(decimals))
+                    return '---';          
                 let str = BigInt(input).toString();
                 let integerPart = '0';
                 let fractionalPart = '0';
@@ -1821,6 +1876,7 @@
                 });
                 return translationsArr;
             },
+
             resolveTxType : function(rectype, incorrectValue = '---') {
                 let recTypes = {
                     iin : 'TX_IIN',
@@ -1840,8 +1896,167 @@
                     return recTypes[rectype];
                 } else
                     return incorrectValue;
+
+            getTokenType: function(token) {
+                let minEable = token.minable;
+                let tokenType = '---';
+                if (minEable === 1 && token.reissuable === 0)
+                    tokenType = 'Mineable';
+                else if (minEable === 0 && token.reissuable === 0)
+                    tokenType = "Non-reissuable";
+                else if (minEable === 0 && token.reissuable === 1) 
+                    tokenType = "Reissuable";
+
+                return tokenType;
+            },
+            getTokenFees: function(token) {
+                let res = {
+                    fee_type : '---',
+                    fee_value : '---',
+                    fee_min : '---'
+                }
+
+                if (token.fee_type === 0) {
+                    res.fee_type = 'FEE_TYPE_FLAT';
+                    res.fee_value = $filter('US_COMMAS_BIGINT_DECIMALS')(token.fee_value, token.decimals, token.decimals) +' '+ token.ticker;
+                    res.fee_min = $filter('US_COMMAS_BIGINT_DECIMALS')(token.fee_min, token.decimals, token.decimals) +' '+ token.ticker;
+                } else if (token.fee_type === 1) {
+                    res.fee_type = 'FEE_TYPE_PERCENT';
+                    res.fee_min = $filter('US_COMMAS_BIGINT_DECIMALS')(token.fee_value, token.decimals, token.decimals);
+                    res.fee_value = $filter('US_COMMAS_BIGINT_DECIMALS')(token.fee_value, 2, 2) + '%';
+                }
+
+                return res;
             }
+            
         }    
+    });
+
+    app.factory('schema', function () {
+        let schema = {
+                    "root" :            "0000",
+                    "custom" :          "0100",
+                    "create_token" :    "0200",
+                    "delegate" :        "0300",
+                    "undelegate" :      "0400",
+                    "signature" :       "0500",
+                    "hash" :            "0600",
+                    "string" :          "0700",
+                    "int" :             "0800",
+                    "bigint" :          "0900",
+                    "float" :           "0a00",
+                    "object" :          "0c00",
+                    "key" :             "0d00",
+                    "procedure_name" :  "0e00",
+                    "parameters" :      "0f00",
+                    "create_pos" :      "1000",
+                    "pos_reward" :      "1100",
+                    "transfer" :        "1200",
+                    "mint" :            "1300",
+                    "burn" :            "1400"
+                };
+        return schema                
+    });
+
+    app.service('txParser', function () {
+        let schema, contract_pricelist = {};    
+
+        function getkey(object, value) {
+            return Object.keys(object).find(key => object[key] === value);
+        }
+        function getChunk(bin){
+            let size = parseInt(bin.substring(0, 4), 16);
+            let key = getkey(schema, bin.substring(4,8));
+            return {
+                size : size,
+                key : key,
+                data : bin.substr(8, size - 8)
+            }
+        }
+        function deserialize(bin){
+            let arr = [];
+            while(bin.length > 0){
+                let chunk = getChunk(bin);
+                if(bin.length === chunk.size){
+                    if((!contract_pricelist.hasOwnProperty(chunk.key))
+                        && (chunk.key !== "parameters")
+                        && (chunk.key !== "object")){
+                        arr.push([chunk.key, chunk.data]);
+                        return arr;
+                    }
+                    bin = bin.substring(8, bin.length);
+                }
+                if(bin.length > chunk.size)
+                    arr.push([chunk.key, chunk.data]);
+                else
+                    arr.push([chunk.key, deserialize(chunk.data)]);
+                bin = bin.substring(chunk.size);
+            }
+            return arr;
+        }
+        function prettify(data){
+            let res = {};
+            let arr = [];
+            for(let i = 0; i < (data.length); i++){
+                let el = data[i];
+                if(Array.isArray(el)){
+                    arr.push(prettify(el))
+                }
+                else{
+                    if(!Array.isArray(data[i+1])){
+                        res[el] = data[i+1];
+                        i++;
+                    }
+                    else{
+                        res[el] = prettify(data[i+1]);
+                        i++;
+                    }
+                }
+            }
+            if(arr.length > 0)
+                return arr;
+            return res;
+        }
+        
+        this.isContract = function(raw, txSchema = {}, contractPricelist={}) {
+            schema = txSchema;
+            contract_pricelist = contractPricelist;
+            if(raw === undefined || raw === null)
+                return false;
+            let chunk = getChunk(raw);
+            if((chunk.size === raw.length) && contract_pricelist.hasOwnProperty(chunk.key))
+                return chunk.key;
+            return false;
+        } 
+
+        this.parse = function(raw, txSchema = {}, contractPricelist={}){
+            schema = txSchema;
+            contract_pricelist = contractPricelist;
+            let data = {};
+            let input = (deserialize(raw))[0];
+            data.type = input[0];
+            input = prettify(input[1]);
+            //data.procedure_name = input[0].procedure_name;
+            let params = input[0].parameters;
+            data.parameters = {};
+            for(let i = 0; i < params.length; i+=2){
+                let value = (Object.keys(params[i+1]))[0];
+                if(value === "int" || value === "bigint" || value === "float"){
+                    if(value === "bigint"){
+                        value = BigInt(params[i+1][value]);
+                    }
+                    else {
+                        if(isNaN(params[i+1][value]))
+                            throw new Error("Not a number");
+                        value = parseInt(params[i+1][value]);
+                    }
+                }
+                else
+                    value = params[i+1][value];
+                data.parameters[params[i].key] = value;
+            }
+            return data;
+        }
     });  
 
     app.factory('provider', function ($resource){
@@ -1878,9 +2093,30 @@
             get_delegated_list : $resource('/api/v1/get_delegated_list?delegator=:delegator', {delegator:'@delegator'}, {query: {method: 'GET', isArray: true}}),
             get_pos_active_total_stake : $resource('/api/v1/get_pos_active_total_stake'),
             account_transactions : $resource('api/v1/account_transactions?id=:id&page=:page', {id:'@id', page:'@page'}),
-            account_rewards : $resource('api/v1/account_rewards?id=:id&page=:page', {id:'@id', page:'@page'})
+            account_rewards : $resource('api/v1/account_rewards?id=:id&page=:page', {id:'@id', page:'@page'}),
+            contract_pricelist : $resource('/api/v1/contract_pricelist')
 		};
 	});
+
+    app.directive('onLoadFile', function ($parse) {
+        return {
+            restrict: 'A',
+            scope: {
+                onLoadFile : "&"
+            },
+            link: function(scope, element, attrs) {
+                element.on('change', function(e) {
+                    let reader = new FileReader();
+                    reader.onload = function(e) {
+                        scope.$apply(function() {
+                           scope.onLoadFile({file:e.target.result});
+                        });
+                    };
+                    reader.readAsText((e.srcElement || e.target).files[0]);
+                });
+            }
+        };
+    });
 
     app.controller('documentHeadCtrl', function(GLOBAL_APP_CONFIG, $scope) {
        let currentPreset = GLOBAL_APP_CONFIG.tokenPresets[GLOBAL_APP_CONFIG.presetName];
@@ -2376,7 +2612,9 @@
         });   
     });
 
-    app.controller('tokenROICtrl', function($scope, $routeParams, provider, dataValidator) {
+    app.controller('tokenROICtrl', function($scope, $routeParams, provider, dataValidator, $translate) {
+        let maxBigInt = 1800000000;
+
         $scope.customToken = {
             targetPriceUSD: {
                 value: 0.1,
@@ -2478,7 +2716,7 @@
                         },
                         {
                         method: 'inIntervalBothClosed',
-                        args: {value: $scope.customToken.maxSupply.tokens.value, min: $scope.customToken.maxSupply.tokens.minValue, max: $scope.customToken.maxSupply.tokens.maxValue},
+                        args: {value: Number($scope.customToken.maxSupply.tokens.value), min: Number($scope.customToken.maxSupply.tokens.minValue), max: Number($scope.customToken.maxSupply.tokens.maxValue)},
                         desiredResult: true,
                         errMsg: {
                                     msg: 'NOT_IN_RANGE',
@@ -2508,7 +2746,7 @@
                         },
                         {
                         method: 'inIntervalBothClosed',
-                        args: {value: $scope.customToken.premine.percent.value, min: $scope.customToken.premine.percent.minValue, max: $scope.customToken.premine.percent.maxValue},
+                        args: {value: Number($scope.customToken.premine.percent.value), min: Number($scope.customToken.premine.percent.minValue), max: Number($scope.customToken.premine.percent.maxValue)},
                         desiredResult: true,
                         errMsg: {
                                     msg: 'NOT_IN_RANGE',
@@ -2543,7 +2781,7 @@
                         },
                         {
                         method: 'inIntervalBothClosed',
-                        args: {value: $scope.customToken.targetPriceUSD.value, min: $scope.customToken.targetPriceUSD.minValue, max: $scope.customToken.targetPriceUSD.maxValue},
+                        args: {value: Number($scope.customToken.targetPriceUSD.value), min: Number($scope.customToken.targetPriceUSD.minValue), max: Number($scope.customToken.targetPriceUSD.maxValue)},
                         desiredResult: true,
                         errMsg: {
                                     msg: 'NOT_IN_RANGE',
@@ -2572,7 +2810,7 @@
                         },
                         {
                         method: 'inIntervalBothClosed',
-                        args: {value: $scope.customToken.referralProgramBudget.percent.value, min: $scope.customToken.referralProgramBudget.percent.minValue, max: $scope.customToken.referralProgramBudget.percent.maxValue},
+                        args: {value: Number($scope.customToken.referralProgramBudget.percent.value), min: Number($scope.customToken.referralProgramBudget.percent.minValue), max: Number($scope.customToken.referralProgramBudget.percent.maxValue)},
                         desiredResult: true,
                         errMsg: {
                                     msg: 'NOT_IN_RANGE',
@@ -2601,7 +2839,7 @@
                         },
                         {
                         method: 'inIntervalBothClosed',
-                        args: {value: $scope.customToken.miningPeriod.value, min: $scope.customToken.miningPeriod.minValue, max: $scope.customToken.miningPeriod.maxValue},
+                        args: {value: Number($scope.customToken.miningPeriod.value), min: Number($scope.customToken.miningPeriod.minValue), max: Number($scope.customToken.miningPeriod.maxValue)},
                         desiredResult: true,
                         errMsg: {
                                     msg: 'NOT_IN_RANGE',
@@ -2627,18 +2865,6 @@
                             args: {str: $scope.customToken.minStake.tokens.value, regExpObj: /^([0-9]*\.?([0-9]*)){1}$/},
                             desiredResult: true,
                             errMsg: 'INVALID_SYMBOLS_IN_DIGITAL_VALUE'                                
-                        },
-                        {
-                        method: 'inIntervalBothClosed',
-                        args: {value: $scope.customToken.minStake.tokens.value, min: $scope.customToken.minStake.tokens.minValue, max: $scope.customToken.premine.tokens},
-                        desiredResult: true,
-                        errMsg: {
-                                    msg: 'NOT_IN_RANGE',
-                                    params: {
-                                        min: $scope.customToken.minStake.tokens.minValue,
-                                        max: 'value of Premine'
-                                    }
-                                }
                         }
                     ],
                     errMsgSelector: '#customTokenROICalc #setTokenMinStakeWrapper .errMsg'
@@ -2659,7 +2885,7 @@
                         },
                         {
                         method: 'inIntervalBothClosed',
-                        args: {value: $scope.customToken.stakedTokens.percent.value, min: $scope.customToken.stakedTokens.percent.minValue, max: $scope.customToken.stakedTokens.percent.maxValue},
+                        args: {value: Number($scope.customToken.stakedTokens.percent.value), min: Number($scope.customToken.stakedTokens.percent.minValue), max: Number($scope.customToken.stakedTokens.percent.maxValue)},
                         desiredResult: true,
                         errMsg: {
                                     msg: 'NOT_IN_RANGE',
@@ -2674,17 +2900,141 @@
                 }
             };
             return validationRules;       
+        }
+
+        function getThirdStepValidationRules() {
+            let validationRules = {
+                minStake: {
+                    checks: [
+                        {
+                            method: 'lessOrEqualThan',
+                            args: {value: Number($scope.customToken.minStake.tokens.value), max: Number($scope.customToken.premine.tokens)},
+                            desiredResult: true,
+                            errMsg: {
+                                        msg: 'MUST_BE_LESS_OR_EQUAL_THAN_NAMED_VALUE',
+                                        params: {
+                                            name: $translate.instant('PREMINE')
+                                        }
+                                    }
+                        },                    
+                        {
+                            method: 'lessOrEqualThan',
+                            args: {value: Number($scope.customToken.minStake.tokens.value), max: Number($scope.customToken.maxSupply.tokens.value)},
+                            desiredResult: true,
+                            errMsg: {
+                                        msg: 'MUST_BE_LESS_OR_EQUAL_THAN_NAMED_VALUE',
+                                        params: {
+                                            name: $translate.instant('TOKEN_MAX_SUPPLY')
+                                        }
+                                    }
+                        },                    
+                        {
+                            method: 'lessOrEqualThan',
+                            args: {value: Number($scope.customToken.minStake.tokens.value), max: maxBigInt},
+                            desiredResult: true,
+                            errMsg: {
+                                        msg: 'EXEED_MAX_VALUE_IN_TOKENS',
+                                        params: {
+                                            maxValue: maxBigInt,
+                                            ticker: ''
+                                        }
+                                    }
+                        }
+                    ],
+                    errMsgSelector: '#customTokenROICalc #setTokenMinStakeWrapper .errMsg'        
+                },
+                premine: {
+                    checks: [
+                        {
+                            method: 'moreOrEqualThan',
+                            args: {value: Number($scope.customToken.premine.tokens), max: Number($scope.customToken.minStake.tokens.value)},
+                            desiredResult: true,
+                            errMsg: {
+                                        msg: 'MUST_BE_GREATER_OR_EQUAL_THAN_NAMED_VALUE',
+                                        params: {
+                                            name: $translate.instant('MINIMAL_STAKE')
+                                        }
+                                    }
+                        },                    
+                        {
+                            method: 'lessOrEqualThan',
+                            args: {value: Number($scope.customToken.premine.tokens), max: Number($scope.customToken.maxSupply.tokens.value)},
+                            desiredResult: true,
+                            errMsg: {
+                                        msg: 'MUST_BE_LESS_OR_EQUAL_THAN_NAMED_VALUE',
+                                        params: {
+                                            name: $translate.instant('TOKEN_MAX_SUPPLY')
+                                        }
+                                    }
+                        },                    
+                        {
+                            method: 'lessOrEqualThan',
+                            args: {value: Number($scope.customToken.premine.tokens), max: maxBigInt},
+                            desiredResult: true,
+                            errMsg: {
+                                        msg: 'EXEED_MAX_VALUE_IN_TOKENS',
+                                        params: {
+                                            maxValue: maxBigInt,
+                                            ticker: ''
+                                        }
+                                    }
+                        }
+                    ],
+                    errMsgSelector: '#customTokenROICalc #outputTokenPremineWrapper .errMsg'        
+                },
+                maxSupply: {
+                    checks: [
+                        {
+                            method: 'moreOrEqualThan',
+                            args: {value: Number($scope.customToken.maxSupply.tokens.value), max: Number($scope.customToken.minStake.tokens.value)},
+                            desiredResult: true,
+                            errMsg: {
+                                        msg: 'MUST_BE_GREATER_OR_EQUAL_THAN_NAMED_VALUE',
+                                        params: {
+                                            name: $translate.instant('MINIMAL_STAKE')
+                                        }
+                                    }
+                        },
+                        {
+                            method: 'moreOrEqualThan',
+                            args: {value: Number($scope.customToken.maxSupply.tokens.value), max: Number($scope.customToken.premine.tokens)},
+                            desiredResult: true,
+                            errMsg: {
+                                        msg: 'MUST_BE_LESS_OR_EQUAL_THAN_NAMED_VALUE',
+                                        params: {
+                                            name: $translate.instant('PREMINE')
+                                        }
+                                    }
+                        },
+                        {
+                            method: 'lessOrEqualThan',
+                            args: {value: Number($scope.customToken.maxSupply.tokens.value), max: maxBigInt},
+                            desiredResult: true,
+                            errMsg: {
+                                        msg: 'EXEED_MAX_VALUE_IN_TOKENS',
+                                        params: {
+                                            maxValue: maxBigInt,
+                                            ticker: ''
+                                        }
+                                    }
+                        }
+                    ],
+                    errMsgSelector: '#customTokenROICalc #setTokenMaxSupplyWrapper .errMsg'        
+                }            
+            };
+            return validationRules;       
         }        
 
         $scope.calculate = function() {
+            $scope.showExportControl = false;
             $('#customTokenROICalc .output-box-group').css({'opacity': 0.25});
             let firstStepValidationRules = getFirstStepValidationRules();
-            let checkDataFirstStep = dataValidator.batchValidate($scope.customToken, firstStepValidationRules);
-            if (checkDataFirstStep) {              
+            $scope.checkDataFirstStep = dataValidator.batchValidate($scope.customToken, firstStepValidationRules);
+            if ($scope.checkDataFirstStep) {              
                 $scope.customToken.premine.tokens = ($scope.customToken.maxSupply.tokens.value * $scope.customToken.premine.percent.value/100);
                 let secondStepValidationRules = getSecondStepValidationRules();
-                let checkDataSecondStep = dataValidator.batchValidate($scope.customToken, secondStepValidationRules);
-                if (checkDataSecondStep) {
+                $scope.checkDataSecondStep = dataValidator.batchValidate($scope.customToken, secondStepValidationRules);
+                if ($scope.checkDataSecondStep) {
                     $('#customTokenROICalc .output-box-group').css({'opacity': 1});
                     $scope.customToken.maxSupply.usd = toUSD($scope.customToken.maxSupply.tokens.value);
                     //Market Capitalization                
@@ -2708,7 +3058,11 @@
                     $scope.customToken.stakedTokens.usd = toUSD($scope.customToken.stakedTokens.tokens);
                     $scope.customToken.roi.percent.daily = $scope.customToken.dailyEmission.tokens/$scope.customToken.stakedTokens.tokens*100;
                     $scope.customToken.roi.percent.monthly = $scope.customToken.monthlyEmission.tokens/$scope.customToken.stakedTokens.tokens*100;
-                    $scope.customToken.roi.percent.annually = $scope.customToken.annualEmission.tokens/$scope.customToken.stakedTokens.tokens*100;                  
+                    $scope.customToken.roi.percent.annually = $scope.customToken.annualEmission.tokens/$scope.customToken.stakedTokens.tokens*100;
+
+                    $scope.checkDataThirdStep = dataValidator.batchValidate($scope.customToken, getThirdStepValidationRules());
+                    if (dataValidator.batchValidate($scope.customToken, $scope.checkDataThirdStep))
+                        $scope.showExportControl = true;
                 } 
             }
         }
@@ -2724,7 +3078,25 @@
         $scope.calculate();
 
         $scope.printTokenROICalc = function () {
-          window.print()
+          window.print();
+        }
+
+        $scope.saveTokenROICalc = function () {
+            let url = window.URL || window.webkitURL;
+            let content = JSON.stringify($scope.customToken);
+            let blob = new Blob([ content ], { type:"application/json;charset=utf-8;" });
+            const objectURL = url.createObjectURL(blob);
+            let tmpLinkDOMElement = angular.element('<a></a>');
+            tmpLinkDOMElement.attr('href', objectURL);
+            tmpLinkDOMElement.attr('download', 'customToken.json');
+            tmpLinkDOMElement[0].click();
+            url.revokeObjectURL(objectURL);
+        }
+
+        $scope.loadTokenROICalcJSON = function(f) {
+            let tokenData = JSON.parse(f);
+            $scope.customToken = JSON.parse(JSON.stringify(tokenData));  
+            document.getElementById("fileElem").value = null;        
         }
     });
 
@@ -2814,16 +3186,7 @@
         provider.token_info.query({hash:$routeParams.hash}, function(token_info) {
             $scope.token = token_info[0];
             $scope.media = currentPreset.externalLinks.projectMedia;
-            let mineable = $scope.token.minable;
-            let reissuable = $scope.token.reissuable;
-            let tokenType = '---';
-            if (mineable === 1 && reissuable === 0)
-                tokenType = 'Mineable';
-            else if (mineable === 0 && reissuable === 0)
-                tokenType = "Non-reissuable";
-            else if (mineable === 0 && reissuable === 1)
-                tokenType = "Reissuable";
-            $scope.token.type = tokenType;
+            $scope.token.type = commonTools.getTokenType($scope.token);
 
             provider.stats.get({}, function(stat) {
                 if ($routeParams.hash === $rootScope.mainToken.hash) {
@@ -2858,14 +3221,10 @@
                 let ticker = tickers_all.find(function(ticker) {return (ticker.hash === $scope.token.hash) ? true : false;});
                 $scope.token.ticker = ticker.ticker;
                 $scope.token.caption = ticker.caption;
-                if ($scope.token.fee_type === 0) {
-                    $scope.token.fee_type = 'FEE_TYPE_FLAT';
-                    $scope.token.fee_value = $filter('US_COMMAS_BIGINT_DECIMALS')($scope.token.fee_value, $scope.token.decimals, $scope.token.decimals) +' '+ $scope.token.ticker;
-                } else if ($scope.token.fee_type === 1) {
-                    $scope.token.fee_type = 'FEE_TYPE_PERCENT';
-                    $scope.token.fee_min = $filter('US_COMMAS_BIGINT_DECIMALS')($scope.token.fee_value, $scope.token.decimals, $scope.token.decimals);
-                    $scope.token.fee_value = $filter('US_COMMAS_BIGINT_DECIMALS')($scope.token.fee_value, 2, 2) + '%';
-                }
+                let feesObject = commonTools.getTokenFees($scope.token);
+                $scope.token.fee_type = feesObject.fee_type;
+                $scope.token.fee_value = feesObject.fee_value;
+                $scope.token.fee_min = feesObject.fee_min;
             });
             provider.transaction.get({hash:$routeParams.hash}, function(issue_token_tx) {
                 $scope.issue_token_tx = issue_token_tx;
@@ -3191,7 +3550,7 @@
                                         if (token.token === ticker.hash) {
                                             token.caption = ticker.caption;
                                             provider.token_info.query({hash:token.token}, function(token_info) {
-                                                token.type = getTokenType(token_info[0]);
+                                                token.type = commonTools.getTokenType(token_info[0]);
                                             }); 
                                         }
                                     });
@@ -3339,7 +3698,7 @@
                                 provider.get_tokens_by_owner.query({owner:$routeParams.id}, function(my_tokens_list) {
                                     my_tokens_list.forEach(function(token) {
                                         provider.token_info.query({hash:token.token_hash}, function(token_info) {
-                                            token.type = getTokenType(token_info[0]);
+                                            token.type = commonTools.getTokenType(token_info[0]);
                                             token.decimals = token_info[0].decimals;
                                          });   
                                         provider.get_token_holder_count.get({token_hash: token.token_hash}, function(holders) {
@@ -3399,21 +3758,6 @@
 
                     let radialChart = new ApexCharts(document.querySelector("#" + chartElementSelector), radialChartOptions);  
                     radialChart.render();
-                }
-
-                function getTokenType(token) {
-                    let mineable = token.minable;
-                    let reissuable = token.reissuable;
-                    let tokenType = '---';
-
-                    if ( mineable === 1 && reissuable === 0)
-                        tokenType = 'Mineable';
-                    else if (mineable === 0 && reissuable === 0)
-                        tokenType = "Non-reissuable";
-                    else if (mineable === 0 && reissuable === 1)
-                        tokenType = "Reissuable";
-                    
-                    return tokenType;
                 }
 
                 getBalanceAll();
@@ -3566,18 +3910,118 @@
         });        
 	});
 
-	app.controller('transactionCtrl', function($scope, $routeParams, provider) {
-        provider.transaction.get({hash:$routeParams.hash}, function(tx) {
-            $scope.tx = tx;
-            $scope.tx.token = {
-                ticker: '',
-                decimals: null
+	app.controller('transactionCtrl', function($scope, $routeParams, $translate, $filter, provider, schema, commonTools, txParser) {
+        $scope.showParams = false;
+        $scope.txDataInit = '---';
+        provider.transaction.get({hash:$routeParams.hash}, function(tx) {            
+            console.log(tx)
+            if (tx.hash !== undefined) {
+                $scope.tx = tx;
+                $scope.tx.token = {};
+                provider.token_info.query({hash:tx.token_hash}, function(token_info) {
+                    console.log(token_info)
+                    $scope.tx.token.ticker = token_info[0].ticker;
+                    $scope.tx.token.decimals =  token_info[0].decimals;
+                    provider.contract_pricelist.get(function(contract_pricelist) {
+                        let txSchema = schema;
+
+                        if (txParser.isContract(tx.data, txSchema, contract_pricelist)) {                    
+                            $scope.showContractParams = true;
+                            $scope.txDataInit = txParser.parse(tx.data, txSchema, contract_pricelist);
+                            $scope.txData = txParser.parse(tx.data, txSchema, contract_pricelist);
+                            prettifyTxData($scope.txData);
+                            console.log($scope.txData)
+                        } 
+                    });
+                });                
             }
-            provider.token_info.query({hash:tx.token_hash}, function(token_info) {
-                $scope.tx.token.ticker = token_info[0].ticker;
-                $scope.tx.token.decimals =  token_info[0].decimals;
-            });
         });
+        function prettifyTxData(txData) {
+            if (txData.type === "create_token") {
+                $scope.paramsOrderArr = ["ticker", "name", "token_type", "total_supply", "max_supply", "block_reward", "min_stake", "referrer_stake", "ref_share", "decimals", "fee_type", "fee_value", "fee_min"];
+                let fieldsAsTokenValue = ["total_supply", "max_supply", "block_reward", "min_stake", "referrer_stake"];
+                $scope.paramsOrderArr.forEach(function(param) {
+                    if (txData.parameters[param] === undefined || txData.parameters[param] === null) {
+                        txData.parameters[param] = '---';
+                    }
+                });
+                txData.parameters.decimals = parseInt(txData.parameters.decimals);
+                txData.parameters.token_type = commonTools.getTokenType(txData.parameters);
+                let res = commonTools.getTokenFees(txData.parameters);
+                txData.parameters.fee_type = $translate.instant(res.fee_type);
+                txData.parameters.fee_value = res.fee_value;
+                txData.parameters.fee_min = res.fee_min;
+                txData.parameters.ref_share = $filter('US_COMMAS_BIGINT_DECIMALS')(txData.parameters.ref_share, 2, 2) +'%';                
+                fieldsAsTokenValue.forEach(function(param) {
+                    txData.parameters[param] = $filter('US_COMMAS_BIGINT_DECIMALS')(txData.parameters[param], txData.parameters.decimals, txData.parameters.decimals) +' '+ txData.parameters.ticker;
+                });
+
+                $scope.txContractsTemplate = 'tx-create-token-contract.html';
+            } else if (txData.type === "mint" || txData.type === "burn") {
+                $scope.paramsOrderArr = ["amount"];
+                let fieldsAsTokenValue = ["amount"];
+                $scope.paramsOrderArr.forEach(function(param) {
+                    if (txData.parameters[param] === undefined || txData.parameters[param] === null) {
+                        txData.parameters[param] = '---';
+                    }
+                });
+
+                let token = {};
+                provider.token_info.query({hash:txData.parameters.token_hash}, function(token_info) {
+                    token.ticker = token_info[0].ticker;
+                    token.decimals =  token_info[0].decimals;    
+                    fieldsAsTokenValue.forEach(function(param) {                 
+                        txData.parameters[param] = $filter('US_COMMAS_BIGINT_DECIMALS')(txData.parameters[param], token.decimals, token.decimals) +' '+ token.ticker;
+                    });
+                    $scope.txContractsTemplate = 'tx-mint-burn-contract.html';
+                });                
+            } else if (txData.type === "delegate" || txData.type === "undelegate") {
+                $scope.paramsOrderArr = ["pos_id", "amount"];
+                let fieldsAsTokenValue = ["amount"];
+                $scope.paramsOrderArr.forEach(function(param) {
+                    if (txData.parameters[param] === undefined || txData.parameters[param] === null) {
+                        txData.parameters[param] = '---';
+                    }
+                });
+
+                $scope.$watch('tx.token', function(newValue, oldValue) {
+                    if (newValue.ticker !== '' && newValue.decimals !== null) {
+                        fieldsAsTokenValue.forEach(function(param) {                 
+                            txData.parameters[param] = $filter('US_COMMAS_BIGINT_DECIMALS')(txData.parameters[param], newValue.decimals, newValue.decimals) +' '+ newValue.ticker;
+                        });                        
+                    }                    
+                }, true);                
+                $scope.txContractsTemplate = 'tx-mint-burn-contract.html';
+            } else if (txData.type === "create_pos") {
+                $scope.paramsOrderArr = ["name", "fee"];
+                $scope.paramsOrderArr.forEach(function(param) {
+                    if (txData.parameters[param] === undefined || txData.parameters[param] === null) {
+                        txData.parameters[param] = '---';
+                    }
+                });
+
+                txData.parameters.fee = $filter('US_COMMAS_BIGINT_DECIMALS')(txData.parameters.fee, 2, 2) +'%';               
+                $scope.txContractsTemplate = 'tx-mint-burn-contract.html';
+            } else if (txData.type === "transfer") {
+                $scope.paramsOrderArr = ["undelegate_id"];
+                $scope.paramsOrderArr.forEach(function(param) {
+                    if (txData.parameters[param] === undefined || txData.parameters[param] === null) {
+                        txData.parameters[param] = '---';
+                    }
+                });
+                           
+                $scope.txContractsTemplate = 'tx-mint-burn-contract.html';
+            }  else if (txData.type === "pos_reward") {
+                $scope.paramsOrderArr = ["pos_id"];
+                $scope.paramsOrderArr.forEach(function(param) {
+                    if (txData.parameters[param] === undefined || txData.parameters[param] === null) {
+                        txData.parameters[param] = '---';
+                    }
+                });
+                           
+                $scope.txContractsTemplate = 'tx-mint-burn-contract.html';
+            }
+        }
     });
 
 	app.run(function($rootScope, $http, $location, $cookies, langService, provider) {

@@ -312,3 +312,44 @@ a.disabled{
     pointer-events: none;
     cursor: default;
 }
+
+.onhover-pointer:hover {
+    cursor: pointer;
+}
+
+#singleTxInfo tr td:first-child {
+    width: 150px;
+}
+
+.tx-data-table.table-sm th {
+    padding-left: 0px;
+    width: 150px;
+}
+
+#txDataShowToggler .nav-tabs .nav-item.show .nav-link, #txDataShowToggler .nav-tabs .nav-link.active,
+#txDataShowToggler .nav-tabs .nav-link:focus, #txDataShowToggler .nav-tabs .nav-link:hover {
+    border: none;
+    background-color: transparent;
+}
+
+#txDataShowToggler  .nav-tabs {
+    border-bottom: none;
+}
+
+#txDataShowToggler .nav-tabs .nav-link {
+    border: none;
+    padding: 0px; 
+    font-weight: normal;
+}
+
+#txDataShowToggler  .dropdown-toggle::after {
+    display: none;
+}
+
+#txDataShowToggler  .dropdown-toggle:hover {
+    cursor: pointer;
+}
+
+#txDataShowToggler .dropdown-menu {
+    min-width: 0rem;
+}
