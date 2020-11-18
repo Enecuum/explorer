@@ -332,5 +332,13 @@
     "DATA": "Data",
     "PARAMS": "Parameters",
     "TX_DATA_AS_IS": "Raw",
-    "TX_DATA_FORMATTED": "Formatted"
+    "TX_DATA_FORMATTED": "Formatted",
+    "CREATE_TOKEN": "Create token", 
+    "CREATE_POS_CONTRACT": "Create POS contract",
+    "DELEGATE": "Delegate",
+    "UNDELEGATE": "Undelegate",
+    "TRANSFER": "Transfer",
+    "CLAIM_REWARD": "Claim reward",
+    "MINT": "Mint",
+    "BURN": "Burn"
 }

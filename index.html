@@ -471,7 +471,15 @@
                                 </ol>
                             </nav>
 
-                            <div class="h3 mb-3 mx-md-2" ng-if="showContractParams">{{txDataInit.type}}</div>
+                            <div class="mb-3 mx-md-2" ng-if="showContractParams">
+                                <div class="h4 text-uppercase">{{'TX' | translate}}</div>
+                                <div class="h4 d-flex align-items-center">
+                                    <div class="mr-2 h5 font-weight-normal">{{'TYPE' | translate}}</div>
+                                    <div class="text-uppercase badge badge-secondary-lighten badge-pill">{{getContactType(txDataInit.type) | translate}}</div>
+                                </div>
+
+                                
+                            </div>
                             <table class="table table-centered">
                                 <tbody id="singleTxInfo">
                                     <tr>
@@ -525,7 +533,7 @@
                                                 <div class="tab-pane active show" id="txDataTab"> 
                                                     <div class="mb-2">
                                                         <span class="mr-1 font-weight-bolder">{{"TYPE" | translate}}</span>
-                                                        <span class="mr-2 d-block d-md-inline">{{txData.type}}</span>
+                                                        <span class="mr-2 d-block d-md-inline">{{getContactType(txDataInit.type) | translate}}</span>
                                                     </div>
                                                     <div ng-include="'views/partials/contracts-tx/' + txContractsTemplate"></div>
                                                 </div>                                                
@@ -1876,7 +1884,6 @@
                 });
                 return translationsArr;
             },
-
             resolveTxType : function(rectype, incorrectValue = '---') {
                 let recTypes = {
                     iin : 'TX_IIN',
@@ -1894,6 +1901,22 @@
 
                 if (recTypes.hasOwnProperty(rectype)) {
                     return recTypes[rectype];
+                } else
+                    return incorrectValue;
+            },
+            getContractTypeTranslation : function(contractType, incorrectValue = '---') {
+                let contractTypes = {
+                    "create_token" :    "CREATE_TOKEN",
+                    "create_pos" :      "CREATE_POS_CONTRACT",
+                    "delegate" :        "DELEGATE",
+                    "undelegate" :      "UNDELEGATE",
+                    "transfer" :        "TRANSFER",
+                    "pos_reward" :      "CLAIM_REWARD",
+                    "mint" :            "MINT",
+                    "burn" :            "BURN"
+                };
+                if (contractTypes.hasOwnProperty(contractType)) {
+                    return contractTypes[contractType];
                 } else
                     return incorrectValue;
             },        
@@ -1915,7 +1938,6 @@
                     fee_value : '---',
                     fee_min : '---'
                 }
-
                 if (token.fee_type === 0) {
                     res.fee_type = 'FEE_TYPE_FLAT';
                     res.fee_value = $filter('US_COMMAS_BIGINT_DECIMALS')(token.fee_value, token.decimals, token.decimals) +' '+ token.ticker;
@@ -1925,10 +1947,8 @@
                     res.fee_min = $filter('US_COMMAS_BIGINT_DECIMALS')(token.fee_value, token.decimals, token.decimals);
                     res.fee_value = $filter('US_COMMAS_BIGINT_DECIMALS')(token.fee_value, 2, 2) + '%';
                 }
-
                 return res;
-            }
-            
+            }            
         }    
     });
 
@@ -3900,7 +3920,8 @@
                     provider.contract_pricelist.get(function(contract_pricelist) {
                         let txSchema = schema;
 
-                        if (txParser.isContract(tx.data, txSchema, contract_pricelist)) {                    
+                        if (txParser.isContract(tx.data, txSchema, contract_pricelist)) {
+                            $scope.getContactType = commonTools.getContractTypeTranslation;                    
                             $scope.showContractParams = true;
                             $scope.txDataInit = txParser.parse(tx.data, txSchema, contract_pricelist);
                             $scope.txData = txParser.parse(tx.data, txSchema, contract_pricelist);
@@ -3947,7 +3968,7 @@
                     fieldsAsTokenValue.forEach(function(param) {                 
                         txData.parameters[param] = $filter('US_COMMAS_BIGINT_DECIMALS')(txData.parameters[param], token.decimals, token.decimals) +' '+ token.ticker;
                     });
-                    $scope.txContractsTemplate = 'tx-mint-burn-contract.html';
+                    $scope.txContractsTemplate = 'tx-default-contract.html';
                 });                
             } else if (txData.type === "delegate" || txData.type === "undelegate") {
                 $scope.paramsOrderArr = ["pos_id", "amount"];
@@ -3965,7 +3986,7 @@
                         });                        
                     }                    
                 }, true);                
-                $scope.txContractsTemplate = 'tx-mint-burn-contract.html';
+                $scope.txContractsTemplate = 'tx-default-contract.html';
             } else if (txData.type === "create_pos") {
                 $scope.paramsOrderArr = ["name", "fee"];
                 $scope.paramsOrderArr.forEach(function(param) {
@@ -3975,7 +3996,7 @@
                 });
 
                 txData.parameters.fee = $filter('US_COMMAS_BIGINT_DECIMALS')(txData.parameters.fee, 2, 2) +'%';               
-                $scope.txContractsTemplate = 'tx-mint-burn-contract.html';
+                $scope.txContractsTemplate = 'tx-default-contract.html';
             } else if (txData.type === "transfer") {
                 $scope.paramsOrderArr = ["undelegate_id"];
                 $scope.paramsOrderArr.forEach(function(param) {
@@ -3984,7 +4005,7 @@
                     }
                 });
                            
-                $scope.txContractsTemplate = 'tx-mint-burn-contract.html';
+                $scope.txContractsTemplate = 'tx-default-contract.html';
             }  else if (txData.type === "pos_reward") {
                 $scope.paramsOrderArr = ["pos_id"];
                 $scope.paramsOrderArr.forEach(function(param) {
@@ -3993,7 +4014,7 @@
                     }
                 });
                            
-                $scope.txContractsTemplate = 'tx-mint-burn-contract.html';
+                $scope.txContractsTemplate = 'tx-default-contract.html';
             }
         }
     });

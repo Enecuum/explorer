@@ -294,5 +294,13 @@
     "MUST_BE_GREATER_OR_EQUAL_THAN_NAMED_VALUE": "값은 {{name}}보다 크거나 같아야 합니다.",
     "MUST_BE_GREATER_THAN": "값은 {{minValue}}보다 커야 합니다.",
     "MUST_BE_LESS_OR_EQUAL_THAN_NAMED_VALUE": "값은 {{name}}보다 작거나 같아야 합니다.",
-    "MUST_BE_LESS_THAN_NAMED_VALUE": "값은 {{name}}보다 작아야 합니다."
+    "MUST_BE_LESS_THAN_NAMED_VALUE": "값은 {{name}}보다 작아야 합니다.",
+    "CREATE_TOKEN": "토큰 발행", 
+    "CREATE_POS_CONTRACT": "POS 계약 생성",
+    "DELEGATE": "위임",
+    "UNDELEGATE": "위임 취소",
+    "TRANSFER": "전송",
+    "CLAIM_REWARD": "보상 청구",
+    "MINT": "민트",
+    "BURN": "소각"
 }

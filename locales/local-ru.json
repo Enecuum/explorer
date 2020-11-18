@@ -313,5 +313,13 @@
     "DATA": "Данные",
     "PARAMS": "Параметры",
     "TX_DATA_AS_IS": "Как есть",
-    "TX_DATA_FORMATTED": "Формат"
+    "TX_DATA_FORMATTED": "Формат",
+    "CREATE_TOKEN": "Создать токен", 
+    "CREATE_POS_CONTRACT": "Создать POS контракт",
+    "DELEGATE": "Делегировать",
+    "UNDELEGATE": "Отозвать",
+    "TRANSFER": "Вывести",
+    "CLAIM_REWARD": "Забрать награду",
+    "MINT": "Mint",
+    "BURN": "Burn"
 }
