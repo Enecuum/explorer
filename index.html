@@ -1896,7 +1896,7 @@
                     return recTypes[rectype];
                 } else
                     return incorrectValue;
-
+            },        
             getTokenType: function(token) {
                 let minEable = token.minable;
                 let tokenType = '---';
@@ -3837,29 +3837,6 @@
                     }
                 });
 
-                // $scope.getHistory = function(page){
-                //     $scope.isLoading = true;
-                //     provider.account.get({id:$routeParams.id, filter:$scope.historyFilter, page:page}, function(account){
-                //         //getBalanceAll();                
-                //         $scope.account.records = account.records;
-                //         $scope.account.page_count = account.page_count;
-                //         $scope.isLoading = false;
-                //     });
-                //     $scope.page_num = page;
-                // };
-
-                // $scope.page_num = 0;
-                // $scope.historyFilter = '';
-                // $scope.getHistory(0);
-
-                // $scope.setFilter = function(val){
-                //     let filtersArr = ['_in','_out','_kreward','_mreward','_sreward','_refreward',''];
-                //     $scope.historyFilter = (filtersArr.includes(val)) ? $scope.historyFilter = val : '';
-                //     $scope.getHistory(0);
-                // };
-
-                // $scope.page_num = Number($routeParams.page_num) | 0;
-
                 $scope.statusBadge = function(status) {
                     switch(status){
                         case 'STATUS_SUCCESS' : return 'badge-success-lighten';
@@ -3914,12 +3891,10 @@
         $scope.showParams = false;
         $scope.txDataInit = '---';
         provider.transaction.get({hash:$routeParams.hash}, function(tx) {            
-            console.log(tx)
             if (tx.hash !== undefined) {
                 $scope.tx = tx;
                 $scope.tx.token = {};
                 provider.token_info.query({hash:tx.token_hash}, function(token_info) {
-                    console.log(token_info)
                     $scope.tx.token.ticker = token_info[0].ticker;
                     $scope.tx.token.decimals =  token_info[0].decimals;
                     provider.contract_pricelist.get(function(contract_pricelist) {
@@ -3930,7 +3905,6 @@
                             $scope.txDataInit = txParser.parse(tx.data, txSchema, contract_pricelist);
                             $scope.txData = txParser.parse(tx.data, txSchema, contract_pricelist);
                             prettifyTxData($scope.txData);
-                            console.log($scope.txData)
                         } 
                     });
                 });                
