@@ -504,9 +504,9 @@
                                     </tr>
                                     <tr ng-if="showContractParams">
                                         <td>{{'PARAMS' | translate}}</td>
-                                        <td>
-                                            <div class="mb-2 d-flex align-items-center justify-content-end">
-                                                <div class="btn-group" id="txDataShowToggler">
+                                        <td class="overflow-hidden">
+                                            <div class="mb-2">
+                                                <div class="btn-group float-right" id="txDataShowToggler">
                                                     <a class="dropdown-toggle btn btn-primary btn-sm bg-blue text-white" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="mdi mdi-eye-outline"></i></a>
                                                     <div class="dropdown-menu dropdown-menu-right">
                                                         <ul class="nav nav-tabs">
@@ -525,14 +525,14 @@
                                                 <div class="tab-pane active show" id="txDataTab"> 
                                                     <div class="mb-2">
                                                         <span class="mr-1 font-weight-bolder">{{"TYPE" | translate}}</span>
-                                                        <span class="mr-2">{{txData.type}}</span>
+                                                        <span class="mr-2 d-block d-md-inline">{{txData.type}}</span>
                                                     </div>
                                                     <div ng-include="'views/partials/contracts-tx/' + txContractsTemplate"></div>
                                                 </div>                                                
                                                 <div class="tab-pane" id="txDataInitTab">
                                                     <div class="mb-2">
                                                         <span class="mr-1 font-weight-bolder">type</span>
-                                                        <span class="mr-2">{{txData.type}}</span>
+                                                        <span class="mr-2 d-block d-md-inline">{{txData.type}}</span>
                                                     </div>
                                                     <table class="table table-sm tx-data-table no-border">
                                                         <tbody>

@@ -351,5 +351,17 @@ a.disabled{
 }
 
 #txDataShowToggler .dropdown-menu {
-    min-width: 0rem;
+    min-width: 3rem;
+}
+
+@media (max-width: 767.98px) {
+    #txDataTab table td, #txDataInitTab  table td,
+    #txDataTab table th, #txDataInitTab  table th {
+        display: block!important;
+        padding: 0px;
+    }
+    #txDataTab table tr, #txDataInitTab  table tr {
+        display: block!important;
+        margin-bottom: 0.5rem;
+    } 
 }
