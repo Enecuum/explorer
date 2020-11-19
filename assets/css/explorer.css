@@ -316,3 +316,52 @@ a.disabled{
 .onhover-pointer:hover {
     cursor: pointer;
 }
+
+#singleTxInfo tr td:first-child {
+    width: 150px;
+}
+
+.tx-data-table.table-sm th {
+    padding-left: 0px;
+    width: 150px;
+}
+
+#txDataShowToggler .nav-tabs .nav-item.show .nav-link, #txDataShowToggler .nav-tabs .nav-link.active,
+#txDataShowToggler .nav-tabs .nav-link:focus, #txDataShowToggler .nav-tabs .nav-link:hover {
+    border: none;
+    background-color: transparent;
+}
+
+#txDataShowToggler  .nav-tabs {
+    border-bottom: none;
+}
+
+#txDataShowToggler .nav-tabs .nav-link {
+    border: none;
+    padding: 0px; 
+    font-weight: normal;
+}
+
+#txDataShowToggler  .dropdown-toggle::after {
+    display: none;
+}
+
+#txDataShowToggler  .dropdown-toggle:hover {
+    cursor: pointer;
+}
+
+#txDataShowToggler .dropdown-menu {
+    min-width: 3rem;
+}
+
+@media (max-width: 767.98px) {
+    #txDataTab table td, #txDataInitTab  table td,
+    #txDataTab table th, #txDataInitTab  table th {
+        display: block!important;
+        padding: 0px;
+    }
+    #txDataTab table tr, #txDataInitTab  table tr {
+        display: block!important;
+        margin-bottom: 0.5rem;
+    } 
+}

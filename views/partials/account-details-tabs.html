@@ -11,7 +11,7 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="javascript;" data-target="#accountRewardsTab" data-toggle="tab" aria-expanded="false" class="nav-link h-100 d-flex align-items-center justify-content-center disabled text-muted px-1">
+                                <a href="javascript;" data-target="#accountRewardsTab" data-toggle="tab" aria-expanded="false" class="nav-link h-100 d-flex align-items-center justify-content-center px-1">
                                     <span>{{'REWARDS' | translate}}</span>
                                 </a>
                             </li>                            
@@ -45,9 +45,13 @@
                 </div>
                 <div class="tab-content">
                     <div class="tab-pane active show" id="accountTransactionsTab">
-                        <div ng-if="account.records.length === 0" ng-include="'views/partials/common-no-records.html'"></div>
-                        <div ng-if="account.records.length > 0" class="row" ng-include="'views/partials/account-txs-tab.html'"></div>
+                        <div ng-if="account_txs.records.length === 0" ng-include="'views/partials/common-no-records.html'"></div>
+                        <div ng-if="account_txs.records.length > 0" class="row" ng-include="'views/partials/account-txs-tab.html'"></div>
                     </div>
+                    <div class="tab-pane" id="accountRewardsTab">
+                        <div ng-if="account_rewards.records.length === 0" ng-include="'views/partials/common-no-records.html'"></div>
+                        <div ng-if="account_rewards.records.length > 0" class="row" ng-include="'views/partials/account-rewards-tab.html'"></div>
+                    </div>                    
                     <div class="tab-pane" id="accountTokenBalanceTab">
                         <div ng-if="balanceAll.length === 0" ng-include="'views/partials/common-no-records.html'"></div>
                         <div ng-if="balanceAll.length > 0" class="row" ng-include="'views/partials/account-token-balance-tab.html'"></div>

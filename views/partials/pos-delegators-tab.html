@@ -10,7 +10,7 @@
         </thead>
         <tbody style="font-size: 12px;">
             <tr ng-repeat="record in delegators.pos_delegators">
-                <td><a class="d-block fit responsive-hash" ng-href="#!/account/{{record.delegator}}/0">{{record.delegator}}</a></td>
+                <td><a class="d-block fit responsive-hash" ng-href="#!/account/{{record.delegator}}">{{record.delegator}}</a></td>
                 <td class="text-nowrap">{{record.amount | US_COMMAS_BIGINT_DECIMALS : mainToken.decimals : mainToken.decimals}} {{mainToken.ticker}}</td>
                 <td class="text-nowrap" ng-if="mainToken.ticker === 'ENQ'">{{multipleBigintOnFloat(record.amount, mainToken.decimals, mainTokenPrice, 2)}} USD</td>
                 <td class="text-nowrap">{{record.share.str}}</td>
