@@ -46,6 +46,9 @@
                 weixin: 'https://weixin.qq.com/some-token',
                 telegram: 'https://t.me/some-token'
             },
+            documents: {
+                whitepaper: 'https://enecuum.com/pdf/pp_en.pdf'
+            },  
             descriptionLocaleStringArray: {
                 en: 'EN text about some token',
                 de: 'DE text about some token',
