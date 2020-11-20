@@ -834,6 +834,7 @@
                                                     <tr>
                                                         <th>{{'RANK' | translate}}</th>
                                                         <th>{{'TOKEN' | translate}}</th>
+                                                        <th>{{'TYPE' | translate}}</th>
                                                         <th>{{'TOTAL_SUPPLY' | translate}}</th>
                                                         <th>{{'HOLDERS' | translate}}</th>
                                                     </tr>
@@ -847,6 +848,7 @@
                                                                     <a ng-href="#!/token/{{token.token_hash}}">({{tickers[token.token_hash].ticker}})</a>
                                                                 </div>
                                                             </td>
+                                                            <td>{{token.type}}</td>
                                                             <td class="text-nowrap">{{token.total_supply | US_COMMAS_BIGINT_DECIMALS}} {{tickers[token.token_hash].ticker}}</td>
                                                             <td>{{token.token_holders_count | US_COMMAS_INT}}</td>
                                                         </tr>
@@ -3168,7 +3170,7 @@
             }
         });
     });
-    app.controller('tokensCtrl', function($scope, provider, $translate) {
+    app.controller('tokensCtrl', function($scope, provider, commonTools, $translate) {
         $scope.page_num = 0;
         let entitiesOnPage = 20;
         $scope.getHistory = function(page){
@@ -3180,8 +3182,11 @@
                 });
                 provider.get_token_info_page.get({page:page}, function(tokenInfo) {
                     $scope.page_count = tokenInfo.page_count;
-                    $scope.tokens = tokenInfo.tokens;                    
-                    $scope.tokens.forEach(function(token, i) {
+                    $scope.tokens = tokenInfo.tokens;                 
+                    $scope.tokens.forEach(function(token, i) {                        
+                        provider.token_info.query({hash:token.token_hash}, function(token_info) {
+                           token.type = commonTools.getTokenType(token_info[0]);
+                        });
                         token.rank = i + 1 + entitiesOnPage * page;                         
                     });
                     $scope.page_count = tokenInfo.page_count
