@@ -31,7 +31,7 @@
             }             
 		},
         {
-            tokenId: '5055012074899d433d9329c35bf26ecf6dcf17304522dbebcfc8e479ec23a3c4',
+            tokenId: 'some-token-id',
             webSite: 'https://someTokenWebSite.com',
             media: {                            
                 facebook: 'https://www.facebook.com/some-token',
@@ -45,10 +45,7 @@
                 qq: 'https://qm.qq.com/some-token',
                 weixin: 'https://weixin.qq.com/some-token',
                 telegram: 'https://t.me/some-token'
-            },
-            documents: {
-                whitepaper: 'https://enecuum.com/pdf/pp_en.pdf'
-            },  
+            }, 
             descriptionLocaleStringArray: {
                 en: 'EN text about some token',
                 de: 'DE text about some token',
