@@ -6,7 +6,7 @@
 <div class="row">
 	<div class="col-xl-6 col-md-12">
 		<div class="card">
-		    <div class="card-body" id="tokenDescriptionCard">
+<!-- 		    <div class="card-body" id="tokenDescriptionCard">
 		    	<div class="d-flex justify-content-between">
 			    	<div class="d-flex justify-content-start flex-grow-1">
 			    		<div>
@@ -24,7 +24,34 @@
 	    				<div class="text-nowrap font-size-15">{{token.type}}</div>
 	    			</div>		    			
 		    	</div>
-		    </div>
+		    </div> -->
+		    <div class="card-body" id="posDescriptionCard">
+		    	<div class="d-block d-xl-flex justify-content-between">
+			    	<div class="d-flex justify-content-start">
+			    		<div class="item-avatar-blank-wrapper d-flex align-items-center justify-content-center mr-2 flex-shrink-0 flex-grow-0">
+<!-- 		    				<div class="mb-2 text-nowrap">
+	                            <span id="posRankBadge" class="cusom-badge badge-pill font-weight-bolder" ng-class="posContract.active === 1 ? 'badge-success' : 'badge-danger'">
+		    						#{{posContract.rank}}
+	                            </span>
+	                        </div> -->			    			
+			    			<span class="item-avatar-blank-content flex-shrink-0 flex-grow-0">{{token.ticker.charAt(0)}}</span>
+			    		</div>
+			    		<div class="pt-2 mr-2" id="tokenTitle">
+		    				<div class="text-uppercase mb-2 header-title fit w-100">{{token.caption}} ({{token.ticker}})</div>
+		    				<div class="mb-2 text-nowrap font-size-15">
+		    					<span class="cusom-badge badge-pill" ng-class="tokenTypeBadgeClass">
+		    						{{token.type}}
+	                            </span>
+	                        </div>
+		    				<!-- <a ng-if="token.customerInfo.webSite !== undefined" class="pr-2 fit d-block" id="tokenWebSite" ng-href="{{token.customerInfo.webSite}}" target="_blank">{{token.customerInfo.webSite}}</a> -->
+			    		</div>
+			    	</div>
+	    			<div data-simplebar data-simplebar-lg data-simplebar-auto-hide="false" id="tokenDescriptionText" ng-if="tokenDescriptionText !== undefined" class="mt-2 mt-xl-0">
+	    				{{tokenDescriptionText}}
+	    			</div>		    			
+		    	</div>
+		    	<div ng-if="token.customerInfo.media !== undefined" id="tokenMedia" class="rounded p-2 mt-2 d-flex align-items-center" style="background: #F9F9FD; font-size: 19px;" ng-include="'views/partials/media-links/enecuum-media-links.html'"></div>
+		    </div>		    
 		</div>		
 	</div>
 	<div class="col-xl-6 col-md-12">
@@ -167,10 +194,10 @@
 						</div>
 						<div class="d-flex flex-column flex-grow-1">
 							<div class="py-095">
-								<a ng-href="{{additionalTokenData.officialSiteLink}}">{{additionalTokenData.officialSiteText}}</a>
+								<a ng-href="{{additionalTokenData.officialSiteLink}}" class="fit">{{additionalTokenData.officialSiteText}}</a>
 							</div>
 							<div class="py-095" style="border-top: 1px solid rgb(227, 234, 239);">
-								<a ng-href="{{additionalTokenData.whitepaperLink}}">{{additionalTokenData.whitepaperLinkText}}</a>
+								<a ng-href="{{additionalTokenData.whitepaperLink}}" class="fit">{{additionalTokenData.whitepaperLinkText}}</a>
 							</div>						
 						</div>												
 					</div>

@@ -37,6 +37,8 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simplebar@5.2.1/dist/simplebar.css"/>
     <script src="/assets/info/pos-info-storage-enq.js"></script>
     <script src="/assets/info/pos-info-storage-bit.js"></script>
+    <script src="/assets/info/token-info-storage-enq.js"></script>
+    <script src="/assets/info/token-info-storage-bit.js"></script>    
     <!-- Global site tag (gtag.js) - Google Analytics -->
 
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-138901721-1"></script>
@@ -1351,7 +1353,7 @@
 
 	let app = angular.module('myApp', ['ngResource', 'ngRoute', 'ngCookies', 'pascalprecht.translate','ngAnimate', 'ui.select','ngSanitize'])
         .constant('GLOBAL_APP_CONFIG', {
-            presetName: 'ENQ',            
+            presetName: 'BIT',            
             POSChallenge: {
                 on: false,  
                 address: '03c91e88967465c44aa2afeab3b87dbeede9bd63dbe4a0121ea02fa3f0f4a4e2a8'
@@ -1373,22 +1375,6 @@
                         topMenuItemsLinks: {
                             walletLink: 'https://wallet.enecuum.com',
                         },
-                        documents: {
-                            whitepaper: 'https://enecuum.com/pdf/pp_en.pdf',
-                        },
-                        projectMedia: {                            
-                            facebook: 'https://www.facebook.com/enecuum.EN/?ref=bookmarks',
-                            twitter: 'https://twitter.com/enq_enecuum',
-                            medium: 'https://medium.com/@EnqBlockchain',
-                            github: 'https://github.com/Enecuum',
-                            forklog: 'https://hub.forklog.com/companies/enecuum/',
-                            bitcointalk: 'https://bitcointalk.org/index.php?topic=2939909.0;topicseen',
-                            linkedin: 'https://www.linkedin.com/company/enecuum-limited/',
-                            youtube: 'https://www.youtube.com/channel/UCyZqNfzK_PP82nkAVOlmN4Q',
-                            qq: 'https://qm.qq.com/cgi-bin/qm/qr?k=YfdokyjJnlKl0eAuhVXEc6JtVsoKnxvI&authKey=6WpHwP4Cu/kAAyPyVuBWZeQCjhEyijvLyGf6Jj6P7f9LVCe/9ZZC7YIfRtudjD23&noverify=0',
-                            weixin: 'https://weixin.qq.com/g/AwYAAJdSThUYHIJmetSinRGfcwtrkRovBmLZZr5moi0UXRIW56Me4ts56gByaeYU',
-                            telegram: 'https://t.me/Enecuum_EN'
-                        }
                     },
                     pagesSectionsVisibility: {
                         showFullNodesCountCard: true,
@@ -1416,14 +1402,6 @@
                         topMenuItemsLinks: {
                             walletLink: 'https://bit-wallet.enecuum.com'
                         },
-                        documents: {
-                            whitepaper: 'https://enecuum.com/pdf/pp_en.pdf',
-                        },
-                        projectMedia: {                            
-                            twitter: 'https://twitter.com/enq_enecuum',
-                            telegram: 'https://t.me/Enecuum_EN',
-                            github: 'https://github.com/Enecuum'
-                        }
                     },
                     pagesSectionsVisibility: {
                         showFullNodesCountCard: true,
@@ -1704,6 +1682,27 @@
             }
         } 
     });
+
+    app.factory('tokenInfoStorage', function($window, $rootScope, GLOBAL_APP_CONFIG) {
+        let currentPreset = GLOBAL_APP_CONFIG.presetName;
+        let tokenInfoStorage = $window['tokenInfoStorage' + currentPreset];
+        let tokenInfoTemplate = {
+            website: undefined,
+            media: undefined,
+            documents: undefined,
+            descriptionLocaleStringArray: undefined
+        }
+
+        return {
+            getInfo: function(tokenId) {
+                let tokenInfo = tokenInfoStorage.find(tokenInfoBlock => tokenInfoBlock.tokenId === tokenId);                
+                if (tokenInfo === undefined)
+                    tokenInfo = tokenInfoTemplate;               
+
+                return tokenInfo
+            }
+        } 
+    });    
 
     app.service('dateTimeConverter', function() {
         this.getTimestamp = function(unix){
@@ -3181,7 +3180,7 @@
                 });
                 provider.get_token_info_page.get({page:page}, function(tokenInfo) {
                     $scope.page_count = tokenInfo.page_count;
-                    $scope.tokens = tokenInfo.tokens;
+                    $scope.tokens = tokenInfo.tokens;                    
                     $scope.tokens.forEach(function(token, i) {
                         token.rank = i + 1 + entitiesOnPage * page;                         
                     });
@@ -3194,25 +3193,56 @@
         };
         $scope.getHistory(0);
     });
-    app.controller('tokenCtrl', function($scope, $rootScope, $routeParams, GLOBAL_APP_CONFIG, provider, commonTools, $translate, $filter) {
-
+    app.controller('tokenCtrl', function($scope, $rootScope, $routeParams, GLOBAL_APP_CONFIG, provider, tokenInfoStorage, commonTools, $translate, $filter) {
         let currentPreset = GLOBAL_APP_CONFIG.tokenPresets[GLOBAL_APP_CONFIG.presetName];
         $scope.additionalTokenData = {
             officialSiteLink : '',
             officialSiteText : '---',
             whitepaperLink : '',
             whitepaperLinkText : '---'
-        }
-
+        };
         $scope.mediaWidgetNamePrefix = 'default';
         $scope.page_num = 0;
         let entitiesOnPage = 20;
 
         provider.token_info.query({hash:$routeParams.hash}, function(token_info) {
             $scope.token = token_info[0];
-            $scope.media = currentPreset.externalLinks.projectMedia;
+            $scope.token.customerInfo = tokenInfoStorage.getInfo($routeParams.hash);
             $scope.token.type = commonTools.getTokenType($scope.token);
+            $scope.tokenTypeBadgeClass = getTokenTypeBadgeClass($scope.token.type);
+            $rootScope.$watch('curLang.id', function(newValue, oldValue) {
+                $scope.tokenDescriptionText = undefined;                
+                if ($scope.token.customerInfo.descriptionLocaleStringArray !== undefined && Object.keys($scope.token.customerInfo.descriptionLocaleStringArray).length !== 0) {
+                    if ($scope.token.customerInfo.descriptionLocaleStringArray.hasOwnProperty(newValue) && $scope.token.customerInfo.descriptionLocaleStringArray[newValue] !== undefined) {
+                        $scope.tokenDescriptionText = $scope.token.customerInfo.descriptionLocaleStringArray[newValue];
+                    } else if ($scope.token.customerInfo.descriptionLocaleStringArray.hasOwnProperty('en') && $scope.token.customerInfo.descriptionLocaleStringArray.en !== undefined) {
+                        $scope.tokenDescriptionText = $scope.token.customerInfo.descriptionLocaleStringArray.en;
+                    } else {
+                        let customerLangArr = Object.keys($scope.token.customerInfo.descriptionLocaleStringArray);                        
+                        customerLangArr.some(function(customerLangArrElem) {
+                            appLangArr.some(function(elem) {
+                                if (customerLangArrElem === elem && $scope.tokenDescriptionText === undefined) {
+                                    $scope.tokenDescriptionText = $scope.token.customerInfo.descriptionLocaleStringArray[elem];
 
+                                }
+                            });
+                        });
+                    }                    
+                }
+            });
+            if ($scope.token.customerInfo !== undefined) {
+                if ($scope.token.customerInfo.webSite !== undefined) {
+                    $scope.additionalTokenData.officialSiteLink = $scope.additionalTokenData.officialSiteText = $scope.token.customerInfo.webSite;               
+                }
+                if ($scope.token.customerInfo.documents !== undefined && $scope.token.customerInfo.documents.hasOwnProperty('whitepaper')) {
+                    $scope.additionalTokenData.whitepaperLink = $scope.additionalTokenData.whitepaperLinkText = $scope.token.customerInfo.documents.whitepaper;               
+                }
+                if ($scope.token.customerInfo.media !== undefined) {
+                    $scope.mediaWidgetNamePrefix = 'project';               
+                }                
+            }
+
+            $scope.media = $scope.token.customerInfo.media;
             provider.stats.get({}, function(stat) {
                 if ($routeParams.hash === $rootScope.mainToken.hash) {
                     if ($rootScope.mainToken.ticker === 'ENQ') {
@@ -3224,17 +3254,6 @@
                         $scope.multipleBigintOnFloat = commonTools.multipleBigintOnFloat;
                     }
                     $scope.tokenCsup = $filter('US_COMMAS_BIGINT_DECIMALS')(BigInt(stat.csup), $scope.token.decimals, $scope.token.decimals) +' '+ $scope.token.ticker;
-
-                    if ($scope.token.ticker === 'ENQ' || $scope.token.ticker === 'BIT') {
-                        $scope.mediaWidgetNamePrefix = 'enecuum';
-                        $scope.additionalTokenData.officialSiteText =  $scope.additionalTokenData.officialSiteLink = currentPreset.logoLinkTarget;
-                        
-                        if ($scope.token.ticker === 'ENQ') {
-                            $scope.additionalTokenData.whitepaperLink = currentPreset.externalLinks.documents.whitepaper;
-                            $scope.additionalTokenData.whitepaperLinkText = 'Position Paper';
-                        }     
-                    }                    
-
                 }
             });
 
@@ -3277,6 +3296,23 @@
             });
             $scope.page_num = page;
         };
+        function getTokenTypeBadgeClass(classAsString) {
+            let badgeClass = '';
+            switch (classAsString) {
+                case 'Non-reissuable':
+                    badgeClass = "badge-secondary";
+                    break;
+                case "Reissuable":
+                    badgeClass = "badge-info";
+                    break;
+                case "Mineable":
+                    badgeClass = "badge-success";
+                    break;
+                default:
+                    badgeClass = "d-none";
+            }
+            return badgeClass;
+        }
 
         $scope.getHistory(0);
     });
