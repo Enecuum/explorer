@@ -1373,6 +1373,7 @@
                         topMenuItemsLinks: {
                             walletLink: 'https://wallet.enecuum.com',
                         },
+                        peerMapURL: 'https://pulse.enecuum.com/',
                         documents: {
                             whitepaper: 'https://enecuum.com/pdf/pp_en.pdf',
                         },
@@ -1416,6 +1417,7 @@
                         topMenuItemsLinks: {
                             walletLink: 'https://bit-wallet.enecuum.com'
                         },
+                        peerMapURL: 'https://bit.enecuum.com/',
                         documents: {
                             whitepaper: 'https://enecuum.com/pdf/pp_en.pdf',
                         },
@@ -1450,6 +1452,7 @@
                         topMenuItemsLinks: {
                             walletLink: 'https://bit-wallet.enecuum.com'
                         },
+                        peerMapURL: 'https://bit.enecuum.com/',
                         documents: {
                             whitepaper: 'https://enecuum.com/pdf/pp_en.pdf',
                         },
@@ -2196,10 +2199,11 @@
         $scope.blocks = provider.lastblocks.get();
         $scope.txs = provider.lasttxs.get();
         $scope.stats = provider.stats.get();
+        let peerMapURL = currentPreset.externalLinks.peerMapURL;
 
         $scope.showFullNodesCountCard = currentPreset.pagesSectionsVisibility.showFullNodesCountCard;
 
-        $http({method: 'GET', url: '/api/v1/peer_map'}).
+        $http({method: 'GET', url: peerMapURL + 'api/v1/peer_map'}).
                 then(function (response){
                     let marker_style = [{r: 3, fill:'black'}, {r: 3, fill:'blue'}, {r: 3, fill:'red'}, {r: 3, fill:'green'}];
                     let markers = response.data.filter((el)=> (el.lat !== null && el.lon !== null && el.type !== null && el.count !== null))
