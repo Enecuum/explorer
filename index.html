@@ -245,7 +245,7 @@
                             <div class="card widget-flat">
                                 <div class="card-body text-center">
                                     <span class="mdi mdi-laptop-chromebook" style="font-size: 24px;"></span>
-                                    <h4><span>{{stats.pow_count !== null && stats.pow_count !== undefined ? stats.pow_count : "N/A"}}</span></h4>
+                                    <h4><span>{{externalStats.pow_count !== null && externalStats.pow_count !== undefined ? externalStats.pow_count : "N/A"}}</span></h4>
                                     <p class="text-muted font-15 mb-0">PoW {{'NODES' | translate}}</p>
                                 </div>
                                 <!-- end card-body-->
@@ -253,7 +253,7 @@
                             <div class="card widget-flat">
                                 <div class="card-body text-center">
                                     <span class="mdi mdi-server" style="font-size: 24px;"></span>
-                                    <h4><span>{{stats.pos_count !== null && stats.pos_count !== undefined ? stats.pos_count : "N/A"}}</span></h4>
+                                    <h4><span>{{externalStats.pos_count !== null && externalStats.pos_count !== undefined ? externalStats.pos_count : "N/A"}}</span></h4>
                                     <p class="text-muted font-15 mb-0">PoS {{'NODES' | translate}}</p>
                                 </div>
                                 <!-- end card-body-->
@@ -261,7 +261,7 @@
                             <div class="card widget-flat" ng-if="showFullNodesCountCard">
                                 <div class="card-body text-center">
                                     <span class="mdi mdi-monitor" style="font-size: 24px;"></span>
-                                    <h4><span>{{stats.full_count !== null && stats.full_count !== undefined ? stats.full_count : "N/A"}}</span></h4>
+                                    <h4><span>{{externalStats.full_count !== null && externalStats.full_count !== undefined ? externalStats.full_count : "N/A"}}</span></h4>
                                     <p class="text-muted font-15 mb-0">Full {{'NODES' | translate}}</p>
                                 </div>
                                 <!-- end card-body-->
@@ -270,7 +270,7 @@
                             <div class="card widget-flat">
                                 <div class="card-body text-center">
                                     <span class="mdi mdi-cellphone-android" style="font-size: 24px;"></span>
-                                    <h4><span>{{stats.poa_count !== null && stats.poa_count !== undefined ? stats.poa_count : "N/A"}}</span></h4>
+                                    <h4><span>{{externalStats.poa_count !== null && externalStats.poa_count !== undefined ? externalStats.poa_count : "N/A"}}</span></h4>
                                     <p class="text-muted font-15 mb-0">PoA {{'NODES' | translate}}</p>
                                 </div>
                                 <!-- end card-body-->
@@ -282,7 +282,7 @@
                                 <div class="card-body">
                                     <div class="pb-2">
                                         <h4 class="d-inline header-title">{{'TOTAL_NODES' | translate}}</h4>
-                                        <h3 class="d-inline">{{stats.poa_count + stats.pos_count + stats.pow_count + stats.full_count}}</h3>
+                                        <h3 class="d-inline">{{externalStats.poa_count + externalStats.pos_count + externalStats.pow_count + externalStats.full_count}}</h3>
                                     </div>
                                     <div id="world-map-markers" ng-style="{'height' : showFullNodesCountCard ? '511px' : '360px'}"></div>
                                 </div> <!-- end card-body-->
@@ -2087,7 +2087,9 @@
         }
     });  
 
-    app.factory('provider', function ($resource){
+    app.factory('provider', function (GLOBAL_APP_CONFIG, $resource){
+        let currentPreset = GLOBAL_APP_CONFIG.tokenPresets[GLOBAL_APP_CONFIG.presetName];
+        let nodeUrl = currentPreset.externalLinks.peerMapURL;
 		return {
 			page : $resource('api/v1/page?n=:n', {n:'@n'}),
 			macroblock : $resource('api/v1/macroblock?hash=:hash', {hash:'@hash'}),
@@ -2096,6 +2098,7 @@
 			lastblocks : $resource('api/v1/lastblocks', {}),
 			lasttxs : $resource('api/v1/lasttxs', {}),
 			stats : $resource('api/v1/stats', {}),
+            externalStats : $resource(nodeUrl + 'api/v1/stats', {}),
             account : $resource('api/v1/account:filter?id=:id&page=:page', {filter:'@filter',id:'@id', page:'@page'}),
             agent_info : $resource('/api/v1/stat/agent_info?id=:id', {id:'@id'}),
             transaction : $resource('api/v1/tx?hash=:hash', {hash:'@hash'}),
@@ -2199,6 +2202,7 @@
         $scope.blocks = provider.lastblocks.get();
         $scope.txs = provider.lasttxs.get();
         $scope.stats = provider.stats.get();
+        $scope.externalStats = provider.externalStats.get();
         let peerMapURL = currentPreset.externalLinks.peerMapURL;
 
         $scope.showFullNodesCountCard = currentPreset.pagesSectionsVisibility.showFullNodesCountCard;
