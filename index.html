@@ -3988,9 +3988,9 @@
                 if (txData.parameters[param] === undefined || txData.parameters[param] === null) {
                     array[index] = 'skip';
                     txData.parameters[param] = defaultValue;
-                    let index = $scope.dataFiledsList[txData.type].asToken.indexOf(param);
-                    if (index !== -1)
-                        $scope.dataFiledsList[txData.type].asToken.splice(index,1);
+                    let tmpIndex = $scope.dataFiledsList[txData.type].asToken.indexOf(param);
+                    if (tmpIndex !== -1)
+                        $scope.dataFiledsList[txData.type].asToken.splice(tmpIndex,1);
                 }
             });
 
