@@ -1748,7 +1748,7 @@
     app.filter('US_COMMAS_BIGINT_DECIMALS', function() {
         return function(input, decimals=10, fixed=10) {
             if(typeof input === 'bigint' || !isNaN(input)) {
-                if (decimals === undefined || decimals === null || isNaN(decimals))
+                if (decimals === undefined || decimals === null || isNaN(decimals) || input === null)
                     return '---';          
                 let str = BigInt(input).toString();
                 let integerPart = '0';
@@ -3939,9 +3939,11 @@
         });
 
         function amountInUnits(amount, decimals, toFixed, units) {
+
             let result = null;
             if (amount !== undefined && decimals !== undefined && toFixed !== undefined && units !== undefined) {
                 let unitsStr = (typeof amount === 'bigint' || !isNaN(amount) ? units : '');
+                console.log(amount, decimals, toFixed)
                 result = $filter('US_COMMAS_BIGINT_DECIMALS')(amount, decimals, toFixed) +' '+ unitsStr;
             }
             return result;
