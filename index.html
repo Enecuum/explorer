@@ -3856,7 +3856,7 @@
                 provider.account.get({id:$routeParams.id}, function(data) {            
                     commonTools.genQR('#qrcode', data.id);
                     $scope.account = data;
-                    $scope.account.banned = bannedAccsArr.indexOf($routeParams.id) !== -1 ? true : false;
+                    $scope.account.banned = bannedAccsArr.indexOf($scope.account.id) !== -1 ? true : false;
                     if (validator.checkValidDigitalValue($scope.account.balance)) {
                         if ((parseInt($scope.account.balance) / $rootScope.mainTokenFactor) >= 1000) {
                             $scope.isAgent = true;
