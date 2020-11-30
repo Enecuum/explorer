@@ -340,5 +340,7 @@
     "TRANSFER": "Transfer",
     "CLAIM_REWARD": "Claim reward",
     "MINT": "Mint",
-    "BURN": "Burn"
+    "BURN": "Burn",
+    "ACCOUNT_WAS_BANNED": "Account was banned",
+    "WARNING": "WARNING"
 }

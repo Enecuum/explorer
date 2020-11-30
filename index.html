@@ -788,7 +788,7 @@
                                                         </thead>
                                                         <tbody style="font-size: 12px;" >
                                                         <tr ng-repeat="acc in accs.accounts ">
-                                                            <td>{{acc.rank}}</td>
+                                                            <td class="text-nowrap"><span ng-if="acc.banned"><i class="fas fa-skull-crossbones" style="font-size: 18px;"></i></span><span ng-if="!acc.banned">{{acc.rank}}</span></td>
                                                             <td><a class="d-block fit responsive-hash" ng-href="#!/account/{{acc.id}}">{{acc.id}}</a></td>
                                                             <td class="text-nowrap">{{acc.amount !== undefined ? acc.amount : "N/A" | US_COMMAS_BIGINT_DECIMALS : mainToken.decimals : mainToken.decimals}} {{mainToken.ticker}}</td>
                                                             <td class="text-nowrap" ng-if="mainToken.ticker === 'ENQ'">{{acc.valueUSD}}</td>
@@ -1397,7 +1397,22 @@
                         showExchangesSection: true,
                         showCurrencyToUSDAccountDetails: true,
                         showTestNetDisclaimer: false
-                    }
+                    },
+                    bannedAccs: [
+                        "02096d938f0001957441b96ab8eeec4815c3f1821686258ef15a6bdbb21764f577",
+                        "036808ae1adb7604b52345694723df6b09853e9e43105add144604d382951b0df5",
+                        "039099794d26438ceff314524d40f96003099ba4cd0b3419062f85df32792ee139",
+                        "033bf7f0aabfcc5150ca32edab63062f527a0bc47b71a1ba58759c8527dc6647fa",
+                        "03422ba778183fe11170f39034153343ae329c5f4781262588347b53e137cd8136",
+                        "039a2090d69ba1d09f3dbada9b8e1cc4d30ec3188d007fa43ee2199deb50f56e8a",
+                        "0283101404bec6696159d3fafc2bdd8c9a5e142735ce47cbd6d053a32fd0c4fd08",
+                        "03b75312c96e2dbaa107fdf449377bbd049dd27d3dfec7194371c059702a39ce01",
+                        "02218337ec2c7bebb92497244344e5660e11fd832135a47b0eb69b688623e91c1c",
+                        "03586a61df7b01c620cda8bd2a0a7f7b3089d17b76e942b498a51089cca38d63d5",
+                        "03f42c04a0df2d447b2bb437bb18f9598fa6330c0305c77d399814c45b1bbcc7b0",
+                        "0298635087276c5a6eaee0a84752cacab59cc4c05056df929f7e939c9e5eb7bc08",
+                        "02036448a9ca899ceb79c69e8717bfa336e108a89c3e0d0f52c9c537389453bcf3"
+                    ]
                 },
                 BIT: {
                     theme: 'white',
@@ -3129,10 +3144,12 @@
 		$scope.page_num = Number($routeParams.page_num);
 		$scope.page = provider.page.get({n:$routeParams.page_num});
 	});
-    app.controller('topsCtrl', function($rootScope, $scope, $filter, provider, commonTools) {
+    app.controller('topsCtrl', function(GLOBAL_APP_CONFIG, $rootScope, $scope, $filter, provider, commonTools) {
         $scope.page_num = 0;
         let entitiesOnPage = 20;
         $scope.mainTokenPrice = null;
+        let currentPreset = GLOBAL_APP_CONFIG.tokenPresets[GLOBAL_APP_CONFIG.presetName];
+        let bannedAccsArr = currentPreset.bannedAccs !== undefined ? currentPreset.bannedAccs : [];
 
         $rootScope.$watch('mainToken', function(newValue, oldValue) {
             if (newValue !== undefined || oldValue !== undefined) {
@@ -3143,7 +3160,7 @@
                         $scope.mainTokenPrice = stat.cg_usd;
                     });
                 }
-               
+
                 $scope.getHistory = function(page){
                     $scope.isLoading = true;
 
@@ -3151,6 +3168,7 @@
                         $scope.page_count = accounts.page_count;
                         $scope.accs = accounts;
                         $scope.accs.accounts.forEach(function(acc, i) {
+                            acc.banned = bannedAccsArr.indexOf(acc.id) !== -1 ? true : false;
                             acc.rank = i + 1 + entitiesOnPage * page;
                             acc.percentage = commonTools.getPersentageString(acc.percentage);
                             if ($rootScope.mainToken.ticker === 'ENQ') {
@@ -3788,6 +3806,7 @@
                 getBalanceAll();
                 let currentPreset = GLOBAL_APP_CONFIG.tokenPresets[GLOBAL_APP_CONFIG.presetName];
                 $scope.showCurrencyToUSDAccountDetails = currentPreset.pagesSectionsVisibility.showCurrencyToUSDAccountDetails;
+                let bannedAccsArr = currentPreset.bannedAccs !== undefined ? currentPreset.bannedAccs : [];
                 $scope.get_amount = function(r){
                     if ((r.kreward !== null) && (r.kreward !== undefined))
                         return r.kreward;
@@ -3837,6 +3856,7 @@
                 provider.account.get({id:$routeParams.id}, function(data) {            
                     commonTools.genQR('#qrcode', data.id);
                     $scope.account = data;
+                    $scope.account.banned = bannedAccsArr.indexOf($routeParams.id) !== -1 ? true : false;
                     if (validator.checkValidDigitalValue($scope.account.balance)) {
                         if ((parseInt($scope.account.balance) / $rootScope.mainTokenFactor) >= 1000) {
                             $scope.isAgent = true;
