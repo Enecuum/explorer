@@ -1351,7 +1351,7 @@
 
 	let app = angular.module('myApp', ['ngResource', 'ngRoute', 'ngCookies', 'pascalprecht.translate','ngAnimate', 'ui.select','ngSanitize'])
         .constant('GLOBAL_APP_CONFIG', {
-            presetName: 'ENQ',            
+            presetName: 'BIT',            
             POSChallenge: {
                 on: false,  
                 address: '03c91e88967465c44aa2afeab3b87dbeede9bd63dbe4a0121ea02fa3f0f4a4e2a8'
@@ -1964,7 +1964,7 @@
                     res.fee_min = $filter('US_COMMAS_BIGINT_DECIMALS')(token.fee_min, token.decimals, token.decimals) +' '+ token.ticker;
                 } else if (token.fee_type === 1) {
                     res.fee_type = 'FEE_TYPE_PERCENT';
-                    res.fee_min = $filter('US_COMMAS_BIGINT_DECIMALS')(token.fee_value, token.decimals, token.decimals);
+                    res.fee_min = $filter('US_COMMAS_BIGINT_DECIMALS')(token.fee_min, token.decimals, token.decimals) +' '+ token.ticker;
                     res.fee_value = $filter('US_COMMAS_BIGINT_DECIMALS')(token.fee_value, 2, 2) + '%';
                 }
                 return res;
@@ -4025,7 +4025,7 @@
                 txData.parameters.fee_value = res.fee_value;
                 txData.parameters.fee_min = res.fee_min;
                 txData.parameters.ref_share = amountInUnits(txData.parameters.ref_share, 2, 2, '%');                
-                $scope.dataFiledsList[txData.type].asToken.forEach(function(param) {                    
+                $scope.dataFiledsList[txData.type].asToken.forEach(function(param) {                   
                     txData.parameters[param] = amountInUnits(txData.parameters[param], txData.parameters.decimals, txData.parameters.decimals, txData.parameters.ticker);
                 });
 
