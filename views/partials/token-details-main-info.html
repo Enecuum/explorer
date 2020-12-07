@@ -82,7 +82,7 @@
 						</tr>
 						<tr>
 							<td>{{'CIRC_SUPPLY' | translate}}</td>
-							<td class="text-nowrap text-right font-weight-bolder">{{tokenCsup !== undefined ? tokenCsup : '---'}}</td>
+							<td class="text-nowrap text-right font-weight-bolder">{{tokenCsup !== undefined ? tokenCsup : (token.total_supply !== undefined ? (token.total_supply| US_COMMAS_BIGINT_DECIMALS : token.decimals : token.decimals)+' '+token.ticker: '---')}}</td>
 						</tr>						
 						<tr>
 							<td>{{'TRANSFERS' | translate}}</td>
