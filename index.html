@@ -247,7 +247,7 @@
                             <div class="card widget-flat">
                                 <div class="card-body text-center">
                                     <span class="mdi mdi-laptop-chromebook" style="font-size: 24px;"></span>
-                                    <h4><span>{{stats.pow_count !== null && stats.pow_count !== undefined ? stats.pow_count : "N/A"}}</span></h4>
+                                    <h4><span>{{externalStats.pow_count !== null && externalStats.pow_count !== undefined ? externalStats.pow_count : "N/A"}}</span></h4>
                                     <p class="text-muted font-15 mb-0">PoW {{'NODES' | translate}}</p>
                                 </div>
                                 <!-- end card-body-->
@@ -255,7 +255,7 @@
                             <div class="card widget-flat">
                                 <div class="card-body text-center">
                                     <span class="mdi mdi-server" style="font-size: 24px;"></span>
-                                    <h4><span>{{stats.pos_count !== null && stats.pos_count !== undefined ? stats.pos_count : "N/A"}}</span></h4>
+                                    <h4><span>{{externalStats.pos_count !== null && externalStats.pos_count !== undefined ? externalStats.pos_count : "N/A"}}</span></h4>
                                     <p class="text-muted font-15 mb-0">PoS {{'NODES' | translate}}</p>
                                 </div>
                                 <!-- end card-body-->
@@ -263,7 +263,7 @@
                             <div class="card widget-flat" ng-if="showFullNodesCountCard">
                                 <div class="card-body text-center">
                                     <span class="mdi mdi-monitor" style="font-size: 24px;"></span>
-                                    <h4><span>{{stats.full_count !== null && stats.full_count !== undefined ? stats.full_count : "N/A"}}</span></h4>
+                                    <h4><span>{{externalStats.full_count !== null && externalStats.full_count !== undefined ? externalStats.full_count : "N/A"}}</span></h4>
                                     <p class="text-muted font-15 mb-0">Full {{'NODES' | translate}}</p>
                                 </div>
                                 <!-- end card-body-->
@@ -272,7 +272,7 @@
                             <div class="card widget-flat">
                                 <div class="card-body text-center">
                                     <span class="mdi mdi-cellphone-android" style="font-size: 24px;"></span>
-                                    <h4><span>{{stats.poa_count !== null && stats.poa_count !== undefined ? stats.poa_count : "N/A"}}</span></h4>
+                                    <h4><span>{{externalStats.poa_count !== null && externalStats.poa_count !== undefined ? externalStats.poa_count : "N/A"}}</span></h4>
                                     <p class="text-muted font-15 mb-0">PoA {{'NODES' | translate}}</p>
                                 </div>
                                 <!-- end card-body-->
@@ -284,7 +284,7 @@
                                 <div class="card-body">
                                     <div class="pb-2">
                                         <h4 class="d-inline header-title">{{'TOTAL_NODES' | translate}}</h4>
-                                        <h3 class="d-inline">{{stats.poa_count + stats.pos_count + stats.pow_count + stats.full_count}}</h3>
+                                        <h3 class="d-inline">{{externalStats.poa_count + externalStats.pos_count + externalStats.pow_count + externalStats.full_count}}</h3>
                                     </div>
                                     <div id="world-map-markers" ng-style="{'height' : showFullNodesCountCard ? '511px' : '360px'}"></div>
                                 </div> <!-- end card-body-->
@@ -1377,6 +1377,23 @@
                         topMenuItemsLinks: {
                             walletLink: 'https://wallet.enecuum.com',
                         },
+                        peerMapURL: 'https://pulse2.enecuum.com/',
+                        documents: {
+                            whitepaper: 'https://enecuum.com/pdf/pp_en.pdf',
+                        },
+                        projectMedia: {                            
+                            facebook: 'https://www.facebook.com/enecuum.EN/?ref=bookmarks',
+                            twitter: 'https://twitter.com/enq_enecuum',
+                            medium: 'https://medium.com/@EnqBlockchain',
+                            github: 'https://github.com/Enecuum',
+                            forklog: 'https://hub.forklog.com/companies/enecuum/',
+                            bitcointalk: 'https://bitcointalk.org/index.php?topic=2939909.0;topicseen',
+                            linkedin: 'https://www.linkedin.com/company/enecuum-limited/',
+                            youtube: 'https://www.youtube.com/channel/UCyZqNfzK_PP82nkAVOlmN4Q',
+                            qq: 'https://qm.qq.com/cgi-bin/qm/qr?k=YfdokyjJnlKl0eAuhVXEc6JtVsoKnxvI&authKey=6WpHwP4Cu/kAAyPyVuBWZeQCjhEyijvLyGf6Jj6P7f9LVCe/9ZZC7YIfRtudjD23&noverify=0',
+                            weixin: 'https://weixin.qq.com/g/AwYAAJdSThUYHIJmetSinRGfcwtrkRovBmLZZr5moi0UXRIW56Me4ts56gByaeYU',
+                            telegram: 'https://t.me/Enecuum_EN'
+                        }
                     },
                     pagesSectionsVisibility: {
                         showFullNodesCountCard: true,
@@ -1387,7 +1404,6 @@
                         showTestNetDisclaimer: false
                     },
                     bannedAccs: [
-                        "02096d938f0001957441b96ab8eeec4815c3f1821686258ef15a6bdbb21764f577",
                         "036808ae1adb7604b52345694723df6b09853e9e43105add144604d382951b0df5",
                         "039099794d26438ceff314524d40f96003099ba4cd0b3419062f85df32792ee139",
                         "033bf7f0aabfcc5150ca32edab63062f527a0bc47b71a1ba58759c8527dc6647fa",
@@ -1397,9 +1413,6 @@
                         "03b75312c96e2dbaa107fdf449377bbd049dd27d3dfec7194371c059702a39ce01",
                         "02218337ec2c7bebb92497244344e5660e11fd832135a47b0eb69b688623e91c1c",
                         "03586a61df7b01c620cda8bd2a0a7f7b3089d17b76e942b498a51089cca38d63d5",
-                        "03f42c04a0df2d447b2bb437bb18f9598fa6330c0305c77d399814c45b1bbcc7b0",
-                        "0298635087276c5a6eaee0a84752cacab59cc4c05056df929f7e939c9e5eb7bc08",
-                        "02036448a9ca899ceb79c69e8717bfa336e108a89c3e0d0f52c9c537389453bcf3"
                     ]
                 },
                 BIT: {
@@ -1419,6 +1432,16 @@
                         topMenuItemsLinks: {
                             walletLink: 'https://bit-wallet.enecuum.com'
                         },
+
+                        peerMapURL: 'https://bit.enecuum.com/',
+                        documents: {
+                            whitepaper: 'https://enecuum.com/pdf/pp_en.pdf',
+                        },
+                        projectMedia: {                            
+                            twitter: 'https://twitter.com/enq_enecuum',
+                            telegram: 'https://t.me/Enecuum_EN',
+                            github: 'https://github.com/Enecuum'
+                        }
                     },
                     pagesSectionsVisibility: {
                         showFullNodesCountCard: true,
@@ -1445,6 +1468,7 @@
                         topMenuItemsLinks: {
                             walletLink: 'https://bit-wallet.enecuum.com'
                         },
+                        peerMapURL: 'https://bit.enecuum.com/',
                         documents: {
                             whitepaper: 'https://enecuum.com/pdf/pp_en.pdf',
                         },
@@ -2100,7 +2124,9 @@
         }
     });  
 
-    app.factory('provider', function ($resource){
+    app.factory('provider', function (GLOBAL_APP_CONFIG, $resource){
+        let currentPreset = GLOBAL_APP_CONFIG.tokenPresets[GLOBAL_APP_CONFIG.presetName];
+        let nodeUrl = currentPreset.externalLinks.peerMapURL;
 		return {
 			page : $resource('api/v1/page?n=:n', {n:'@n'}),
 			macroblock : $resource('api/v1/macroblock?hash=:hash', {hash:'@hash'}),
@@ -2109,6 +2135,7 @@
 			lastblocks : $resource('api/v1/lastblocks', {}),
 			lasttxs : $resource('api/v1/lasttxs', {}),
 			stats : $resource('api/v1/stats', {}),
+            externalStats : $resource(nodeUrl + 'api/v1/stats', {}),
             account : $resource('api/v1/account:filter?id=:id&page=:page', {filter:'@filter',id:'@id', page:'@page'}),
             agent_info : $resource('/api/v1/stat/agent_info?id=:id', {id:'@id'}),
             transaction : $resource('api/v1/tx?hash=:hash', {hash:'@hash'}),
@@ -2212,10 +2239,12 @@
         $scope.blocks = provider.lastblocks.get();
         $scope.txs = provider.lasttxs.get();
         $scope.stats = provider.stats.get();
+        $scope.externalStats = provider.externalStats.get();
+        let peerMapURL = currentPreset.externalLinks.peerMapURL;
 
         $scope.showFullNodesCountCard = currentPreset.pagesSectionsVisibility.showFullNodesCountCard;
 
-        $http({method: 'GET', url: '/api/v1/peer_map'}).
+        $http({method: 'GET', url: peerMapURL + 'api/v1/peer_map'}).
                 then(function (response){
                     let marker_style = [{r: 3, fill:'black'}, {r: 3, fill:'blue'}, {r: 3, fill:'red'}, {r: 3, fill:'green'}];
                     let markers = response.data.filter((el)=> (el.lat !== null && el.lon !== null && el.type !== null && el.count !== null))
