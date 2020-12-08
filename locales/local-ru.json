@@ -321,5 +321,7 @@
     "TRANSFER": "Вывести",
     "CLAIM_REWARD": "Забрать награду",
     "MINT": "Mint",
-    "BURN": "Burn"
+    "BURN": "Burn",
+    "ACCOUNT_WAS_BANNED": "Аккаунт заблокирован",
+    "WARNING": "Предупреждение"
 }
