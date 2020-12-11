@@ -1916,8 +1916,9 @@
                 let path = undefined;
                 let link = "#!/";
                 let pathGroups = {
-                    macroblock : ['ik', 'ifk', 'ifg', 'ifl', 'idust'],
+                    macroblock : ['ik', 'ifk', 'ifg', 'ifl', 'ifv', 'idust'],
                     mblock : ['im', 'iref'],
+                    sblock : ['iv'],
                     tx : ['ic', 'iin', 'iout']
                 };
 
@@ -1925,8 +1926,6 @@
                     Object.entries(pathGroups).forEach(function(pathGroupItem) {
                         if (pathGroupItem[1].indexOf(record.rectype) !== -1) {
                             path = pathGroupItem[0] + '/';
-                        } else if (record.rectype === 'iv') {
-                            path = 'sblock/';
                         }
                     })
                 }
