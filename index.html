@@ -1850,6 +1850,19 @@
     });
 
     app.factory('commonTools', function ($translate, $filter) {
+        let recTypes = {
+            iin : 'TX_IIN',//
+            iout : 'TX_IOUT',//
+            ik : 'REW_TX_IK',//
+            im : 'REW_TX_IM',//
+            iref : 'REW_TX_IREF',//
+            iv : 'REW_TX_IV',
+            ic : 'STAKING_IC',//
+            ifk : 'REW_TX_IFK',// 
+            ifg : 'REW_TX_IFG',//
+            ifl : 'REW_TX_IFL',//
+            idust : 'REW_TX_DUST'//
+        };
         function valueToBigInt(inputNumber, decimals=10) {
             let multiplier = 10 ** decimals;
             let str = String(inputNumber).replace(/,/g, '.');
@@ -1899,21 +1912,32 @@
                 });
                 return translationsArr;
             },
-            resolveTxType : function(rectype, incorrectValue = '---') {
-                let recTypes = {
-                    iin : 'TX_IIN',
-                    iout : 'TX_IOUT',
-                    ik : 'REW_TX_IK',
-                    im : 'REW_TX_IM',
-                    iref : 'REW_TX_IREF',
-                    iv : 'REW_TX_IV',
-                    ic : 'STAKING_IC',
-                    ifk : 'REW_TX_IFK', 
-                    ifg : 'REW_TX_IFG',
-                    ifl : 'REW_TX_IFL',
-                    idust : 'REW_TX_DUST'
+            getTxLink : function(record) {
+                let path = undefined;
+                let link = "#!/";
+                let pathGroups = {
+                    macroblock : ['ik', 'ifk', 'ifg', 'ifl', 'idust'],
+                    mblock : ['im', 'iref'],
+                    tx : ['ic', 'iin', 'iout']
                 };
 
+                if (recTypes.hasOwnProperty(record.rectype)) {
+                    Object.entries(pathGroups).forEach(function(pathGroupItem) {
+                        if (pathGroupItem[1].indexOf(record.rectype) !== -1) {
+                            path = pathGroupItem[0] + '/';
+                        } else if (record.rectype === 'iv') {
+                            path = 'sblock/';
+                        }
+                    })
+                }
+
+                if (path !== undefined)
+                    link = '#!/' + path + record.hash;
+
+                return link;
+
+            },
+            getTxTypeLocaleString : function(rectype, incorrectValue = '---') {
                 if (recTypes.hasOwnProperty(rectype)) {
                     return recTypes[rectype];
                 } else
@@ -3893,13 +3917,15 @@
                     }
                 }
 
+                $scope.getTxTypeLocaleString = commonTools.getTxTypeLocaleString;
+                $scope.getTxLink = commonTools.getTxLink;
+
                 $scope.account_txs = {}
                 $scope.getAccTxs = function(page){
                     $scope.isLoading = true;
                     provider.account_transactions.get({id:$routeParams.id, page:page}, function(account_txs) {            
                         $scope.account_txs.records = account_txs.records;
                         $scope.account_txs.records.forEach(function(record) {
-                            record.rectype = commonTools.resolveTxType(record.rectype);
                             record.time = dateTimeConverter.getTimestamp(record.time);
                             provider.token_info.query({hash:record.token_hash}, function(token_info) {
                                 record.token_decimals = token_info[0].decimals;
@@ -3918,7 +3944,6 @@
                         $scope.account_rewards.records = account_rewards.records;
                         $scope.account_rewards.records.forEach(function(record) {
                             record.time = dateTimeConverter.getTimestamp(record.time);
-                            record.rectype = commonTools.resolveTxType(record.rectype);
                         });
                         $scope.account_rewards.page_count = account_rewards.page_count;
                         $scope.isLoading = false;

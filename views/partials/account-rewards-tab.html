@@ -11,9 +11,9 @@
         <tbody style="font-size: 12px;">
             <tr ng-repeat="record in account_rewards.records">
                 <td>{{record.time === null ? 'null' : record.time}}</td>
-                <td>{{record.rectype | translate}}</td>
+                <td>{{getTxTypeLocaleString(record.rectype) | translate}}</td>
                 <td>{{record.amount | US_COMMAS_BIGINT_DECIMALS : mainToken.decimals : mainToken.decimals}} {{mainToken.ticker}}</td>
-                <td><a class="d-block fit" style="width: 100px;" ng-href="#!/{{record.rectype === 'REW_TX_IM'? 'mblock': 'tx'}}/{{record.hash}}">{{record.hash}}</a></td>
+                <td><a class="d-block fit" style="width: 100px;" ng-href="{{getTxLink(record)}}">{{record.hash}}</a></td>
             </tr>
         </tbody>
     </table>
