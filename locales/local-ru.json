@@ -300,6 +300,7 @@
     "REW_TX_IFG" : "Genesis TX fee",
     "REW_TX_IFL" : "PoS leader fees",
     "REW_TX_DUST" : "Dust",
+    "REW_TX_IFV" : "PoS TX fee",
     "IMPORT_TOKENOMICS" : "Импортировать токеномику",
     "SAVE_AS_PDF" : "Сохранить в PDF",
     "SAVE_AS_JSON" : "Сохранить в JSON",

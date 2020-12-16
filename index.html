@@ -1851,17 +1851,18 @@
 
     app.factory('commonTools', function ($translate, $filter) {
         let recTypes = {
-            iin : 'TX_IIN',//
-            iout : 'TX_IOUT',//
-            ik : 'REW_TX_IK',//
-            im : 'REW_TX_IM',//
-            iref : 'REW_TX_IREF',//
+            iin : 'TX_IIN',
+            iout : 'TX_IOUT',
+            ik : 'REW_TX_IK',
+            im : 'REW_TX_IM',
+            iref : 'REW_TX_IREF',
             iv : 'REW_TX_IV',
-            ic : 'STAKING_IC',//
-            ifk : 'REW_TX_IFK',// 
-            ifg : 'REW_TX_IFG',//
-            ifl : 'REW_TX_IFL',//
-            idust : 'REW_TX_DUST'//
+            ifv : 'REW_TX_IFV',
+            ic : 'STAKING_IC',
+            ifk : 'REW_TX_IFK', 
+            ifg : 'REW_TX_IFG',
+            ifl : 'REW_TX_IFL',
+            idust : 'REW_TX_DUST'
         };
         function valueToBigInt(inputNumber, decimals=10) {
             let multiplier = 10 ** decimals;
