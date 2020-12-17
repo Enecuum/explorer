@@ -318,10 +318,17 @@ table.ordinary-table tr td {
    height: 196px; 
 }
 
-#posDescriptionText {
-    max-height: 100px;
+#posDescriptionText, #tokenDescriptionText {
     min-width: 250px;
     padding-right: 10px;
+}
+
+#posDescriptionText {
+    max-height: 100px;
+}
+
+#tokenDescriptionText {
+    max-height: 163px;
 }
 
 #posRankBadge {
@@ -351,18 +358,18 @@ table.ordinary-table tr td {
 }
 
 @media (max-width: 1199.98px) {
-    #posWebSite {
+    #posWebSite, #tokenWebSite {
         width: 100%;
     }
-    #posTitle {
+    #posTitle, #tokenTitle {
         width: calc(100% - 130px);
     }
 
-    #posDescriptionCard {
+    #posDescriptionCard, #tokenDescriptionCard {
        height: auto; 
     }
 
-    #posDescriptionText {
+    #posDescriptionText, #tokenDescriptionText {
         max-height: 100%;
         min-width: none;
         padding-right: 0px;
@@ -446,10 +453,6 @@ a.select2-choice.ui-select-match {
     border: 1px solid #dee2e6!important;
     border-radius: .25rem!important;
 }
-
-/*.ui-select-container.select2.select2-container.ng-not-empty.select2-container-active.select2-dropdown-open.open a.select2-choice.ui-select-match {
-    border: 1px solid #dee2e6!important;
-}*/
 
 .ui-select-dropdown.select2-drop.select2-with-searchbox.select2-drop-active {
     margin-top: 1px!important;

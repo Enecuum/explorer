@@ -6,25 +6,26 @@
 <div class="row">
 	<div class="col-xl-6 col-md-12">
 		<div class="card">
-		    <div class="card-body" id="tokenDescriptionCard">
-		    	<div class="d-flex justify-content-between">
-			    	<div class="d-flex justify-content-start flex-grow-1">
-			    		<div>
-			    			<div class="item-avatar-blank-wrapper d-flex align-items-center justify-content-center mr-2 flex-shrink-0 flex-grow-0">
-				    			<span class="item-avatar-blank-content flex-shrink-0 flex-grow-0">{{token.ticker.charAt(0)}}</span>
-				    		</div>
+		    <div class="card-body" id="posDescriptionCard">
+		    	<div class="d-block d-xl-flex justify-content-between">
+			    	<div class="d-flex justify-content-start">
+			    		<div class="item-avatar-blank-wrapper d-flex align-items-center justify-content-center mr-2 flex-shrink-0 flex-grow-0">		    			
+			    			<span class="item-avatar-blank-content flex-shrink-0 flex-grow-0">{{token.ticker.charAt(0)}}</span>
 			    		</div>
-			    		<div class="pt-2 mr-2 flex-grow-1">
-		    				<div class="text-uppercase mb-2 header-title">{{token.caption}} ({{token.ticker}})</div>
-		    				<div data-simplebar1 data-simplebar-lg1 data-simplebar-auto-hid1e="false" class="pr-2" style="max-height: 110px;"></div>
+			    		<div class="pt-2 mr-2" id="tokenTitle">
+		    				<div class="text-uppercase mb-2 header-title fit w-100">{{token.caption}} ({{token.ticker}})</div>
+		    				<div class="mb-2 text-nowrap">
+		    					<span class="cusom-badge badge-pill" ng-class="tokenTypeBadgeClass">
+		    						{{token.type}}
+	                            </span>
+	                        </div>		    				
 			    		</div>
 			    	</div>
-	    			<div class="pt-2 ml-3">
-	    				<div class="mb-2 text-nowrap font-size-15">{{'TOKEN_TYPE' | translate}}:</div>
-	    				<div class="text-nowrap font-size-15">{{token.type}}</div>
+	    			<div data-simplebar data-simplebar-lg data-simplebar-auto-hide="false" id="tokenDescriptionText" ng-if="tokenDescriptionText !== undefined" class="mt-2 mt-xl-0">
+	    				{{tokenDescriptionText}}
 	    			</div>		    			
 		    	</div>
-		    </div>
+		    </div>		    
 		</div>		
 	</div>
 	<div class="col-xl-6 col-md-12">
@@ -81,7 +82,7 @@
 						</tr>
 						<tr>
 							<td>{{'CIRC_SUPPLY' | translate}}</td>
-							<td class="text-nowrap text-right font-weight-bolder">{{tokenCsup !== undefined ? tokenCsup : '---'}}</td>
+							<td class="text-nowrap text-right font-weight-bolder">{{tokenCsup !== undefined ? tokenCsup : (token.total_supply !== undefined ? (token.total_supply| US_COMMAS_BIGINT_DECIMALS : token.decimals : token.decimals)+' '+token.ticker: '---')}}</td>
 						</tr>						
 						<tr>
 							<td>{{'TRANSFERS' | translate}}</td>
@@ -158,19 +159,19 @@
 						<div class="d-flex flex-column">
 							<div class="d-flex align-items-center py-095">
 								<i class="dripicons-web mr-1" style="color: #CAD8E6;"></i>
-								<div class="pr-2">{{'OFFICIAL_SITE' | translate}}:</div> 
+								<div class="pr-2 text-nowrap">{{'OFFICIAL_SITE' | translate}}:</div> 
 							</div>
 							<div class="d-flex align-items-center py-095" style="border-top: 1px solid rgb(227, 234, 239);">
 								<i class="dripicons-document mr-1" style="color: #CAD8E6;"></i>
-								<div class="pr-2">{{'WHITEPAPER' | translate}}:</div> 
+								<div class="pr-2 text-nowrap">{{'WHITEPAPER' | translate}}:</div> 
 							</div>						
 						</div>
-						<div class="d-flex flex-column flex-grow-1">
+						<div class="d-flex flex-column flex-grow-1 w-50">
 							<div class="py-095">
-								<a ng-href="{{additionalTokenData.officialSiteLink}}">{{additionalTokenData.officialSiteText}}</a>
+								<a ng-href="{{additionalTokenData.officialSiteLink}}" class="d-block fit">{{additionalTokenData.officialSiteText}}</a>
 							</div>
 							<div class="py-095" style="border-top: 1px solid rgb(227, 234, 239);">
-								<a ng-href="{{additionalTokenData.whitepaperLink}}">{{additionalTokenData.whitepaperLinkText}}</a>
+								<a ng-href="{{additionalTokenData.whitepaperLink}}"  class="d-block fit">{{additionalTokenData.whitepaperLinkText}}</a>
 							</div>						
 						</div>												
 					</div>
