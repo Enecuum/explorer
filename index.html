@@ -1536,24 +1536,6 @@
     });
 
     app.service('currencyExchange', function($filter, validator, commonTools) {
-        let currencyInfoStorage = {
-            usd: {
-                ticker : 'USD',
-                paramInStat : 'cg_usd',
-                // toFixed : 3 
-            },
-            eth: {
-                ticker : 'ETH',
-                paramInStat : 'cg_eth',
-                // toFixed : 6 
-            },
-            btc: {
-                ticker : 'BTC',
-                paramInStat : 'cg_btc',
-                // toFixed : 8 
-            }
-        };
-
         this.getCurrencyInfo = function() {
             return currencyInfoStorage
         }
@@ -1562,7 +1544,7 @@
             return (validator.checkValidDigitalValue(value) && validator.checkValidDigitalValue(rate)) ? value * rate : '---';
         }
 
-        this.bigIntConvertValueToCurrency = function(value_in_BigInt, valueDecimals, rate_in_Numbers, toFixed) {
+        this.bigIntConvertValueToCurrency = function(value_in_BigInt, rate_in_Numbers, valueDecimals, toFixed) {
             if (value_in_BigInt !== undefined) {              
                 let rateDecimals = rate_in_Numbers.split('.')[1].length;
                 let totalDecimals = rateDecimals + valueDecimals;
@@ -1575,25 +1557,6 @@
     });
 
     app.factory('roiCalc', function ($filter, currencyExchange) {
-        let periods = [
-            {
-                titleInLocale: "ROI_DAILY",
-                factor: 1 
-            },
-            {
-                titleInLocale: "ROI_WEEKLY",
-                factor: 7 
-            },
-            {
-                titleInLocale: "ROI_MONTHLY",
-                factor: 30 
-            },
-            {
-                titleInLocale: "ROI_ANNUALLY",
-                factor: 365 
-            }
-        ];
-
         function lerp(y0, y1, x0, x1, y) {
             return (x0 + ((y - y0) / (y1 - y0)) * (x1 - x0))
         };
@@ -1610,53 +1573,38 @@
             return 0;            
         }
 
-        function batchConvertToCurr(value, valueDecimals, ratesObj, targetCurrenciesList) {
+        function batchConvertToCurr(value, ratesObj) {
             let result = [];
-            let currInfo = currencyExchange.getCurrencyInfo();
-            currInfo.forEach(function(currency) {
+            
+            ratesObj.forEach(function(currency) {
                 result.push({
                     name: currency.ticker,
-                    value: currencyExchange.bigIntConvertValueToCurrency(value, valueDecimals, ratesObj[currency.paramInStat], currency.toFixed) + ' ' + currency.ticker
+                    value: currencyExchange.convertValue(value, currency.rate).toFixed(currency.toFixed) + ' ' + currency.ticker
                 });
             });
             return result;
         }
 
-        let getPOA_ROIs = function(stake, stakeDecimals, stakeTicker, roiArrForLerp, ratesInfo, factorIfReferral=0, targetCurrenciesList) {
-            if(!roiArrForLerp.length)
-                return false;
-            stake = parseFloat(stake);
-            if(isNaN(stake)){
-                return false;
-            }
+        let getPOA_ROIs = function(poaROIData) {
+            let roiData = [];
+            let tokenFactor = Math.pow(10, poaROIData.stakeDecimals);
+            if(!poaROIData.roiArrForLerp.length || isNaN(poaROIData.stake))
+                return roiData;
 
-            stake = stake * Math.pow(10, stakeDecimals);
-            let roi = stakeToROI(stake, roiArrForLerp);
+            let stake = poaROIData.stake * tokenFactor;
+            let roi = stakeToROI(stake, poaROIData.roiArrForLerp);
             let ratio = ((roi - stake) / stake);            
-            ratio += ratio * factorIfReferral;
-            let roiData = [
-                {
-                    period: "ROI_DAILY",
-                    values: [{name: stakeTicker, value : $filter('US_COMMAS_BIGINT_DECIMALS')((stake * ratio), stakeDecimals , 2) + ' ' + stakeTicker}].concat(batchConvertToCurr(stake * ratio, stakeDecimals, ratesInfo)),
-                    roi: "+ " + (ratio * 100).toFixed(2) + " %"
-                },
-                {
-                    period: "ROI_WEEKLY",
-                    values: [{name: stakeTicker, value : $filter('US_COMMAS_BIGINT_DECIMALS')((stake * ratio * 7), stakeDecimals , 2) + ' ' + stakeTicker}].concat(batchConvertToCurr(stake * ratio * 7, stakeDecimals, ratesInfo)),
-                    roi: "+ " + (ratio * 7 * 100).toFixed(2) + " %"
-                },
-                {
-                    period: "ROI_MONTHLY",
-                    values: [{name: stakeTicker, value : $filter('US_COMMAS_BIGINT_DECIMALS')((stake * ratio * 30), stakeDecimals , 2) + ' ' + stakeTicker}].concat(batchConvertToCurr(stake * ratio * 30, stakeDecimals, ratesInfo)),
-                    roi: "+ " + (ratio * 30 * 100).toFixed(2) + " %"
-                },
-                {
-                    period: "ROI_ANNUALLY",
-                    values: [{name: stakeTicker, value : $filter('US_COMMAS_BIGINT_DECIMALS')((stake * ratio * 365), stakeDecimals , 2) + ' ' + stakeTicker}].concat(batchConvertToCurr(stake * ratio * 365, stakeDecimals, ratesInfo)),
-                    roi: "+ " + (ratio * 365 * 100).toFixed(2) + " %"
-                }
-            ];
+            ratio += ratio * poaROIData.factorIfReferral;            
 
+            poaROIData.periods.forEach(function(period, index, array) {
+                let value = (stake * ratio * period.daysFactor) / tokenFactor;
+
+                roiData[index] = {
+                    period : period.titleInLocale,
+                    roi : "+ " + (ratio * 100 * period.daysFactor).toFixed(2) + " %",
+                    values : batchConvertToCurr(value, poaROIData.currencyInfo)
+                };
+            });
             return roiData
         }
 
@@ -2235,8 +2183,6 @@
         $scope.currentPreset = GLOBAL_APP_CONFIG.tokenPresets[GLOBAL_APP_CONFIG.presetName];
         $scope.showROICalc = $scope.currentPreset.pagesSectionsVisibility.showROICalc;
 
-        let getPOA_ROIs = roiCalc.getPOA_ROIs;
-
         if ($scope.showROICalc === false) {
             $window.location.href = '/';
         }
@@ -2340,16 +2286,75 @@
                     return 0;
             }
 
-            $scope.rois = provider.roi.query(function(roi){
-                $scope.reloadROI = function(stake) {
-                    let refFactor = $scope.refCheck ? 0.1 : 0;
-                    // console.log(stat)
-                    $scope.roiData = getPOA_ROIs(stake, $scope.translationData.tokenName, $rootScope.mainToken.decimals, roi, stat, refFactor);
-                    console.log($scope.roiData)
-                }            
+
+            let getPOA_ROIs = roiCalc.getPOA_ROIs;
+
+            let poaROIData = {
+                stake : null,
+                stakeTicker : $scope.translationData.tokenName,
+                stakeDecimals : $rootScope.mainToken.decimals,
+                roiArrForLerp : null,
+                stat : stat,
+                factorIfReferral : null,
+                periods : [
+                    {
+                        titleInLocale: "ROI_DAILY",
+                        daysFactor: 1 
+                    },
+                    {
+                        titleInLocale: "ROI_WEEKLY",
+                        daysFactor: 7 
+                    },
+                    {
+                        titleInLocale: "ROI_MONTHLY",
+                        daysFactor: 30 
+                    },
+                    {
+                        titleInLocale: "ROI_ANNUALLY",
+                        daysFactor: 365 
+                    }
+                ],
+                currencyInfo : [
+                    {
+                        ticker : $scope.translationData.tokenName,
+                        rate : 1,
+                        toFixed : 2 
+                    },                
+                    {
+                        ticker : 'USD',
+                        rate : stat.cg_usd,
+                        toFixed : 3 
+                    },
+                    {
+                        ticker : 'ETH',
+                        rate : stat.cg_eth,
+                        toFixed : 6 
+                    },
+                    {
+                        ticker : 'BTC',
+                        rate : stat.cg_btc,
+                        toFixed : 8 
+                    }
+                ]
+            };
+
+            $scope.reloadROI = function(stake) {/////////////////////////////////////////зАМЕНИТЬ РЕЛОАД НА ДРУГОЕ НАЗВАНИЕ
+                poaROIData.stake = parseFloat(stake);
+                console.log($scope.refCheck)
+                poaROIData.factorIfReferral = $scope.refCheck ? 0.1 : 0;
+                $scope.roiData = getPOA_ROIs(poaROIData);
+            }
+
+            $scope.rois = provider.roi.query(function(roiArrForLerp){
+                poaROIData.roiArrForLerp = roiArrForLerp;            
                 $scope.reloadROI($scope.stake);
             });
         });
+
+
+        // $scope.$watch('refCheck', function(newValue, oldValue) {
+        //     console.log(newValue)
+        // })
 
         // $scope.reloadROI = function(stake){
         //     if(!$scope.rois.length || !$scope.stats.$resolved)
