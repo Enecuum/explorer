@@ -1010,11 +1010,10 @@
                     </div>
 
 
-                        <div class="tab-content justify-content-center mt-3">
-                            <div class="tab-pane row show active justify-content-center" id="poaCalculatorTab" ng-include="'views/partials/poa-calculator-tab.html'"></div>
-                            <div class="tab-pane fade row" id="powCalculatorTab" ng-include="'views/partials/pow-calculator-tab.html'" ng-init="powCalc.calculate();"></div>
-                            <div class="tab-pane fade row" id="posCalculatorTab" ng-include="'views/partials/pos-calculator-tab.html'"></div>
-                        </div>
+                    <div class="tab-content justify-content-center mt-3">
+                        <div class="tab-pane row show active justify-content-center" id="poaCalculatorTab" ng-include="'views/partials/poa-calculator-tab.html'"></div>
+                        <div class="tab-pane fade row" id="powCalculatorTab" ng-include="'views/partials/pow-calculator-tab.html'" ng-init="powCalc.calculate();"></div>
+                        <div class="tab-pane fade row" id="posCalculatorTab" ng-include="'views/partials/pos-calculator-tab.html'"></div>
                     </div>
                 </script>
                 <script type="text/ng-template" id="tokenROI">
@@ -2226,50 +2225,6 @@
 
         $scope.showExchangesSection = $scope.currentPreset.pagesSectionsVisibility.showExchangesSection;        
 
-        // $scope.convert = function(enq){
-        //     enq = enq / $rootScope.mainTokenFactor;
-        //     // Add more in future
-        //     return [
-        //         {
-        //             name:$scope.translationData.tokenName,
-        //             value: commas(enq.toFixed(2)) + ' ' + $scope.translationData.tokenName
-        //         },
-        //         {
-        //             name:'USD',
-        //             value: commas((enq * parseFloat($scope.stats.cg_usd)).toFixed(3)) + ' USD'
-        //         },
-        //         {
-        //             name:'ETH',
-        //             value: (enq * parseFloat($scope.stats.cg_eth)).toFixed(6) + ' ETH'
-        //         },
-        //         {
-        //             name:'BTC',
-        //             value: (enq * parseFloat($scope.stats.cg_btc)).toFixed(8) + ' BTC'
-        //         }
-        //     ]
-        // };
-
-        // $scope.lerp = function(y0, y1, x0, x1, y){
-        //     return (x0 + ((y - y0) / (y1 - y0)) * (x1 - x0))
-        // };
-
-
-
-        // $scope.calcROI = function(stake){
-        //     let rois = $scope.rois;
-        //     for (let i = 0; i < rois.length; i++) {
-        //         if(stake === rois[i].stake){
-        //             return rois[i].roi;
-        //         }
-        //         else if(stake < rois[i].stake){
-        //             return this.lerp(rois[i-1].stake, rois[i].stake, rois[i-1].roi, rois[i].roi, stake)
-        //         }
-        //     }
-        //     return 0;
-        // };
-
-
-
         $scope.stats = provider.stats.get(function(stat){
             let statsPropertiesArr = ['total_daily_stake','reward_poa','poa_count','cg_usd','cg_btc'];
             statsPropertiesArr.forEach(function(item) {
@@ -2286,9 +2241,8 @@
                     return 0;
             }
 
-
             let getPOA_ROIs = roiCalc.getPOA_ROIs;
-
+            $scope.refCheck = false;
             let poaROIData = {
                 stake : null,
                 stakeTicker : $scope.translationData.tokenName,
@@ -2338,10 +2292,9 @@
                 ]
             };
 
-            $scope.reloadROI = function(stake) {/////////////////////////////////////////зАМЕНИТЬ РЕЛОАД НА ДРУГОЕ НАЗВАНИЕ
+            $scope.reloadROI = function(stake) {
                 poaROIData.stake = parseFloat(stake);
-                console.log($scope.refCheck)
-                poaROIData.factorIfReferral = $scope.refCheck ? 0.1 : 0;
+                poaROIData.factorIfReferral = $scope.refCheck === true ? 0.1 : 0;
                 $scope.roiData = getPOA_ROIs(poaROIData);
             }
 
@@ -2350,65 +2303,8 @@
                 $scope.reloadROI($scope.stake);
             });
         });
-
-
-        // $scope.$watch('refCheck', function(newValue, oldValue) {
-        //     console.log(newValue)
-        // })
-
-        // $scope.reloadROI = function(stake){
-        //     if(!$scope.rois.length || !$scope.stats.$resolved)
-        //         return false;
-        //     $scope.isLoaded = true;
-        //     stake = parseFloat(stake);
-        //     if(isNaN(stake)){
-        //         return false;
-        //     }
-
-        //     if(stake < $scope.min_stake || stake > $scope.max_stake ){
-        //         $.toast({
-        //             heading: 'Error',
-        //             text: `Stake is out of range ${$scope.min_stake}...${$scope.max_stake}`,
-        //             icon: 'error',
-        //             hideAfter: 5000,
-        //             stack: 3,
-        //             position: 'top-right',
-        //             loader: false
-        //         });
-        //         return false;
-        //     }
-
-        //     $scope.translationData.stake = stake;
-        //     $scope.ROIHeaderTranslate();
-        //     stake = stake * $rootScope.mainTokenFactor;
-        //     let roi = $scope.calcROI(stake);
-        //     let ratio = ((roi - stake) / stake);
-        //     if($scope.refCheck)
-        //         ratio += ratio * 0.1;
-        //     $scope.roiData = [
-        //         {
-        //             period: "ROI_DAILY",
-        //             values: $scope.convert((stake * ratio)),
-        //             roi: "+ " + (ratio * 100).toFixed(2) + " %"
-        //         },
-        //         {
-        //             period: "ROI_WEEKLY",
-        //             values: $scope.convert(stake * ratio * 7),
-        //             roi: "+ " + (ratio * 7 * 100).toFixed(2) + " %"
-        //         },
-        //         {
-        //             period: "ROI_MONTHLY",
-        //             values: $scope.convert(stake * ratio * 30),
-        //             roi: "+ " + (ratio * 30 * 100).toFixed(2) + " %"
-        //         },
-        //         {
-        //             period: "ROI_ANNUALLY",
-        //             values: $scope.convert(stake * ratio * 365),
-        //             roi: "+ " + (ratio * 365 * 100).toFixed(2) + " %"
-        //         }
-        //     ];
-        // };
-
+        
+        ////////////////////////////////// PoW Calc
         $scope.showPOWCalcResult = false;
 
         $scope.powCalc = {
