@@ -55,8 +55,8 @@
                     <div class="row">
                         <div class="col-xl-3 col-sm-12">
                             <p class="mt-3">{{'ROI_RANGE' | translate: translationData}}</p>
-                            <div class="custom-control custom-checkbox" ng-click="reloadROI(stake)">
-                                <input type="checkbox" class="custom-control-input" id="customCheck1" ng-model="refCheck">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" id="customCheck1" ng-model="$parent.refCheck" ng-change="reloadROI(stake)">
                                 <label class="custom-control-label" for="customCheck1">{{'IS_REFERRAL' | translate}}</label>
                             </div>
                         </div>

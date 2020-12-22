@@ -1523,6 +1523,22 @@
                 return tokenInfo
             }
         } 
+    });
+
+    app.factory('Toast', function($translate) {
+        return {
+            stakeErrorToast : function(msg){
+                $.toast({
+                    heading: 'Error',
+                    text: msg,
+                    icon: 'error',
+                    hideAfter: 5000,
+                    stack: 3,
+                    position: 'top-right',
+                    loader: false
+                })                
+            }
+        }
     });    
 
     app.service('dateTimeConverter', function() {
@@ -1535,10 +1551,6 @@
     });
 
     app.service('currencyExchange', function($filter, validator, commonTools) {
-        this.getCurrencyInfo = function() {
-            return currencyInfoStorage
-        }
-
         this.convertValue = function(value, rate) {
             return (validator.checkValidDigitalValue(value) && validator.checkValidDigitalValue(rate)) ? value * rate : '---';
         }
@@ -1573,8 +1585,7 @@
         }
 
         function batchConvertToCurr(value, ratesObj) {
-            let result = [];
-            
+            let result = [];            
             ratesObj.forEach(function(currency) {
                 result.push({
                     name: currency.ticker,
@@ -1605,21 +1616,6 @@
                 };
             });
             return roiData
-        }
-
-        function toastIfOutOfRange(stake, min_stake, max_stake) {
-            if(stake < min_stake || stake > max_stake ){
-                $.toast({
-                    heading: 'Error',
-                    text: `Stake is out of range ${min_stake}...${max_stake}`,
-                    icon: 'error',
-                    hideAfter: 5000,
-                    stack: 3,
-                    position: 'top-right',
-                    loader: false
-                });
-                return false;
-            }            
         }
 
         return {
@@ -2178,7 +2174,7 @@
         return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     };
 
-    app.controller('roiCtrl', function(GLOBAL_APP_CONFIG, $window, $scope, $rootScope, $translate, provider, validator, currencyExchange, commonTools, roiCalc) {
+    app.controller('roiCtrl', function(GLOBAL_APP_CONFIG, $window, $scope, $rootScope, $translate, provider, validator, currencyExchange, commonTools, roiCalc, Toast) {
         $scope.currentPreset = GLOBAL_APP_CONFIG.tokenPresets[GLOBAL_APP_CONFIG.presetName];
         $scope.showROICalc = $scope.currentPreset.pagesSectionsVisibility.showROICalc;
 
@@ -2242,7 +2238,6 @@
             }
 
             let getPOA_ROIs = roiCalc.getPOA_ROIs;
-            $scope.refCheck = false;
             let poaROIData = {
                 stake : null,
                 stakeTicker : $scope.translationData.tokenName,
@@ -2293,9 +2288,14 @@
             };
 
             $scope.reloadROI = function(stake) {
-                poaROIData.stake = parseFloat(stake);
-                poaROIData.factorIfReferral = $scope.refCheck === true ? 0.1 : 0;
-                $scope.roiData = getPOA_ROIs(poaROIData);
+                if(stake < $scope.min_stake || stake > $scope.max_stake ){
+                    Toast.stakeErrorToast(`Stake is out of range ${$scope.min_stake}...${$scope.max_stake}`);
+                    $scope.roiData = [];
+                } else {
+                    poaROIData.stake = parseFloat(stake);
+                    poaROIData.factorIfReferral = $scope.refCheck === true ? 0.1 : 0;
+                    $scope.roiData = getPOA_ROIs(poaROIData);                    
+                }
             }
 
             $scope.rois = provider.roi.query(function(roiArrForLerp){
