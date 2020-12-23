@@ -1608,7 +1608,6 @@
 
             poaROIData.periods.forEach(function(period, index, array) {
                 let value = (stake * ratio * period.daysFactor) / tokenFactor;
-
                 roiData[index] = {
                     period : period.titleInLocale,
                     roi : "+ " + (ratio * 100 * period.daysFactor).toFixed(2) + " %",
@@ -1727,7 +1726,6 @@
 			return input;
 		}
 	});
-
 
     app.factory('apexRadialChart', function ($window) {    
         return {
@@ -2003,7 +2001,7 @@
             agent_info : $resource('/api/v1/stat/agent_info?id=:id', {id:'@id'}),
             transaction : $resource('api/v1/tx?hash=:hash', {hash:'@hash'}),
             top_accounts : $resource('api/v1/top_accounts?page=:page', {page:'@page'}),
-            roi : $resource('api/v1/roi', {}),
+            roi : $resource('api/v1/roi?hash=:hash', {hash:'@hash'}),
             stake_limits : $resource('api/v1/get_stake_limits', {}),
             get_tickers_all : $resource('api/v1/get_tickers_all', {query: {method: 'GET', isArray: true}}),
             get_token_info_page : $resource('api/v1/get_token_info_page?page=:page', {page:'@page'}),
@@ -2237,7 +2235,6 @@
                     return 0;
             }
 
-            let getPOA_ROIs = roiCalc.getPOA_ROIs;
             let poaROIData = {
                 stake : null,
                 stakeTicker : $scope.translationData.tokenName,
@@ -2294,7 +2291,7 @@
                 } else {
                     poaROIData.stake = parseFloat(stake);
                     poaROIData.factorIfReferral = $scope.refCheck === true ? 0.1 : 0;
-                    $scope.roiData = getPOA_ROIs(poaROIData);                    
+                    $scope.roiData = roiCalc.getPOA_ROIs(poaROIData);                    
                 }
             }
 
@@ -3068,7 +3065,7 @@
         };
         $scope.getHistory(0);
     });
-    app.controller('tokenCtrl', function($scope, $rootScope, $routeParams, GLOBAL_APP_CONFIG, provider, tokenInfoStorage, commonTools, $translate, $filter) {
+    app.controller('tokenCtrl', function($scope, $rootScope, $routeParams, GLOBAL_APP_CONFIG, provider, tokenInfoStorage, commonTools, $translate, $filter, roiCalc, Toast) {
         let currentPreset = GLOBAL_APP_CONFIG.tokenPresets[GLOBAL_APP_CONFIG.presetName];
         $scope.additionalTokenData = {
             officialSiteLink : '',
@@ -3118,7 +3115,113 @@
             }
 
             $scope.media = $scope.token.customerInfo.media;
+
+            $scope.stake = 25;
+            $scope.min_stake  = 25;
+            $scope.max_stake = 25000;
+
+            let diff = parseInt($scope.max_stake - $scope.min_stake);
+
+            let orderStr =  String(diff)
+            let order = orderStr.length;
+            order = order - 2;
+            let step = Math.pow(10, order);
+
+            if (parseInt(diff / step) > 10)
+                step *= 5;
+
+            $scope.upStake = function() {
+                $scope.stake = parseFloat($scope.stake); 
+                if ( ($scope.stake + step) > $scope.max_stake)
+                    $scope.stake = $scope.max_stake;
+                else if (($scope.stake + step) < $scope.min_stake)
+                    $scope.stake = $scope.min_stake;
+                else
+                    $scope.stake += step;
+            }
+
+            $scope.downStake = function() {
+                $scope.stake = parseFloat($scope.stake);
+                if (($scope.stake - step) < $scope.min_stake)
+                    $scope.stake = $scope.min_stake;
+                else if (($scope.stake - step) > $scope.max_stake)
+                    $scope.stake = $scope.max_stake;
+                else
+                    $scope.stake -= step;
+            }
+
             provider.stats.get({}, function(stat) {
+                let poaROIData = {
+                    stake : null,
+                    stakeTicker : $scope.token.ticker,
+                    stakeDecimals : $scope.token.decimals,
+                    roiArrForLerp : null,
+                    stat : stat,
+                    factorIfReferral : null,
+                    periods : [
+                        {
+                            titleInLocale: "ROI_WEEKLY",
+                            daysFactor: 7 
+                        },
+                        {
+                            titleInLocale: "ROI_MONTHLY",
+                            daysFactor: 30 
+                        },
+                        {
+                            titleInLocale: "ROI_ANNUALLY",
+                            daysFactor: 365 
+                        }
+                    ],
+                    currencyInfo : [
+                        {
+                            ticker : $scope.token.ticker,
+                            rate : 1,
+                            toFixed : 2 
+                        }
+                    ]
+                };
+
+                $scope.reloadROI = function(stake) {
+                    $scope.roiData = [
+                        {
+                            period : "ROI_WEEKLY",
+                            roi : '---',
+                            values : [{value : '---'}]
+                        },
+                        {
+                            period : "ROI_WEEKLY",
+                            roi : '---',
+                            values : [{value : '---'}]
+                        },
+                        {
+                            period : "ROI_WEEKLY",
+                            roi : '---',
+                            values : [{value : '---'}]
+                        }
+                    ];
+
+                    if (stake === undefined) {
+                        return false
+                    } else if (stake < $scope.min_stake || stake > $scope.max_stake ){
+                        Toast.stakeErrorToast(`Stake is out of range ${$scope.min_stake}...${$scope.max_stake}`);
+                        return false
+                    } else {
+                        poaROIData.stake = parseFloat(stake);
+                        poaROIData.factorIfReferral = $scope.refCheck === true ? 0.1 : 0;
+                        let result = roiCalc.getPOA_ROIs(poaROIData);
+                        $scope.roiData = result.length === 0 ? $scope.roiData : result;                                       
+                    }
+                }
+
+                provider.roi.query({hash:$routeParams.hash},function(roiArrForLerp){
+                    poaROIData.roiArrForLerp = roiArrForLerp;
+                    $scope.$watch('stake', function(newValue, oldValue) {
+                        if (newValue !== undefined && newValue != '') {
+                            $scope.reloadROI(newValue);
+                        }
+                    });
+                });
+
                 if ($routeParams.hash === $rootScope.mainToken.hash) {
                     if ($rootScope.mainToken.ticker === 'ENQ') {
                         let tokenPrice = stat.cg_usd;
@@ -3157,7 +3260,7 @@
 
         provider.get_token_holder_count.get({token_hash:$routeParams.hash}, function(tokenHolders) {
             $scope.tokenHoldersCount = tokenHolders.count;                        
-        });
+        });        
 
         $scope.getHistory = function(page){
             $scope.isLoading = true;
@@ -4139,7 +4242,6 @@
             window.getSelection().removeAllRanges();
             document.body.removeChild(tmp);
         });
-
     });
 </script>
 

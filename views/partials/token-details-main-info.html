@@ -125,6 +125,67 @@
 <div class="row">
 	<div class="col-12 col-lg-6">
 		<div class="card">
+			<div class="card-body" style="background-color: lightgreen;">
+				<div class="header-title mr-2 text-uppercase">{{'OVERVIEW' | translate}}</div>
+				<div>
+					<table class="table table-centered ordinary-table animate-show-hide table-td-font-size-15 mb-0" style="table-layout: auto;">
+						<tr>
+							<td class="border-top-0">{{'TOTAL_SUPPLY' | translate}}</td>
+							<td class="text-nowrap text-right font-weight-bolder border-top-0">{{token.total_supply | US_COMMAS_BIGINT_DECIMALS : token.decimals : token.decimals}} {{token.ticker}}</td>
+						</tr>
+						<tr>
+							<td>{{'CIRC_SUPPLY' | translate}}</td>
+							<td class="text-nowrap text-right font-weight-bolder">{{tokenCsup !== undefined ? tokenCsup : (token.total_supply !== undefined ? (token.total_supply| US_COMMAS_BIGINT_DECIMALS : token.decimals : token.decimals)+' '+token.ticker: '---')}}</td>
+						</tr>						
+						<tr>
+							<td>{{'TRANSFERS' | translate}}</td>
+							<td class="text-nowrap text-right font-weight-bolder">{{'---' | US_COMMAS_INT}}</td>
+						</tr>
+						<tr>
+							<td>{{'HOLDERS' | translate}}</td>
+							<td class="text-nowrap text-right font-weight-bolder">{{tokenHoldersCount}}</td>
+						</tr>												
+					</table>
+				</div>
+			</div>
+		</div>	
+	</div>
+	<div class="col-12 col-lg-6">
+		<div class="card">
+			<div class="card-body">
+				<div class="header-title mr-2 text-uppercase">{{'ROI_CALC' | translate}}</div>
+				<div>
+					<table class="table table-centered ordinary-table animate-show-hide table-td-font-size-15 mb-0">
+						<tr>
+							<td class="border-top-0">{{'ROI_STAKE' | translate: {tokenName : token.ticker} }}</td>
+							<td class="text-nowrap text-right font-weight-bolder border-top-0 p-0">
+								<div class="input-group bootstrap-touchspin bootstrap-touchspin-injected">
+									<span class="input-group-btn input-group-prepend">
+										<button class="btn btn-primary bootstrap-touchspin-down" type="button" ng-click="$parent.downStake()">-</button>
+									</span>
+									<input class="form-control" ng-model="$parent.stake">
+									<span class="input-group-btn input-group-append">
+										<button class="btn btn-primary bootstrap-touchspin-up" type="button" ng-click="$parent.upStake()">+</button>
+									</span>
+								</div>					
+							</td>
+						</tr>
+					</table>
+					<table class="table table-centered ordinary-table animate-show-hide table-td-font-size-15 mb-0">
+						<tr ng-repeat="rec in roiData">
+							<td ng-class="{'border-top-0': $index == 0}">{{rec.period | translate}}</td>
+							<td  ng-class="{'border-top-0': $index == 0}" class="text-center">{{rec.roi}}</td>
+							<td  ng-class="{'border-top-0': $index == 0}" class="text-right">{{rec.values[0].value}}</td>
+						</tr>
+					</table>
+				</div>
+			</div>
+		</div>		
+	</div>
+</div>
+<div class="row">
+	<div class="col-12 col-lg-6">
+		<div class="card">
 			<div class="card-body">
 				<div class="header-title mr-2 text-uppercase">{{'TRX_COST_DETAILS' | translate}}</div>
 				<div>
