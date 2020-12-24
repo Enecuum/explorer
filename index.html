@@ -3078,6 +3078,8 @@
             whitepaperLink : '',
             whitepaperLinkText : '---'
         };
+
+        $scope.stake = null;
         $scope.mediaWidgetNamePrefix = 'default';
         $scope.page_num = 0;
         let entitiesOnPage = 20;
@@ -3121,7 +3123,6 @@
             }
 
             $scope.media = $scope.token.customerInfo.media;
-
             provider.stats.get({}, function(stat) {
                 if ($scope.token.type === "Mineable") {
                     function setCalcStep() {
@@ -3185,7 +3186,7 @@
                     };
 
                     $scope.reloadROI = function(stake) {
-                        let roiData = [
+                        let roiDataInit = [
                             {
                                 period : "ROI_WEEKLY",
                                 roi : '---',
@@ -3202,18 +3203,16 @@
                                 values : [{value : '---'}]
                             }
                         ];
-
-                        if (stake === undefined) {
-                            return false
-                        } else if (stake < $scope.min_stake || stake > $scope.max_stake ){
+                        let result = [];
+                        if ((stake < $scope.min_stake || stake > $scope.max_stake) || (stake !== undefined && stake === '')) {
                             Toast.stakeErrorToast(`Stake is out of range ${$scope.min_stake}...${$scope.max_stake}`);
-                            return false
+                            return roiDataInit;                            
                         } else {
                             poaROIData.stake = parseFloat(stake);
                             poaROIData.factorIfReferral = $scope.refCheck === true ? 0.1 : 0;
-                            let result = roiCalc.getPOA_ROIs(poaROIData);
-                            return result.length === 0 ? roiData : result;                                       
+                            result = roiCalc.getPOA_ROIs(poaROIData);                                                                   
                         }
+                        return result.length === 0? roiDataInit : result;
                     }
 
                     provider.roi.query({hash:$routeParams.hash},function(roiArrForLerp){
@@ -3225,7 +3224,7 @@
                         let minROIArr = $scope.reloadROI($scope.min_stake);
                         $scope.minAnnualROI = minROIArr[minROIArr.length -1].values[0].value;                   
                         $scope.$watch('stake', function(newValue, oldValue) {
-                            if (newValue !== undefined && newValue != '') {
+                            if (newValue !== undefined && newValue !== '') {                                
                                 $scope.roiData = $scope.reloadROI(newValue);
                             }
                         });

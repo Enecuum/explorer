@@ -370,6 +370,7 @@ a.disabled{
 .input-group>.input-group-append>.btn.bootstrap-touchspin-up {
     position: relative;
     border-radius: 3px!important;
+    z-index: 9999!important;
 }
 
 .input-group>.input-group-prepend>.btn.bootstrap-touchspin-down {
