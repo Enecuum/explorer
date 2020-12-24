@@ -365,3 +365,17 @@ a.disabled{
         margin-bottom: 0.5rem;
     } 
 }
+
+.input-group>.input-group-prepend>.btn.bootstrap-touchspin-down,
+.input-group>.input-group-append>.btn.bootstrap-touchspin-up {
+    position: relative;
+    border-radius: 3px!important;
+}
+
+.input-group>.input-group-prepend>.btn.bootstrap-touchspin-down {
+    left: 3px;
+}
+
+.input-group>.input-group-append>.btn.bootstrap-touchspin-up {
+    right: 3px;
+}

@@ -303,6 +303,7 @@
     "ROI_MONTHLY": "ROI monthly",
     "ROI_WEEKLY": "ROI weekly",
     "ROI_ANNUALLY": "ROI annually",
+    "MIN_ANNUALL_ROI" : "Min. annual ROI",
     "TOKEN_CALC": "Token calculator",
     "BY_OTHERS": "By others",
     "BY_OWNER": "By owner",
@@ -342,5 +343,6 @@
     "MINT": "Mint",
     "BURN": "Burn",
     "ACCOUNT_WAS_BANNED": "Account was banned",
-    "WARNING": "WARNING"
+    "WARNING": "WARNING",
+    "MINING_PREFORMANCE" : "Mining preformance"
 }

@@ -122,30 +122,23 @@
 		</div>		
 	</div>
 </div>
-<div class="row">
+<div class="row" ng-if="showMiningFeatures">
 	<div class="col-12 col-lg-6">
 		<div class="card">
-			<div class="card-body" style="background-color: lightgreen;">
-				<div class="header-title mr-2 text-uppercase">{{'OVERVIEW' | translate}}</div>
+			<div class="card-body">
+				<div class="header-title mr-2 text-uppercase">{{'MINING_PREFORMANCE' | translate}}</div>
 				<div>
 					<table class="table table-centered ordinary-table animate-show-hide table-td-font-size-15 mb-0" style="table-layout: auto;">
 						<tr>
-							<td class="border-top-0">{{'TOTAL_SUPPLY' | translate}}</td>
-							<td class="text-nowrap text-right font-weight-bolder border-top-0">{{token.total_supply | US_COMMAS_BIGINT_DECIMALS : token.decimals : token.decimals}} {{token.ticker}}</td>
+							<td class="border-top-0">{{'MIN_STAKE' | translate}}</td>
+							<td class="text-nowrap text-right font-weight-bolder border-top-0">{{min_stake | US_COMMAS_BIGINT_DECIMALS : token.decimals : token.decimals}} {{token.ticker}}</td>
 						</tr>
 						<tr>
-							<td>{{'CIRC_SUPPLY' | translate}}</td>
-							<td class="text-nowrap text-right font-weight-bolder">{{tokenCsup !== undefined ? tokenCsup : (token.total_supply !== undefined ? (token.total_supply| US_COMMAS_BIGINT_DECIMALS : token.decimals : token.decimals)+' '+token.ticker: '---')}}</td>
-						</tr>						
-						<tr>
-							<td>{{'TRANSFERS' | translate}}</td>
-							<td class="text-nowrap text-right font-weight-bolder">{{'---' | US_COMMAS_INT}}</td>
-						</tr>
-						<tr>
-							<td>{{'HOLDERS' | translate}}</td>
-							<td class="text-nowrap text-right font-weight-bolder">{{tokenHoldersCount}}</td>
-						</tr>												
+							<td>{{'MIN_ANNUALL_ROI' | translate}}</td>
+							<td class="text-nowrap text-right font-weight-bolder">{{minAnnualROI}}</td>
+						</tr>																		
 					</table>
+					<div style="height: 105px;" class="d-none d-lg-block"></div>
 				</div>
 			</div>
 		</div>	
@@ -175,7 +168,7 @@
 						<tr ng-repeat="rec in roiData">
 							<td ng-class="{'border-top-0': $index == 0}">{{rec.period | translate}}</td>
 							<td  ng-class="{'border-top-0': $index == 0}" class="text-center">{{rec.roi}}</td>
-							<td  ng-class="{'border-top-0': $index == 0}" class="text-right">{{rec.values[0].value}}</td>
+							<td  ng-class="{'border-top-0': $index == 0}" class="text-right">{{rec.values[0].value | US_COMMAS_2}}</td>
 						</tr>
 					</table>
 				</div>

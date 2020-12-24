@@ -1587,9 +1587,14 @@
         function batchConvertToCurr(value, ratesObj) {
             let result = [];            
             ratesObj.forEach(function(currency) {
+                let commasFormatter = new Intl.NumberFormat("en-us", {
+                    useGrouping: 'true',
+                    minimumFractionDigits: currency.toFixed,
+                    maximumFractionDigits: currency.toFixed
+                });
                 result.push({
                     name: currency.ticker,
-                    value: currencyExchange.convertValue(value, currency.rate).toFixed(currency.toFixed) + ' ' + currency.ticker
+                    value: commasFormatter.format(currencyExchange.convertValue(value, currency.rate)) + ' ' + currency.ticker
                 });
             });
             return result;
@@ -2183,10 +2188,10 @@
         $scope.roiValid = true;
 
         if (GLOBAL_APP_CONFIG.presetName !== 'ENQ') {
-             $scope.stake_limits = provider.stake_limits.get(function(stake_limits){
+             $scope.stake_limits = provider.stake_limits.get(function(stake_limits){                
                 $scope.stake = stake_limits.min_stake/$rootScope.mainTokenFactor;           
                 $scope.min_stake = stake_limits.min_stake/$rootScope.mainTokenFactor;
-                $scope.max_stake = stake_limits.max_stake/$rootScope.mainTokenFactor;  
+                $scope.max_stake = stake_limits.max_stake/$rootScope.mainTokenFactor; 
             });           
         } else {
             $scope.stake = 25;           
@@ -3076,6 +3081,7 @@
         $scope.mediaWidgetNamePrefix = 'default';
         $scope.page_num = 0;
         let entitiesOnPage = 20;
+        $scope.showMiningFeatures = false;
 
         provider.token_info.query({hash:$routeParams.hash}, function(token_info) {
             $scope.token = token_info[0];
@@ -3116,111 +3122,116 @@
 
             $scope.media = $scope.token.customerInfo.media;
 
-            $scope.stake = 25;
-            $scope.min_stake  = 25;
-            $scope.max_stake = 25000;
-
-            let diff = parseInt($scope.max_stake - $scope.min_stake);
-
-            let orderStr =  String(diff)
-            let order = orderStr.length;
-            order = order - 2;
-            let step = Math.pow(10, order);
-
-            if (parseInt(diff / step) > 10)
-                step *= 5;
-
-            $scope.upStake = function() {
-                $scope.stake = parseFloat($scope.stake); 
-                if ( ($scope.stake + step) > $scope.max_stake)
-                    $scope.stake = $scope.max_stake;
-                else if (($scope.stake + step) < $scope.min_stake)
-                    $scope.stake = $scope.min_stake;
-                else
-                    $scope.stake += step;
-            }
-
-            $scope.downStake = function() {
-                $scope.stake = parseFloat($scope.stake);
-                if (($scope.stake - step) < $scope.min_stake)
-                    $scope.stake = $scope.min_stake;
-                else if (($scope.stake - step) > $scope.max_stake)
-                    $scope.stake = $scope.max_stake;
-                else
-                    $scope.stake -= step;
-            }
-
             provider.stats.get({}, function(stat) {
-                let poaROIData = {
-                    stake : null,
-                    stakeTicker : $scope.token.ticker,
-                    stakeDecimals : $scope.token.decimals,
-                    roiArrForLerp : null,
-                    stat : stat,
-                    factorIfReferral : null,
-                    periods : [
-                        {
-                            titleInLocale: "ROI_WEEKLY",
-                            daysFactor: 7 
-                        },
-                        {
-                            titleInLocale: "ROI_MONTHLY",
-                            daysFactor: 30 
-                        },
-                        {
-                            titleInLocale: "ROI_ANNUALLY",
-                            daysFactor: 365 
-                        }
-                    ],
-                    currencyInfo : [
-                        {
-                            ticker : $scope.token.ticker,
-                            rate : 1,
-                            toFixed : 2 
-                        }
-                    ]
-                };
+                if ($scope.token.type === "Mineable") {
+                    function setCalcStep() {
+                        let diff = parseInt($scope.max_stake - $scope.min_stake);
+                        let orderStr =  String(diff)
+                        let order = orderStr.length;
+                        order = order - 2;
+                        let step = Math.pow(10, order);
 
-                $scope.reloadROI = function(stake) {
-                    $scope.roiData = [
-                        {
-                            period : "ROI_WEEKLY",
-                            roi : '---',
-                            values : [{value : '---'}]
-                        },
-                        {
-                            period : "ROI_WEEKLY",
-                            roi : '---',
-                            values : [{value : '---'}]
-                        },
-                        {
-                            period : "ROI_WEEKLY",
-                            roi : '---',
-                            values : [{value : '---'}]
-                        }
-                    ];
+                        if (parseInt(diff / step) > 10)
+                            step *= 5;
 
-                    if (stake === undefined) {
-                        return false
-                    } else if (stake < $scope.min_stake || stake > $scope.max_stake ){
-                        Toast.stakeErrorToast(`Stake is out of range ${$scope.min_stake}...${$scope.max_stake}`);
-                        return false
-                    } else {
-                        poaROIData.stake = parseFloat(stake);
-                        poaROIData.factorIfReferral = $scope.refCheck === true ? 0.1 : 0;
-                        let result = roiCalc.getPOA_ROIs(poaROIData);
-                        $scope.roiData = result.length === 0 ? $scope.roiData : result;                                       
+                        $scope.upStake = function() {
+                            $scope.stake = parseFloat($scope.stake); 
+                            if ( ($scope.stake + step) > $scope.max_stake)
+                                $scope.stake = $scope.max_stake;
+                            else if (($scope.stake + step) < $scope.min_stake)
+                                $scope.stake = $scope.min_stake;
+                            else
+                                $scope.stake += step;
+                        }
+
+                        $scope.downStake = function() {
+                            $scope.stake = parseFloat($scope.stake);
+                            if (($scope.stake - step) < $scope.min_stake)
+                                $scope.stake = $scope.min_stake;
+                            else if (($scope.stake - step) > $scope.max_stake)
+                                $scope.stake = $scope.max_stake;
+                            else
+                                $scope.stake -= step;
+                        }                
                     }
-                }
+                    let poaROIData = {
+                        stake : null,
+                        stakeTicker : $scope.token.ticker,
+                        stakeDecimals : $scope.token.decimals,
+                        roiArrForLerp : null,
+                        stat : stat,
+                        factorIfReferral : null,
+                        periods : [
+                            {
+                                titleInLocale: "ROI_WEEKLY",
+                                daysFactor: 7 
+                            },
+                            {
+                                titleInLocale: "ROI_MONTHLY",
+                                daysFactor: 30 
+                            },
+                            {
+                                titleInLocale: "ROI_ANNUALLY",
+                                daysFactor: 365 
+                            }
+                        ],
+                        currencyInfo : [
+                            {
+                                ticker : $scope.token.ticker,
+                                rate : 1,
+                                toFixed : 2 
+                            }
+                        ]
+                    };
 
-                provider.roi.query({hash:$routeParams.hash},function(roiArrForLerp){
-                    poaROIData.roiArrForLerp = roiArrForLerp;
-                    $scope.$watch('stake', function(newValue, oldValue) {
-                        if (newValue !== undefined && newValue != '') {
-                            $scope.reloadROI(newValue);
+                    $scope.reloadROI = function(stake) {
+                        let roiData = [
+                            {
+                                period : "ROI_WEEKLY",
+                                roi : '---',
+                                values : [{value : '---'}]
+                            },
+                            {
+                                period : "ROI_MONTHLY",
+                                roi : '---',
+                                values : [{value : '---'}]
+                            },
+                            {
+                                period : "ROI_ANNUALLY",
+                                roi : '---',
+                                values : [{value : '---'}]
+                            }
+                        ];
+
+                        if (stake === undefined) {
+                            return false
+                        } else if (stake < $scope.min_stake || stake > $scope.max_stake ){
+                            Toast.stakeErrorToast(`Stake is out of range ${$scope.min_stake}...${$scope.max_stake}`);
+                            return false
+                        } else {
+                            poaROIData.stake = parseFloat(stake);
+                            poaROIData.factorIfReferral = $scope.refCheck === true ? 0.1 : 0;
+                            let result = roiCalc.getPOA_ROIs(poaROIData);
+                            return result.length === 0 ? roiData : result;                                       
                         }
-                    });
-                });
+                    }
+
+                    provider.roi.query({hash:$routeParams.hash},function(roiArrForLerp){
+                        $scope.min_stake  = roiArrForLerp[0].stake / Math.pow(10, $scope.token.decimals);
+                        $scope.stake = $scope.min_stake;
+                        poaROIData.roiArrForLerp = Array.isArray(roiArrForLerp) ? roiArrForLerp : [];
+                        $scope.max_stake = roiArrForLerp[roiArrForLerp.length - 1].stake / Math.pow(10, $scope.token.decimals);
+                        setCalcStep();
+                        let minROIArr = $scope.reloadROI($scope.min_stake);
+                        $scope.minAnnualROI = minROIArr[minROIArr.length -1].values[0].value;                   
+                        $scope.$watch('stake', function(newValue, oldValue) {
+                            if (newValue !== undefined && newValue != '') {
+                                $scope.roiData = $scope.reloadROI(newValue);
+                            }
+                        });
+                    });                                    
+                    $scope.showMiningFeatures = true;
+                }
 
                 if ($routeParams.hash === $rootScope.mainToken.hash) {
                     if ($rootScope.mainToken.ticker === 'ENQ') {
