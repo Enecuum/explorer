@@ -1527,11 +1527,22 @@
 
     app.factory('Toast', function($translate) {
         return {
-            stakeErrorToast : function(msg){
+            stakeErrorToast : function(msg) {
                 $.toast({
                     heading: 'Error',
                     text: msg,
                     icon: 'error',
+                    hideAfter: 5000,
+                    stack: 3,
+                    position: 'top-right',
+                    loader: false
+                })                
+            },
+            stakeInfoToast : function(msg) {
+                $.toast({
+                    heading: 'Info',
+                    text: msg,
+                    icon: 'info',
                     hideAfter: 5000,
                     stack: 3,
                     position: 'top-right',
@@ -3136,7 +3147,7 @@
                             step *= 5;
 
                         $scope.upStake = function() {
-                            $scope.stake = parseFloat($scope.stake); 
+                            $scope.stake = $scope.stake == '' ? $scope.min_stake : parseFloat($scope.stake);                            
                             if ( ($scope.stake + step) > $scope.max_stake)
                                 $scope.stake = $scope.max_stake;
                             else if (($scope.stake + step) < $scope.min_stake)
@@ -3146,7 +3157,7 @@
                         }
 
                         $scope.downStake = function() {
-                            $scope.stake = parseFloat($scope.stake);
+                            $scope.stake = $scope.stake == '' ? $scope.min_stake : parseFloat($scope.stake);
                             if (($scope.stake - step) < $scope.min_stake)
                                 $scope.stake = $scope.min_stake;
                             else if (($scope.stake - step) > $scope.max_stake)
@@ -3204,10 +3215,10 @@
                             }
                         ];
                         let result = [];
-                        if (poaROIData.roiArrForLerp.length == 0) {
+                        if (poaROIData.roiArrForLerp.length === 0) {
                             return roiDataInit;
                         } else if ((stake < $scope.min_stake || stake > $scope.max_stake) || (stake !== undefined && stake === '') || !(poaROIData.roiArrForLerp.length > 0)) {
-                            Toast.stakeErrorToast(`Stake is out of range ${$scope.min_stake}...${$scope.max_stake}`);
+                            Toast.stakeInfoToast(`Please set stake in the range ${$scope.min_stake}...${$scope.max_stake}`);
                             return roiDataInit;                            
                         } else {
                             poaROIData.stake = parseFloat(stake);
