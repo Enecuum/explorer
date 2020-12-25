@@ -3204,7 +3204,9 @@
                             }
                         ];
                         let result = [];
-                        if ((stake < $scope.min_stake || stake > $scope.max_stake) || (stake !== undefined && stake === '')) {
+                        if (poaROIData.roiArrForLerp.length == 0) {
+                            return roiDataInit;
+                        } else if ((stake < $scope.min_stake || stake > $scope.max_stake) || (stake !== undefined && stake === '') || !(poaROIData.roiArrForLerp.length > 0)) {
                             Toast.stakeErrorToast(`Stake is out of range ${$scope.min_stake}...${$scope.max_stake}`);
                             return roiDataInit;                            
                         } else {
@@ -3212,17 +3214,27 @@
                             poaROIData.factorIfReferral = $scope.refCheck === true ? 0.1 : 0;
                             result = roiCalc.getPOA_ROIs(poaROIData);                                                                   
                         }
-                        return result.length === 0? roiDataInit : result;
+                        return result.length === 0 ? roiDataInit : result;
                     }
 
-                    provider.roi.query({hash:$routeParams.hash},function(roiArrForLerp){
-                        $scope.min_stake  = roiArrForLerp[0].stake / Math.pow(10, $scope.token.decimals);
-                        $scope.stake = $scope.min_stake;
-                        poaROIData.roiArrForLerp = Array.isArray(roiArrForLerp) ? roiArrForLerp : [];
-                        $scope.max_stake = roiArrForLerp[roiArrForLerp.length - 1].stake / Math.pow(10, $scope.token.decimals);
-                        setCalcStep();
-                        let minROIArr = $scope.reloadROI($scope.min_stake);
-                        $scope.minAnnualROI = minROIArr[minROIArr.length -1].values[0].value;                   
+                    provider.roi.query({hash:$routeParams.hash},function(roiArrForLerp) {
+
+                        if (Array.isArray(roiArrForLerp) && roiArrForLerp.length > 0) {
+                            $scope.min_stake  = roiArrForLerp[0].stake / Math.pow(10, $scope.token.decimals);
+                            $scope.stake = $scope.min_stake;
+                            $scope.max_stake = roiArrForLerp[roiArrForLerp.length - 1].stake / Math.pow(10, $scope.token.decimals);
+                            poaROIData.roiArrForLerp = roiArrForLerp;
+                            setCalcStep();
+                            let minROIArr = $scope.reloadROI($scope.min_stake);
+                            $scope.minAnnualROI = minROIArr[minROIArr.length - 1].roi;
+                            $scope.roiCalcState = '';
+                        } else {
+                            poaROIData.roiArrForLerp = [];
+                            $scope.stake = '---';
+                            $scope.minAnnualROI = '---';
+                            $scope.roiCalcState = 'disabled';
+                        }                        
+                                           
                         $scope.$watch('stake', function(newValue, oldValue) {
                             if (newValue !== undefined && newValue !== '') {                                
                                 $scope.roiData = $scope.reloadROI(newValue);

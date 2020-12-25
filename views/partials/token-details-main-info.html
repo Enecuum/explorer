@@ -131,7 +131,7 @@
 					<table class="table table-centered ordinary-table animate-show-hide table-td-font-size-15 mb-0" style="table-layout: auto;">
 						<tr>
 							<td class="border-top-0">{{'MIN_STAKE' | translate}}</td>
-							<td class="text-nowrap text-right font-weight-bolder border-top-0">{{min_stake | US_COMMAS_BIGINT_DECIMALS : token.decimals : token.decimals}} {{token.ticker}}</td>
+							<td class="text-nowrap text-right font-weight-bolder border-top-0">{{token.min_stake | US_COMMAS_BIGINT_DECIMALS : token.decimals : token.decimals}} {{token.ticker}}</td>
 						</tr>
 						<tr>
 							<td>{{'MIN_ANNUALL_ROI' | translate}}</td>
@@ -154,11 +154,11 @@
 							<td class="text-nowrap text-right font-weight-bolder border-top-0 p-0">
 								<div class="input-group bootstrap-touchspin bootstrap-touchspin-injected">
 									<span class="input-group-btn input-group-prepend">
-										<button class="btn btn-primary bootstrap-touchspin-down" type="button" ng-click="$parent.downStake()">-</button>
+										<button class="btn btn-primary bootstrap-touchspin-down" type="button" ng-click="$parent.downStake()" ng-class="roiCalcState" ng-disabled="roiCalcState == 'disabled'">-</button>
 									</span>
-									<input class="form-control" ng-model="$parent.$parent.stake">
+									<input class="form-control" ng-model="$parent.$parent.stake" ng-disabled="roiCalcState == 'disabled'" ng-readonly="roiCalcState == 'disabled'">
 									<span class="input-group-btn input-group-append">
-										<button class="btn btn-primary bootstrap-touchspin-up" type="button" ng-click="$parent.upStake()">+</button>
+										<button class="btn btn-primary bootstrap-touchspin-up" type="button" ng-click="$parent.upStake()" ng-class="roiCalcState" ng-disabled="roiCalcState == 'disabled'">+</button>
 									</span>
 								</div>					
 							</td>
