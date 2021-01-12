@@ -365,3 +365,25 @@ a.disabled{
         margin-bottom: 0.5rem;
     } 
 }
+
+.input-group>.input-group-prepend>.btn.bootstrap-touchspin-down,
+.input-group>.input-group-append>.btn.bootstrap-touchspin-up {
+    position: relative;
+    border-radius: 3px!important;
+    z-index: 9999!important;
+}
+
+.input-group>.input-group-prepend>.btn.bootstrap-touchspin-down {
+    left: 3px;
+}
+
+.input-group>.input-group-append>.btn.bootstrap-touchspin-up {
+    right: 3px;
+}
+
+.bootstrap-touchspin .form-control:disabled, .form-control[readonly] {
+    background-color: #e9ecef;
+    opacity: 0.3;
+    border-left-color: transparent;
+    border-right-color: transparent;
+}

@@ -122,6 +122,60 @@
 		</div>		
 	</div>
 </div>
+<div class="row" ng-if="showMiningFeatures">
+	<div class="col-12 col-lg-6">
+		<div class="card">
+			<div class="card-body">
+				<div class="header-title mr-2 text-uppercase">{{'MINING_PREFORMANCE' | translate}}</div>
+				<div>
+					<table class="table table-centered ordinary-table animate-show-hide table-td-font-size-15 mb-0" style="table-layout: auto;">
+						<tr>
+							<td class="border-top-0">{{'MIN_STAKE' | translate}}</td>
+							<td class="text-nowrap text-right font-weight-bolder border-top-0">{{token.min_stake | US_COMMAS_BIGINT_DECIMALS : token.decimals : token.decimals}} {{token.ticker}}</td>
+						</tr>
+						<tr>
+							<td>{{'MIN_ANNUALL_ROI' | translate}}</td>
+							<td class="text-nowrap text-right font-weight-bolder">{{minAnnualROI}}</td>
+						</tr>																		
+					</table>
+					<div style="height: 105px;" class="d-none d-lg-block"></div>
+				</div>
+			</div>
+		</div>	
+	</div>
+	<div class="col-12 col-lg-6">
+		<div class="card">
+			<div class="card-body">
+				<div class="header-title mr-2 text-uppercase">{{'ROI_CALC' | translate}}</div>
+				<div>
+					<table class="table table-centered ordinary-table animate-show-hide table-td-font-size-15 mb-0">
+						<tr>
+							<td class="border-top-0">{{'ROI_STAKE' | translate: {tokenName : token.ticker} }}</td>
+							<td class="text-nowrap text-right font-weight-bolder border-top-0 p-0">
+								<div class="input-group bootstrap-touchspin bootstrap-touchspin-injected">
+									<span class="input-group-btn input-group-prepend">
+										<button class="btn btn-primary bootstrap-touchspin-down" type="button" ng-click="$parent.downStake()" ng-class="roiCalcState" ng-disabled="roiCalcState == 'disabled'">-</button>
+									</span>
+									<input class="form-control" ng-model="$parent.$parent.stake" ng-disabled="roiCalcState == 'disabled'" ng-readonly="roiCalcState == 'disabled'">
+									<span class="input-group-btn input-group-append">
+										<button class="btn btn-primary bootstrap-touchspin-up" type="button" ng-click="$parent.upStake()" ng-class="roiCalcState" ng-disabled="roiCalcState == 'disabled'">+</button>
+									</span>
+								</div>					
+							</td>
+						</tr>
+					</table>
+					<table class="table table-centered ordinary-table animate-show-hide table-td-font-size-15 mb-0">
+						<tr ng-repeat="rec in roiData">
+							<td ng-class="{'border-top-0': $index == 0}">{{rec.period | translate}}</td>
+							<td  ng-class="{'border-top-0': $index == 0}" class="text-center">{{rec.roi}}</td>
+							<td  ng-class="{'border-top-0': $index == 0}" class="text-right">{{rec.values[0].value | US_COMMAS_2}}</td>
+						</tr>
+					</table>
+				</div>
+			</div>
+		</div>		
+	</div>
+</div>
 <div class="row">
 	<div class="col-12 col-lg-6">
 		<div class="card">

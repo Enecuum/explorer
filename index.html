@@ -1010,230 +1010,10 @@
                     </div>
 
 
-                        <div class="tab-content justify-content-center mt-3">
-                            <div class="tab-pane show active row justify-content-center" id="poaCalculatorTab">
-                                <div class="col-12">
-                                    <div class="row" id="metrics">
-                                        <div class="col-12 col-md-6 col-xl-3" ng-if="currentPreset.tokenName === 'ENQ'">
-                                            <div class="card widget-flat">
-                                                <div class="card-body">
-                                                    <h5 class="text-muted font-weight-normal mt-0" title="Revenue">{{'TOKEN_PRICE' | translate}}</h5>
-                                                    <h3 class="mt-3">{{stats.cg_usd | USD}}</h3>
-                                                    <h6 class="mb-0">{{stats.cg_btc}} BTC</h6>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-12 col-md-6 col-xl-3" ng-if="currentPreset.tokenName === 'BIT'">
-                                            <div class="card widget-flat">
-                                                <div class="card-body">
-                                                    <h5 class="text-muted font-weight-normal mt-0" title="Revenue">{{'CIRC_SUPPLY_SHORT' | translate}}</h5>
-                                                    <h3 class="mt-3">{{stats.csup !== undefined ? stats.csup : "N/A" | US_COMMAS_BIGINT_DECIMALS : mainToken.decimals : 0}} {{mainToken.ticker}}</h3>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-12 col-md-6 col-xl-3">
-                                            <div class="card widget-flat">
-                                                <div class="card-body">
-                                                    <h5 class="text-muted font-weight-normal mt-0" title="Revenue">{{'MN_AMOUNT' | translate}}</h5>
-                                                    <h3 class="mt-3" ng-class="currentPreset.tokenName==='ENQ'?'mb-3':''">{{stats.poa_count}}</h3>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-12 col-md-6 col-xl-3">
-                                            <div class="card widget-flat">
-                                                <div class="card-body">
-                                                    <h5 class="text-muted font-weight-normal mt-0" title="Revenue">{{'MN_STAKE' | translate}}</h5>
-                                                    <h3 class="mt-3">{{stats.total_daily_stake | US_COMMAS_BIGINT_DECIMALS : mainToken.decimals : 0}} {{mainToken.ticker}}</h3>
-                                                    <h6 class="mb-0" ng-if="currentPreset.tokenName === 'ENQ'">{{convertValueToUSD(stats.total_daily_stake) | US_COMMAS_BIGINT_DECIMALS : mainTokenToUSDDecimals : 5}} USD</h6>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div class="col-12 col-md-6 col-xl-3">
-                                            <div class="card widget-flat">
-                                                <div class="card-body">
-                                                    <h5 class="text-muted font-weight-normal mt-0" title="Revenue">{{'MN_REWARD' | translate}}</h5>
-                                                    <h3 class="mt-3">{{stats.reward_poa | US_COMMAS_BIGINT_DECIMALS : mainToken.decimals : 0}} {{mainToken.ticker}}</h3>
-                                                    <h6 class="mb-0" ng-if="currentPreset.tokenName === 'ENQ'">{{convertValueToUSD(stats.reward_poa) | US_COMMAS_BIGINT_DECIMALS : mainTokenToUSDDecimals : 5}} USD</h6>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="row" id="calculator">
-                                        <div class="col-12">
-                                            <div class="card">
-                                                <div class="card-body">
-                                                    <h4 class="header-title mb-3">{{'MN_CALCULATOR' | translate}}</h4>
-                                                    <div class="row">
-                                                        <div class="col-xl-3 col-sm-12">
-                                                            <p class="mt-3">{{'ROI_RANGE' | translate: translationData}}</p>
-                                                            <div class="custom-control custom-checkbox" ng-click="reloadROI(stake)">
-                                                                <input type="checkbox" class="custom-control-input" id="customCheck1" ng-model="refCheck">
-                                                                <label class="custom-control-label" for="customCheck1">{{'IS_REFERRAL' | translate}}</label>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-xl-9 col-sm-12">
-                                                            <div class="form-row align-items-center">
-                                                                <div class="col-md-5 form-group mb-3" ng-class="currentPreset.tokenName === 'ENQ'? 'mt-3': ''">
-                                                                    <label for="roi_stake">{{'ROI_STAKE' | translate: translationData}}</label>
-                                                                    <input type="text" id="roi_stake" class="form-control" ng-model="stake" >
-                                                                    <span class="form-text" ng-if="currentPreset.tokenName === 'ENQ'">{{convertValueToUSD(stake * mainTokenFactor) | US_COMMAS_BIGINT_DECIMALS : mainTokenToUSDDecimals : 5}} USD</span>
-                                                                </div>
-                                                                <div class="col-md-5 form-group mb-3" style="opacity: 0.5">
-                                                                    <label for="roi_nodes">{{'ROI_MN_AMOUNT' | translate}}</label>
-                                                                    <input type="text" id="roi_nodes" class="form-control" placeholder="1" disabled>
-                                                                </div>
-                                                                <div class="col-md-2 mt-1">
-                                                                    <button type="button" class="btn btn-primary" ng-click="reloadROI(stake)">{{'CALCULATE' | translate}}</button>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-
-                                                    </div>
-                                                    <div class="row">
-
-                                                    </div>
-                                                    <div class="row">
-                                                        <div class="col-12 text-center">
-                                                            <hr>
-                                                            <h4 class="mt-3">{{ROIHeader}}</h4>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="row" ng-if="currentPreset.tokenName === 'ENQ'">
-                                                <div class="col-12 mb-3 d-flex justify-content-center" ng-hide="isLoaded">
-                                                    <div class="spinner-grow avatar-md text-primary m-2" role="status"></div>
-                                                </div>
-                                                <div class="col-md-6 col-xl-3" ng-repeat="rec in roiData">
-                                                    <div class="card">
-                                                        <div class="card-body text-center">
-                                                            <h4 class="text-title text-nowrap mb-3">{{rec.period | translate}}</h4>
-                                                            <div class="table-responsive-sm">
-                                                                <table class="table table-borderless table-sm table-centered mb-0" style="table-layout: auto;">
-                                                                    <tbody>
-                                                                    <tr ng-repeat="curr in rec.values">
-                                                                        <td><b>{{curr.name}}</b></td>
-                                                                        <td>{{curr.value}}</td>
-                                                                    </tr>
-                                                                    </tbody>
-                                                                </table>
-                                                                <hr>
-                                                                <h5>ROI</h5>
-                                                                <h3>{{rec.roi}}</h3>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>                                       
-                                    </div>
-                                    <div class="row" ng-if="currentPreset.tokenName === 'BIT'">
-                                        <div class="col-10 offset-1 col-sm-6 offset-sm-0 col-md-6 col-lg-6 col-xl-3" ng-repeat="rec in roiData">
-                                            <div class="card">
-                                                <div class="card-body text-center">
-                                                    <div class="roi-cards-period-label-wrapper">
-                                                        <div class="text-title text-nowrap">{{rec.period | translate}}</div>
-                                                    </div>
-                                                    <div class="pt-2 pb-2" ng-init="roiVal=rec.values[0].value.split('.')">
-                                                        <span class="h3">+ </span><span class="h3">{{roiVal[0]}}.</span><span class="h4">{{roiVal[1]}}</span>
-                                                    </div>
-                                                    <hr>
-                                                    <div class="table-responsive-sm">
-                                                        <h4 class="pt-2">ROI</h4>
-                                                        <h3 class="text-blue mb-2">{{rec.roi}}</h3>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-12 align-items-center justify-content-center" ng-if="currentPreset.tokenName !== 'ENQ'">
-                                        <h3 class="text-center mb-3">{{'TOKEN_NOT_TRADING' | translate: translationData}}</h3>
-                                    </div>                                     
-                                    <div ng-if="showExchangesSection" class="row" id="token-info">
-                                        <div class="col-12 mb-3">
-                                            <div class="card">
-                                                <div class="card-body">
-                                                    <h3 class="header-title mt-2 mb-3">{{'HOW_TO_START_MN' | translate}}</h3>
-                                                    <div class="row mb-3">
-                                                        <div class="col-lg-10 col-md-12">
-                                                            <h5> {{'ROI_DESC1' | translate}} - <a href="https://app.enecuum.com/">app.enecuum.com</a></h5>
-                                                            <h5> {{'ROI_DESC2' | translate}}</h5>
-                                                            <h5> {{'ROI_DESC3' | translate}}</h5>
-                                                            <h5> {{'ROI_DESC5' | translate}}</h5>
-                                                        </div>
-                                                        <div class="col-lg-4 d-lg-block d-none">
-                                                            <!--<img src="assets/images/app-screen.png" style="height: 300px;" alt="">-->
-
-                                                        </div>
-                                                    </div>
-                                                    <h3 class="header-title mt-2 mb-3">{{'BUY_ON_EXCHANGE' | translate}}</h3>
-                                                    <div class="row my-3" id="exchanges">
-                                                        <div class="col-xl-12 col-md-12 text-center mt-4">
-                                                            <a href="https://www.kucoin.com/trade/ENQ-BTC" class="exchange-logo-link" target="_blank" style="background-image: url(/assets/images/exchanges/kucoin-logo.svg")"></a>
-                                                            <ul class="list-inline text-white">
-                                                                <li class="list-inline-item">
-                                                                    <h4><a href="https://www.kucoin.com/trade/ENQ-USDT"  target="_blank">ENQ-USDT</a></h4>
-                                                                </li>
-                                                                <li class="list-inline-item">
-                                                                    <h4><a href="https://www.kucoin.com/trade/ENQ-BTC" target="_blank">ENQ-BTC</a></h4>
-                                                                </li>
-                                                            </ul>
-                                                        </div>
-                                                        <div class="col-12 col-md-10 offset-md-1 text-center mt-4">  
-                                                            <a href="https://www.probit.com/app/exchange/ENQ-USDT" class="exchange-logo-link graviex-logo-link" style="background-image: url(/assets/images/exchanges/probit-blue.png)" target="_blank"></a>  
-                                                            <ul class="list-inline text-white">  
-                                                                <li class="list-inline-item">   
-                                                                    <h4><a href="https://www.probit.com/app/exchange/ENQ-USDT" target="_blank">ENQ-USDT</a></h4>  
-                                                                </li>   
-                                                                <li class="list-inline-item">   
-                                                                    <h4><a href="https://www.probit.kr/app/exchange/ENQ-KRW" target="_blank">ENQ-KRW</a></h4>    
-                                                                </li>
-                                                            </ul>
-                                                        </div>                                                          
-                                                        <div class="col-12 col-md-10 offset-md-1 text-center mt-4">  
-                                                            <a href="https://graviex.net/markets/enqbtc" class="exchange-logo-link graviex-logo-link" style="background-image: url(/assets/images/exchanges/graviex-grey.png)" target="_blank"></a>  
-                                                            <ul class="list-inline text-white"> 
-                                                                <li class="list-inline-item">   
-                                                                    <h4><a href="https://graviex.net/markets/enqbtc" target="_blank">ENQ-BTC</a></h4>    
-                                                                </li>   
-                                                                <li class="list-inline-item">   
-                                                                    <h4><a href="https://graviex.net/markets/enqusdt" target="_blank">ENQ-USDT</a></h4>  
-                                                                </li>   
-                                                                <li class="list-inline-item">   
-                                                                    <h4><a href="https://graviex.net/markets/enqeth" target="_blank">ENQ-ETH</a></h4>    
-                                                                </li>
-                                                            </ul>
-                                                        </div>    
-                                                    </div>
-                                                    <h3 class="header-title mt-4 mb-3 d-none">{{'PAY_BY_CARD' | translate}}</h3>
-                                                    <div class="row my-3 d-none" id="bankCardProcessing">
-                                                        <div class="col-xl-12 col-md-12 text-center mt-2">
-                                                            <a href="https://suex.io/?currency_in=EUR&currency_out=ENQ&amount_in=30" class="card-processing-logo-link suex-logo-link" target="_blank" style="background-image: url(/assets/images/bank_cards_processing/suex-logo-color.svg")"></a>
-                                                            <ul class="list-inline text-white">
-                                                                <li class="list-inline-item">
-                                                                    <h4><a href="https://suex.io/?currency_in=RUB&currency_out=ENQ&amount_in=2000"  target="_blank" class="text-white">RUB-ENQ</a></h4>
-                                                                </li>
-                                                                <li class="list-inline-item">
-                                                                    <h4><a href="https://suex.io/?currency_in=EUR&currency_out=ENQ&amount_in=30" target="_blank" class="text-white">EUR-ENQ</a></h4>
-                                                                </li>
-                                                                <li class="list-inline-item">
-                                                                    <h4><a href="https://suex.io/?currency_in=USD&currency_out=ENQ&amount_in=30" target="_blank" class="text-white">USD-ENQ</a></h4>
-                                                                </li>
-                                                            </ul>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                    </div> <!-- end col-->
-                                </div>
-                                </div>
-                            </div>
-                            <div class="tab-pane fade row" id="powCalculatorTab" ng-include="'views/partials/pow-calculator-tab.html'" ng-init="powCalc.calculate();"></div>
-                            <div class="tab-pane fade row" id="posCalculatorTab" ng-include="'views/partials/pos-calculator-tab.html'"></div>
-                        </div>
+                    <div class="tab-content justify-content-center mt-3">
+                        <div class="tab-pane row show active justify-content-center" id="poaCalculatorTab" ng-include="'views/partials/poa-calculator-tab.html'"></div>
+                        <div class="tab-pane fade row" id="powCalculatorTab" ng-include="'views/partials/pow-calculator-tab.html'" ng-init="powCalc.calculate();"></div>
+                        <div class="tab-pane fade row" id="posCalculatorTab" ng-include="'views/partials/pos-calculator-tab.html'"></div>
                     </div>
                 </script>
                 <script type="text/ng-template" id="tokenROI">
@@ -1743,6 +1523,33 @@
                 return tokenInfo
             }
         } 
+    });
+
+    app.factory('Toast', function($translate) {
+        return {
+            stakeErrorToast : function(msg) {
+                $.toast({
+                    heading: 'Error',
+                    text: msg,
+                    icon: 'error',
+                    hideAfter: 5000,
+                    stack: 3,
+                    position: 'top-right',
+                    loader: false
+                })                
+            },
+            stakeInfoToast : function(msg) {
+                $.toast({
+                    heading: 'Info',
+                    text: msg,
+                    icon: 'info',
+                    hideAfter: 5000,
+                    stack: 3,
+                    position: 'top-right',
+                    loader: false
+                })                
+            }
+        }
     });    
 
     app.service('dateTimeConverter', function() {
@@ -1754,11 +1561,82 @@
         };
     });
 
-    app.service('currencyExchange', function(validator) {
+    app.service('currencyExchange', function($filter, validator, commonTools) {
         this.convertValue = function(value, rate) {
             return (validator.checkValidDigitalValue(value) && validator.checkValidDigitalValue(rate)) ? value * rate : '---';
         }
+
+        this.bigIntConvertValueToCurrency = function(value_in_BigInt, rate_in_Numbers, valueDecimals, toFixed) {
+            if (value_in_BigInt !== undefined) {              
+                let rateDecimals = rate_in_Numbers.split('.')[1].length;
+                let totalDecimals = rateDecimals + valueDecimals;
+                let bigIntRate = commonTools.valueToBigInt(rate_in_Numbers, rateDecimals).value;
+                let mult = this.convertValue(BigInt(value_in_BigInt), bigIntRate);
+                return $filter('US_COMMAS_BIGINT_DECIMALS')(mult, totalDecimals, toFixed);
+            } else
+                return '---';
+        }
     });
+
+    app.factory('roiCalc', function ($filter, currencyExchange) {
+        function lerp(y0, y1, x0, x1, y) {
+            return (x0 + ((y - y0) / (y1 - y0)) * (x1 - x0))
+        };
+
+        function stakeToROI(stake, roiArr) {            
+            for (let i = 0; i < roiArr.length; i++) {
+                if(stake === roiArr[i].stake){
+                    return roiArr[i].roi;
+                }
+                else if(stake < roiArr[i].stake){
+                    return lerp(roiArr[i-1].stake, roiArr[i].stake, roiArr[i-1].roi, roiArr[i].roi, stake)
+                }
+            }
+            return 0;            
+        }
+
+        function batchConvertToCurr(value, ratesObj) {
+            let result = [];            
+            ratesObj.forEach(function(currency) {
+                let commasFormatter = new Intl.NumberFormat("en-us", {
+                    useGrouping: 'true',
+                    minimumFractionDigits: currency.toFixed,
+                    maximumFractionDigits: currency.toFixed
+                });
+                result.push({
+                    name: currency.ticker,
+                    value: commasFormatter.format(currencyExchange.convertValue(value, currency.rate)) + ' ' + currency.ticker
+                });
+            });
+            return result;
+        }
+
+        let getPOA_ROIs = function(poaROIData) {
+            let roiData = [];
+            let tokenFactor = Math.pow(10, poaROIData.stakeDecimals);
+            if(!poaROIData.roiArrForLerp.length || isNaN(poaROIData.stake))
+                return roiData;
+
+            let stake = poaROIData.stake * tokenFactor;
+            let roi = stakeToROI(stake, poaROIData.roiArrForLerp);
+            let ratio = ((roi - stake) / stake);            
+            ratio += ratio * poaROIData.factorIfReferral;            
+
+            poaROIData.periods.forEach(function(period, index, array) {
+                let value = (stake * ratio * period.daysFactor) / tokenFactor;
+                roiData[index] = {
+                    period : period.titleInLocale,
+                    roi : "+ " + (ratio * 100 * period.daysFactor).toFixed(2) + " %",
+                    values : batchConvertToCurr(value, poaROIData.currencyInfo)
+                };
+            });
+            return roiData
+        }
+
+        return {
+            getPOA_ROIs : getPOA_ROIs
+        };                
+    });    
 
     let commasFormatter10Decimals = new Intl.NumberFormat("en-us", {
         useGrouping: 'true',
@@ -1864,7 +1742,6 @@
 			return input;
 		}
 	});
-
 
     app.factory('apexRadialChart', function ($window) {    
         return {
@@ -2023,27 +1900,27 @@
 
     app.factory('schema', function () {
         let schema = {
-                    "root" :            "0000",
-                    "custom" :          "0100",
-                    "create_token" :    "0200",
-                    "delegate" :        "0300",
-                    "undelegate" :      "0400",
-                    "signature" :       "0500",
-                    "hash" :            "0600",
-                    "string" :          "0700",
-                    "int" :             "0800",
-                    "bigint" :          "0900",
-                    "float" :           "0a00",
-                    "object" :          "0c00",
-                    "key" :             "0d00",
-                    "procedure_name" :  "0e00",
-                    "parameters" :      "0f00",
-                    "create_pos" :      "1000",
-                    "pos_reward" :      "1100",
-                    "transfer" :        "1200",
-                    "mint" :            "1300",
-                    "burn" :            "1400"
-                };
+            "root" :            "0000",
+            "custom" :          "0100",
+            "create_token" :    "0200",
+            "delegate" :        "0300",
+            "undelegate" :      "0400",
+            "signature" :       "0500",
+            "hash" :            "0600",
+            "string" :          "0700",
+            "int" :             "0800",
+            "bigint" :          "0900",
+            "float" :           "0a00",
+            "object" :          "0c00",
+            "key" :             "0d00",
+            "procedure_name" :  "0e00",
+            "parameters" :      "0f00",
+            "create_pos" :      "1000",
+            "pos_reward" :      "1100",
+            "transfer" :        "1200",
+            "mint" :            "1300",
+            "burn" :            "1400"
+        };
         return schema                
     });
 
@@ -2164,7 +2041,7 @@
             agent_info : $resource('/api/v1/stat/agent_info?id=:id', {id:'@id'}),
             transaction : $resource('api/v1/tx?hash=:hash', {hash:'@hash'}),
             top_accounts : $resource('api/v1/top_accounts?page=:page', {page:'@page'}),
-            roi : $resource('api/v1/roi', {}),
+            roi : $resource('api/v1/roi?hash=:hash', {hash:'@hash'}),
             stake_limits : $resource('api/v1/get_stake_limits', {}),
             get_tickers_all : $resource('api/v1/get_tickers_all', {query: {method: 'GET', isArray: true}}),
             get_token_info_page : $resource('api/v1/get_token_info_page?page=:page', {page:'@page'}),
@@ -2335,7 +2212,7 @@
         return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     };
 
-    app.controller('roiCtrl', function(GLOBAL_APP_CONFIG, $window, $scope, $rootScope, $translate, provider, validator, currencyExchange, commonTools) {
+    app.controller('roiCtrl', function(GLOBAL_APP_CONFIG, $window, $scope, $rootScope, $translate, provider, validator, currencyExchange, commonTools, roiCalc, Toast) {
         $scope.currentPreset = GLOBAL_APP_CONFIG.tokenPresets[GLOBAL_APP_CONFIG.presetName];
         $scope.showROICalc = $scope.currentPreset.pagesSectionsVisibility.showROICalc;
 
@@ -2346,31 +2223,23 @@
         $scope.roiValid = true;
 
         if (GLOBAL_APP_CONFIG.presetName !== 'ENQ') {
-             $scope.stake_limits = provider.stake_limits.get(function(stake_limits){
+             $scope.stake_limits = provider.stake_limits.get(function(stake_limits){                
                 $scope.stake = stake_limits.min_stake/$rootScope.mainTokenFactor;           
                 $scope.min_stake = stake_limits.min_stake/$rootScope.mainTokenFactor;
-                $scope.max_stake = stake_limits.max_stake/$rootScope.mainTokenFactor;
-
-                $scope.translationData = {
-                    stake: $scope.stake,
-                    min: $scope.min_stake,
-                    max: $scope.max_stake,
-                    tokenName: $scope.currentPreset.tokenName
-                };  
+                $scope.max_stake = stake_limits.max_stake/$rootScope.mainTokenFactor; 
             });           
         } else {
             $scope.stake = 25;           
             $scope.min_stake = 25;
             $scope.max_stake = 25000;
-
-            $scope.translationData = {
-                stake: $scope.stake,
-                min: $scope.min_stake,
-                max: $scope.max_stake,
-                tokenName: $scope.currentPreset.tokenName
-            }; 
         }
 
+        $scope.translationData = {
+            stake: $scope.stake,
+            min: $scope.min_stake,
+            max: $scope.max_stake,
+            tokenName: $scope.currentPreset.tokenName
+        };
         
         $scope.ROIHeaderTranslate = function() {
             $translate('ROI_HEADER', $scope.translationData).then(function (translation) {                
@@ -2379,67 +2248,23 @@
         };
 
         $scope.ROIHeaderTranslate();
+
         $rootScope.$on('$translateChangeSuccess', function () {
             $scope.ROIHeaderTranslate();
         });
-
-
-        $scope.showExchangesSection = $scope.currentPreset.pagesSectionsVisibility.showExchangesSection;
-
-        $scope.convert = function(enq){
-            enq = enq / $rootScope.mainTokenFactor;
-            // Add more in future
-            return [
-                {
-                    name:$scope.translationData.tokenName,
-                    value: commas(enq.toFixed(2)) + ' ' + $scope.translationData.tokenName
-                },
-                {
-                    name:'USD',
-                    value: commas((enq * parseFloat($scope.stats.cg_usd)).toFixed(3)) + ' USD'
-                },
-                {
-                    name:'ETH',
-                    value: (enq * parseFloat($scope.stats.cg_eth)).toFixed(6) + ' ETH'
-                },
-                {
-                    name:'BTC',
-                    value: (enq * parseFloat($scope.stats.cg_btc)).toFixed(8) + ' BTC'
-                }
-            ]
-        };
-
-        $scope.lerp = function(y0, y1, x0, x1, y){
-            return (x0 + ((y - y0) / (y1 - y0)) * (x1 - x0))
-        };
 
         $scope.getTimestamp = function(unix){
             return (new Date(unix * 1000)).toLocaleString()
         };
 
-        $scope.calcROI = function(stake){
-            let rois = $scope.rois;
-            for (let i = 0; i < rois.length; i++) {
-                if(stake === rois[i].stake){
-                    return rois[i].roi;
-                }
-                else if(stake < rois[i].stake){
-                    return this.lerp(rois[i-1].stake, rois[i].stake, rois[i-1].roi, rois[i].roi, stake)
-                }
-            }
-            return 0;
-        };
-
-        $scope.rois = provider.roi.query(function(roi){            
-            $scope.reloadROI($scope.stake);
-        });
+        $scope.showExchangesSection = $scope.currentPreset.pagesSectionsVisibility.showExchangesSection;        
 
         $scope.stats = provider.stats.get(function(stat){
             let statsPropertiesArr = ['total_daily_stake','reward_poa','poa_count','cg_usd','cg_btc'];
             statsPropertiesArr.forEach(function(item) {
                 $scope.stats[item] = (stat.hasOwnProperty(item) && validator.checkValidDigitalValue(stat[item])) ? stat[item] : incorrectValue;
             });
-
+            
             $scope.convertValueToUSD = function(value) {
                 if (value !== undefined) {              
                     let cg_usdDecimals = stat.cg_usd.split('.')[1].length;
@@ -2450,62 +2275,73 @@
                     return 0;
             }
 
-            $scope.reloadROI($scope.stake);
-        });
+            let poaROIData = {
+                stake : null,
+                stakeTicker : $scope.translationData.tokenName,
+                stakeDecimals : $rootScope.mainToken.decimals,
+                roiArrForLerp : null,
+                stat : stat,
+                factorIfReferral : null,
+                periods : [
+                    {
+                        titleInLocale: "ROI_DAILY",
+                        daysFactor: 1 
+                    },
+                    {
+                        titleInLocale: "ROI_WEEKLY",
+                        daysFactor: 7 
+                    },
+                    {
+                        titleInLocale: "ROI_MONTHLY",
+                        daysFactor: 30 
+                    },
+                    {
+                        titleInLocale: "ROI_ANNUALLY",
+                        daysFactor: 365 
+                    }
+                ],
+                currencyInfo : [
+                    {
+                        ticker : $scope.translationData.tokenName,
+                        rate : 1,
+                        toFixed : 2 
+                    },                
+                    {
+                        ticker : 'USD',
+                        rate : stat.cg_usd,
+                        toFixed : 3 
+                    },
+                    {
+                        ticker : 'ETH',
+                        rate : stat.cg_eth,
+                        toFixed : 6 
+                    },
+                    {
+                        ticker : 'BTC',
+                        rate : stat.cg_btc,
+                        toFixed : 8 
+                    }
+                ]
+            };
 
-        $scope.reloadROI = function(stake){
-            if(!$scope.rois.length || !$scope.stats.$resolved)
-                return false;
-            $scope.isLoaded = true;
-            stake = parseFloat(stake);
-            if(isNaN(stake)){
-                return false;
-            }
-
-            if(stake < $scope.min_stake || stake > $scope.max_stake ){
-                $.toast({
-                    heading: 'Error',
-                    text: `Stake is out of range ${$scope.min_stake}...${$scope.max_stake}`,
-                    icon: 'error',
-                    hideAfter: 5000,
-                    stack: 3,
-                    position: 'top-right',
-                    loader: false
-                });
-                return false;
-            }
-
-            $scope.translationData.stake = stake;
-            $scope.ROIHeaderTranslate();
-            stake = stake * $rootScope.mainTokenFactor;
-            let roi = $scope.calcROI(stake);
-            let ratio = ((roi - stake) / stake);
-            if($scope.refCheck)
-                ratio += ratio * 0.1;
-            $scope.roiData = [
-                {
-                    period: "ROI_DAILY",
-                    values: $scope.convert((stake * ratio)),
-                    roi: "+ " + (ratio * 100).toFixed(2) + " %"
-                },
-                {
-                    period: "ROI_WEEKLY",
-                    values: $scope.convert(stake * ratio * 7),
-                    roi: "+ " + (ratio * 7 * 100).toFixed(2) + " %"
-                },
-                {
-                    period: "ROI_MONTHLY",
-                    values: $scope.convert(stake * ratio * 30),
-                    roi: "+ " + (ratio * 30 * 100).toFixed(2) + " %"
-                },
-                {
-                    period: "ROI_ANNUALLY",
-                    values: $scope.convert(stake * ratio * 365),
-                    roi: "+ " + (ratio * 365 * 100).toFixed(2) + " %"
+            $scope.reloadROI = function(stake) {
+                if(stake < $scope.min_stake || stake > $scope.max_stake ){
+                    Toast.stakeErrorToast(`Stake is out of range ${$scope.min_stake}...${$scope.max_stake}`);
+                    $scope.roiData = [];
+                } else {
+                    poaROIData.stake = parseFloat(stake);
+                    poaROIData.factorIfReferral = $scope.refCheck === true ? 0.1 : 0;
+                    $scope.roiData = roiCalc.getPOA_ROIs(poaROIData);                    
                 }
-            ];
-        };
+            }
 
+            $scope.rois = provider.roi.query(function(roiArrForLerp){
+                poaROIData.roiArrForLerp = roiArrForLerp;            
+                $scope.reloadROI($scope.stake);
+            });
+        });
+        
+        ////////////////////////////////// PoW Calc
         $scope.showPOWCalcResult = false;
 
         $scope.powCalc = {
@@ -3269,7 +3105,7 @@
         };
         $scope.getHistory(0);
     });
-    app.controller('tokenCtrl', function($scope, $rootScope, $routeParams, GLOBAL_APP_CONFIG, provider, tokenInfoStorage, commonTools, $translate, $filter) {
+    app.controller('tokenCtrl', function($scope, $rootScope, $routeParams, GLOBAL_APP_CONFIG, provider, tokenInfoStorage, commonTools, $translate, $filter, roiCalc, Toast) {
         let currentPreset = GLOBAL_APP_CONFIG.tokenPresets[GLOBAL_APP_CONFIG.presetName];
         $scope.additionalTokenData = {
             officialSiteLink : '',
@@ -3277,9 +3113,12 @@
             whitepaperLink : '',
             whitepaperLinkText : '---'
         };
+
+        $scope.stake = null;
         $scope.mediaWidgetNamePrefix = 'default';
         $scope.page_num = 0;
         let entitiesOnPage = 20;
+        $scope.showMiningFeatures = false;
 
         provider.token_info.query({hash:$routeParams.hash}, function(token_info) {
             $scope.token = token_info[0];
@@ -3320,6 +3159,126 @@
 
             $scope.media = $scope.token.customerInfo.media;
             provider.stats.get({}, function(stat) {
+                if ($scope.token.type === "Mineable") {
+                    function setCalcStep() {
+                        let diff = parseInt($scope.max_stake - $scope.min_stake);
+                        let orderStr =  String(diff)
+                        let order = orderStr.length;
+                        order = order - 2;
+                        let step = Math.pow(10, order);
+
+                        if (parseInt(diff / step) > 10)
+                            step *= 5;
+
+                        $scope.upStake = function() {
+                            $scope.stake = $scope.stake == '' ? $scope.min_stake : parseFloat($scope.stake);                            
+                            if ( ($scope.stake + step) > $scope.max_stake)
+                                $scope.stake = $scope.max_stake;
+                            else if (($scope.stake + step) < $scope.min_stake)
+                                $scope.stake = $scope.min_stake;
+                            else
+                                $scope.stake += step;
+                        }
+
+                        $scope.downStake = function() {
+                            $scope.stake = $scope.stake == '' ? $scope.min_stake : parseFloat($scope.stake);
+                            if (($scope.stake - step) < $scope.min_stake)
+                                $scope.stake = $scope.min_stake;
+                            else if (($scope.stake - step) > $scope.max_stake)
+                                $scope.stake = $scope.max_stake;
+                            else
+                                $scope.stake -= step;
+                        }                
+                    }
+                    let poaROIData = {
+                        stake : null,
+                        stakeTicker : $scope.token.ticker,
+                        stakeDecimals : $scope.token.decimals,
+                        roiArrForLerp : null,
+                        stat : stat,
+                        factorIfReferral : null,
+                        periods : [
+                            {
+                                titleInLocale: "ROI_WEEKLY",
+                                daysFactor: 7 
+                            },
+                            {
+                                titleInLocale: "ROI_MONTHLY",
+                                daysFactor: 30 
+                            },
+                            {
+                                titleInLocale: "ROI_ANNUALLY",
+                                daysFactor: 365 
+                            }
+                        ],
+                        currencyInfo : [
+                            {
+                                ticker : $scope.token.ticker,
+                                rate : 1,
+                                toFixed : 2 
+                            }
+                        ]
+                    };
+
+                    $scope.reloadROI = function(stake) {
+                        let roiDataInit = [
+                            {
+                                period : "ROI_WEEKLY",
+                                roi : '---',
+                                values : [{value : '---'}]
+                            },
+                            {
+                                period : "ROI_MONTHLY",
+                                roi : '---',
+                                values : [{value : '---'}]
+                            },
+                            {
+                                period : "ROI_ANNUALLY",
+                                roi : '---',
+                                values : [{value : '---'}]
+                            }
+                        ];
+                        let result = [];
+                        if (poaROIData.roiArrForLerp.length === 0) {
+                            return roiDataInit;
+                        } else if ((stake < $scope.min_stake || stake > $scope.max_stake) || (stake !== undefined && stake === '') || !(poaROIData.roiArrForLerp.length > 0)) {
+                            Toast.stakeInfoToast(`Please set stake in the range ${$scope.min_stake}...${$scope.max_stake}`);
+                            return roiDataInit;                            
+                        } else {
+                            poaROIData.stake = parseFloat(stake);
+                            poaROIData.factorIfReferral = $scope.refCheck === true ? 0.1 : 0;
+                            result = roiCalc.getPOA_ROIs(poaROIData);                                                                   
+                        }
+                        return result.length === 0 ? roiDataInit : result;
+                    }
+
+                    provider.roi.query({hash:$routeParams.hash},function(roiArrForLerp) {
+
+                        if (Array.isArray(roiArrForLerp) && roiArrForLerp.length > 0) {
+                            $scope.min_stake  = roiArrForLerp[0].stake / Math.pow(10, $scope.token.decimals);
+                            $scope.stake = $scope.min_stake;
+                            $scope.max_stake = roiArrForLerp[roiArrForLerp.length - 1].stake / Math.pow(10, $scope.token.decimals);
+                            poaROIData.roiArrForLerp = roiArrForLerp;
+                            setCalcStep();
+                            let minROIArr = $scope.reloadROI($scope.min_stake);
+                            $scope.minAnnualROI = minROIArr[minROIArr.length - 1].roi;
+                            $scope.roiCalcState = '';
+                        } else {
+                            poaROIData.roiArrForLerp = [];
+                            $scope.stake = '---';
+                            $scope.minAnnualROI = '---';
+                            $scope.roiCalcState = 'disabled';
+                        }                        
+                                           
+                        $scope.$watch('stake', function(newValue, oldValue) {
+                            if (newValue !== undefined && newValue !== '') {                                
+                                $scope.roiData = $scope.reloadROI(newValue);
+                            }
+                        });
+                    });                                    
+                    $scope.showMiningFeatures = true;
+                }
+
                 if ($routeParams.hash === $rootScope.mainToken.hash) {
                     if ($rootScope.mainToken.ticker === 'ENQ') {
                         let tokenPrice = stat.cg_usd;
@@ -3358,7 +3317,7 @@
 
         provider.get_token_holder_count.get({token_hash:$routeParams.hash}, function(tokenHolders) {
             $scope.tokenHoldersCount = tokenHolders.count;                        
-        });
+        });        
 
         $scope.getHistory = function(page){
             $scope.isLoading = true;
@@ -4340,7 +4299,6 @@
             window.getSelection().removeAllRanges();
             document.body.removeChild(tmp);
         });
-
     });
 </script>
 

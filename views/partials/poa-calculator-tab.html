@@ -1,0 +1,218 @@
+
+<div class="col-12">
+    <div class="row" id="metrics">
+        <div class="col-12 col-md-6 col-xl-3" ng-if="currentPreset.tokenName === 'ENQ'">
+            <div class="card widget-flat">
+                <div class="card-body">
+                    <h5 class="text-muted font-weight-normal mt-0" title="Revenue">{{'TOKEN_PRICE' | translate}}</h5>
+                    <h3 class="mt-3">{{stats.cg_usd | USD}}</h3>
+                    <h6 class="mb-0">{{stats.cg_btc}} BTC</h6>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-6 col-xl-3" ng-if="currentPreset.tokenName === 'BIT'">
+            <div class="card widget-flat">
+                <div class="card-body">
+                    <h5 class="text-muted font-weight-normal mt-0" title="Revenue">{{'CIRC_SUPPLY_SHORT' | translate}}</h5>
+                    <h3 class="mt-3">{{stats.csup !== undefined ? stats.csup : "N/A" | US_COMMAS_BIGINT_DECIMALS : mainToken.decimals : 0}} {{mainToken.ticker}}</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-6 col-xl-3">
+            <div class="card widget-flat">
+                <div class="card-body">
+                    <h5 class="text-muted font-weight-normal mt-0" title="Revenue">{{'MN_AMOUNT' | translate}}</h5>
+                    <h3 class="mt-3" ng-class="currentPreset.tokenName==='ENQ'?'mb-3':''">{{stats.poa_count}}</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-6 col-xl-3">
+            <div class="card widget-flat">
+                <div class="card-body">
+                    <h5 class="text-muted font-weight-normal mt-0" title="Revenue">{{'MN_STAKE' | translate}}</h5>
+                    <h3 class="mt-3">{{stats.total_daily_stake | US_COMMAS_BIGINT_DECIMALS : mainToken.decimals : 0}} {{mainToken.ticker}}</h3>
+                    <h6 class="mb-0" ng-if="currentPreset.tokenName === 'ENQ'">{{convertValueToUSD(stats.total_daily_stake) | US_COMMAS_BIGINT_DECIMALS : mainTokenToUSDDecimals : 5}} USD</h6>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-md-6 col-xl-3">
+            <div class="card widget-flat">
+                <div class="card-body">
+                    <h5 class="text-muted font-weight-normal mt-0" title="Revenue">{{'MN_REWARD' | translate}}</h5>
+                    <h3 class="mt-3">{{stats.reward_poa | US_COMMAS_BIGINT_DECIMALS : mainToken.decimals : 0}} {{mainToken.ticker}}</h3>
+                    <h6 class="mb-0" ng-if="currentPreset.tokenName === 'ENQ'">{{convertValueToUSD(stats.reward_poa) | US_COMMAS_BIGINT_DECIMALS : mainTokenToUSDDecimals : 5}} USD</h6>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row" id="calculator">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="header-title mb-3">{{'MN_CALCULATOR' | translate}}</h4>
+                    <div class="row">
+                        <div class="col-xl-3 col-sm-12">
+                            <p class="mt-3">{{'ROI_RANGE' | translate: {min : min_stake, max: max_stake, tokenName : currentPreset.tokenName} }}</p>
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" id="customCheck1" ng-model="$parent.refCheck" ng-change="reloadROI(stake)">
+                                <label class="custom-control-label" for="customCheck1">{{'IS_REFERRAL' | translate}}</label>
+                            </div>
+                        </div>
+                        <div class="col-xl-9 col-sm-12">
+                            <div class="form-row align-items-center">
+                                <div class="col-md-5 form-group mb-3" ng-class="currentPreset.tokenName === 'ENQ'? 'mt-3': ''">
+                                    <label for="roi_stake">{{'ROI_STAKE' | translate: translationData}}</label>
+                                    <input type="text" id="roi_stake" class="form-control" ng-model="stake" >
+                                    <span class="form-text" ng-if="currentPreset.tokenName === 'ENQ'">{{convertValueToUSD(stake * mainTokenFactor) | US_COMMAS_BIGINT_DECIMALS : mainTokenToUSDDecimals : 5}} USD</span>
+                                </div>
+                                <div class="col-md-5 form-group mb-3" style="opacity: 0.5">
+                                    <label for="roi_nodes">{{'ROI_MN_AMOUNT' | translate}}</label>
+                                    <input type="text" id="roi_nodes" class="form-control" placeholder="1" disabled>
+                                </div>
+                                <div class="col-md-2 mt-1">
+                                    <button type="button" class="btn btn-primary" ng-click="reloadROI(stake)">{{'CALCULATE' | translate}}</button>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="row">
+
+                    </div>
+                    <div class="row">
+                        <div class="col-12 text-center">
+                            <hr>
+                            <h4 class="mt-3">{{ROIHeader}}</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row" ng-if="currentPreset.tokenName === 'ENQ'">
+                <div class="col-12 mb-3 d-flex justify-content-center" ng-hide="isLoaded">
+                    <div class="spinner-grow avatar-md text-primary m-2" role="status"></div>
+                </div>
+                <div class="col-md-6 col-xl-3" ng-repeat="rec in roiData">
+                    <div class="card">
+                        <div class="card-body text-center">
+                            <h4 class="text-title text-nowrap mb-3">{{rec.period | translate}}</h4>
+                            <div class="table-responsive-sm">
+                                <table class="table table-borderless table-sm table-centered mb-0" style="table-layout: auto;">
+                                    <tbody>
+                                    <tr ng-repeat="curr in rec.values">
+                                        <td><b>{{curr.name}}</b></td>
+                                        <td>{{curr.value}}</td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                                <hr>
+                                <h5>ROI</h5>
+                                <h3>{{rec.roi}}</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>                                       
+    </div>
+    <div class="row" ng-if="currentPreset.tokenName === 'BIT'">
+        <div class="col-10 offset-1 col-sm-6 offset-sm-0 col-md-6 col-lg-6 col-xl-3" ng-repeat="rec in roiData">
+            <div class="card">
+                <div class="card-body text-center">
+                    <div class="roi-cards-period-label-wrapper">
+                        <div class="text-title text-nowrap">{{rec.period | translate}}</div>
+                    </div>
+                    <div class="pt-2 pb-2" ng-init="roiVal=rec.values[0].value.split('.')">
+                        <span class="h3">+ </span><span class="h3">{{roiVal[0]}}.</span><span class="h4">{{roiVal[1]}}</span>
+                    </div>
+                    <hr>
+                    <div class="table-responsive-sm">
+                        <h4 class="pt-2">ROI</h4>
+                        <h3 class="text-blue mb-2">{{rec.roi}}</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 align-items-center justify-content-center" ng-if="currentPreset.tokenName !== 'ENQ'">
+        <h3 class="text-center mb-3">{{'TOKEN_NOT_TRADING' | translate: translationData}}</h3>
+    </div>                                     
+    <div ng-if="showExchangesSection" class="row" id="token-info">
+        <div class="col-12 mb-3">
+            <div class="card">
+                <div class="card-body">
+                    <h3 class="header-title mt-2 mb-3">{{'HOW_TO_START_MN' | translate}}</h3>
+                    <div class="row mb-3">
+                        <div class="col-lg-10 col-md-12">
+                            <h5> {{'ROI_DESC1' | translate}} - <a href="https://app.enecuum.com/">app.enecuum.com</a></h5>
+                            <h5> {{'ROI_DESC2' | translate}}</h5>
+                            <h5> {{'ROI_DESC3' | translate}}</h5>
+                            <h5> {{'ROI_DESC5' | translate}}</h5>
+                        </div>
+                        <div class="col-lg-4 d-lg-block d-none">
+                            <!--<img src="assets/images/app-screen.png" style="height: 300px;" alt="">-->
+
+                        </div>
+                    </div>
+                    <h3 class="header-title mt-2 mb-3">{{'BUY_ON_EXCHANGE' | translate}}</h3>
+                    <div class="row my-3" id="exchanges">
+                        <div class="col-xl-12 col-md-12 text-center mt-4">
+                            <a href="https://www.kucoin.com/trade/ENQ-BTC" class="exchange-logo-link" target="_blank" style="background-image: url(/assets/images/exchanges/kucoin-logo.svg)"></a>
+                            <ul class="list-inline text-white">
+                                <li class="list-inline-item">
+                                    <h4><a href="https://www.kucoin.com/trade/ENQ-USDT"  target="_blank">ENQ-USDT</a></h4>
+                                </li>
+                                <li class="list-inline-item">
+                                    <h4><a href="https://www.kucoin.com/trade/ENQ-BTC" target="_blank">ENQ-BTC</a></h4>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="col-12 col-md-10 offset-md-1 text-center mt-4">  
+                            <a href="https://www.probit.com/app/exchange/ENQ-USDT" class="exchange-logo-link graviex-logo-link" style="background-image: url(/assets/images/exchanges/probit-blue.png)" target="_blank"></a>  
+                            <ul class="list-inline text-white">  
+                                <li class="list-inline-item">   
+                                    <h4><a href="https://www.probit.com/app/exchange/ENQ-USDT" target="_blank">ENQ-USDT</a></h4>  
+                                </li>   
+                                <li class="list-inline-item">   
+                                    <h4><a href="https://www.probit.kr/app/exchange/ENQ-KRW" target="_blank">ENQ-KRW</a></h4>    
+                                </li>
+                            </ul>
+                        </div>                                                          
+                        <div class="col-12 col-md-10 offset-md-1 text-center mt-4">  
+                            <a href="https://graviex.net/markets/enqbtc" class="exchange-logo-link graviex-logo-link" style="background-image: url(/assets/images/exchanges/graviex-grey.png)" target="_blank"></a>  
+                            <ul class="list-inline text-white"> 
+                                <li class="list-inline-item">   
+                                    <h4><a href="https://graviex.net/markets/enqbtc" target="_blank">ENQ-BTC</a></h4>    
+                                </li>   
+                                <li class="list-inline-item">   
+                                    <h4><a href="https://graviex.net/markets/enqusdt" target="_blank">ENQ-USDT</a></h4>  
+                                </li>   
+                                <li class="list-inline-item">   
+                                    <h4><a href="https://graviex.net/markets/enqeth" target="_blank">ENQ-ETH</a></h4>    
+                                </li>
+                            </ul>
+                        </div>    
+                    </div>
+                    <h3 class="header-title mt-4 mb-3 d-none">{{'PAY_BY_CARD' | translate}}</h3>
+                    <div class="row my-3 d-none" id="bankCardProcessing">
+                        <div class="col-xl-12 col-md-12 text-center mt-2">
+                            <a href="https://suex.io/?currency_in=EUR&currency_out=ENQ&amount_in=30" class="card-processing-logo-link suex-logo-link" target="_blank" style="background-image: url(/assets/images/bank_cards_processing/suex-logo-color.svg)"></a>
+                            <ul class="list-inline text-white">
+                                <li class="list-inline-item">
+                                    <h4><a href="https://suex.io/?currency_in=RUB&currency_out=ENQ&amount_in=2000"  target="_blank" class="text-white">RUB-ENQ</a></h4>
+                                </li>
+                                <li class="list-inline-item">
+                                    <h4><a href="https://suex.io/?currency_in=EUR&currency_out=ENQ&amount_in=30" target="_blank" class="text-white">EUR-ENQ</a></h4>
+                                </li>
+                                <li class="list-inline-item">
+                                    <h4><a href="https://suex.io/?currency_in=USD&currency_out=ENQ&amount_in=30" target="_blank" class="text-white">USD-ENQ</a></h4>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div> <!-- end col-->
+    </div>
+</div>
