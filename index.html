@@ -1626,7 +1626,7 @@
                 let value = (stake * ratio * period.daysFactor) / tokenFactor;
                 roiData[index] = {
                     period : period.titleInLocale,
-                    roi : "+ " + (ratio * 100 * period.daysFactor).toFixed(2) + " %",
+                    roi : "+ " + commasFormatter2Decimals.format(ratio * 100 * period.daysFactor) + " %",
                     values : batchConvertToCurr(value, poaROIData.currencyInfo)
                 };
             });
@@ -2259,85 +2259,89 @@
 
         $scope.showExchangesSection = $scope.currentPreset.pagesSectionsVisibility.showExchangesSection;        
 
-        $scope.stats = provider.stats.get(function(stat){
-            let statsPropertiesArr = ['total_daily_stake','reward_poa','poa_count','cg_usd','cg_btc'];
-            statsPropertiesArr.forEach(function(item) {
-                $scope.stats[item] = (stat.hasOwnProperty(item) && validator.checkValidDigitalValue(stat[item])) ? stat[item] : incorrectValue;
-            });
-            
-            $scope.convertValueToUSD = function(value) {
-                if (value !== undefined) {              
-                    let cg_usdDecimals = stat.cg_usd.split('.')[1].length;
-                    $scope.mainTokenToUSDDecimals = cg_usdDecimals + $rootScope.mainToken.decimals;
-                    let bigIntCgUSD = commonTools.valueToBigInt(stat.cg_usd, cg_usdDecimals).value
-                    return currencyExchange.convertValue(BigInt(value), bigIntCgUSD);
-                } else
-                    return 0;
-            }
-
-            let poaROIData = {
-                stake : null,
-                stakeTicker : $scope.translationData.tokenName,
-                stakeDecimals : $rootScope.mainToken.decimals,
-                roiArrForLerp : null,
-                stat : stat,
-                factorIfReferral : null,
-                periods : [
-                    {
-                        titleInLocale: "ROI_DAILY",
-                        daysFactor: 1 
-                    },
-                    {
-                        titleInLocale: "ROI_WEEKLY",
-                        daysFactor: 7 
-                    },
-                    {
-                        titleInLocale: "ROI_MONTHLY",
-                        daysFactor: 30 
-                    },
-                    {
-                        titleInLocale: "ROI_ANNUALLY",
-                        daysFactor: 365 
+        $scope.stats = provider.stats.get(function(stat) {
+            $rootScope.$watch('mainToken.decimals', function(newValue, oldValue) {
+                if (newValue !== undefined) {
+                    let statsPropertiesArr = ['total_daily_stake','reward_poa','poa_count','cg_usd','cg_btc'];
+                    statsPropertiesArr.forEach(function(item) {
+                        $scope.stats[item] = (stat.hasOwnProperty(item) && validator.checkValidDigitalValue(stat[item])) ? stat[item] : incorrectValue;
+                    });
+                    
+                    $scope.convertValueToUSD = function(value) {
+                        if (value !== undefined) {              
+                            let cg_usdDecimals = stat.cg_usd.split('.')[1].length;
+                            $scope.mainTokenToUSDDecimals = cg_usdDecimals + $rootScope.mainToken.decimals;
+                            let bigIntCgUSD = commonTools.valueToBigInt(stat.cg_usd, cg_usdDecimals).value
+                            return currencyExchange.convertValue(BigInt(value), bigIntCgUSD);
+                        } else
+                            return 0;
                     }
-                ],
-                currencyInfo : [
-                    {
-                        ticker : $scope.translationData.tokenName,
-                        rate : 1,
-                        toFixed : 2 
-                    },                
-                    {
-                        ticker : 'USD',
-                        rate : stat.cg_usd,
-                        toFixed : 3 
-                    },
-                    {
-                        ticker : 'ETH',
-                        rate : stat.cg_eth,
-                        toFixed : 6 
-                    },
-                    {
-                        ticker : 'BTC',
-                        rate : stat.cg_btc,
-                        toFixed : 8 
-                    }
-                ]
-            };
 
-            $scope.reloadROI = function(stake) {
-                if(stake < $scope.min_stake || stake > $scope.max_stake ){
-                    Toast.stakeErrorToast(`Stake is out of range ${$scope.min_stake}...${$scope.max_stake}`);
-                    $scope.roiData = [];
-                } else {
-                    poaROIData.stake = parseFloat(stake);
-                    poaROIData.factorIfReferral = $scope.refCheck === true ? 0.1 : 0;
-                    $scope.roiData = roiCalc.getPOA_ROIs(poaROIData);                    
+                    let poaROIData = {
+                        stake : null,
+                        stakeTicker : $scope.translationData.tokenName,
+                        stakeDecimals : $rootScope.mainToken.decimals,
+                        roiArrForLerp : null,
+                        stat : stat,
+                        factorIfReferral : null,
+                        periods : [
+                            {
+                                titleInLocale: "ROI_DAILY",
+                                daysFactor: 1 
+                            },
+                            {
+                                titleInLocale: "ROI_WEEKLY",
+                                daysFactor: 7 
+                            },
+                            {
+                                titleInLocale: "ROI_MONTHLY",
+                                daysFactor: 30 
+                            },
+                            {
+                                titleInLocale: "ROI_ANNUALLY",
+                                daysFactor: 365 
+                            }
+                        ],
+                        currencyInfo : [
+                            {
+                                ticker : $scope.translationData.tokenName,
+                                rate : 1,
+                                toFixed : 2 
+                            },                
+                            {
+                                ticker : 'USD',
+                                rate : stat.cg_usd,
+                                toFixed : 3 
+                            },
+                            {
+                                ticker : 'ETH',
+                                rate : stat.cg_eth,
+                                toFixed : 6 
+                            },
+                            {
+                                ticker : 'BTC',
+                                rate : stat.cg_btc,
+                                toFixed : 8 
+                            }
+                        ]
+                    };
+
+                    $scope.reloadROI = function(stake) {
+                        if(stake < $scope.min_stake || stake > $scope.max_stake ){
+                            Toast.stakeErrorToast(`Stake is out of range ${$scope.min_stake}...${$scope.max_stake}`);
+                            $scope.roiData = [];
+                        } else {
+                            poaROIData.stake = parseFloat(stake);
+                            poaROIData.factorIfReferral = $scope.refCheck === true ? 0.1 : 0;
+                            $scope.roiData = roiCalc.getPOA_ROIs(poaROIData);                    
+                        }
+                    }
+
+                    $scope.rois = provider.roi.query(function(roiArrForLerp){
+                        poaROIData.roiArrForLerp = roiArrForLerp;            
+                        $scope.reloadROI($scope.stake);
+                    });
                 }
-            }
-
-            $scope.rois = provider.roi.query(function(roiArrForLerp){
-                poaROIData.roiArrForLerp = roiArrForLerp;            
-                $scope.reloadROI($scope.stake);
             });
         });
         
