@@ -28,7 +28,7 @@
             "in": "ENQ is used in Pulse Network and can be mined in Enecuum's mobile mining application utilizing the Proof-of-Activity algorithm.",
             "tr": "ENQ is used in Pulse Network and can be mined in Enecuum's mobile mining application utilizing the Proof-of-Activity algorithm."
         },
-        "coingecko-id": "coingecko-id"             
+        "coingecko_id": "enq-enecuum"             
     },
     {
         "token_id":"some-token-id",
@@ -56,7 +56,7 @@
             "in":"IN text about some token",
             "tr":"TR text about some token"
         },
-        "coingecko-id": "coingecko-id"             
+        "coingecko_id": "coingecko-id"             
     },
     {
         "token_id":"another-token-id",
@@ -78,6 +78,6 @@
             "en":"EN text about another token",
             "de":"DE text about another token"
         },
-        "coingecko-id": "coingecko-id"             
+        "coingecko_id": "coingecko-id"             
     }
 ]    
