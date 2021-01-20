@@ -36,9 +36,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-translate/2.18.1/angular-translate-loader-static-files/angular-translate-loader-static-files.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simplebar@5.2.1/dist/simplebar.css"/>
     <script src="/assets/info/pos-info-storage-enq.js"></script>
-    <script src="/assets/info/pos-info-storage-bit.js"></script>
-    <script src="/assets/info/token-info-storage-enq.js"></script>
-    <script src="/assets/info/token-info-storage-bit.js"></script>    
+    <script src="/assets/info/pos-info-storage-bit.js"></script>    
     <!-- Global site tag (gtag.js) - Google Analytics -->
 
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-138901721-1"></script>
@@ -1144,6 +1142,7 @@
                 ENQ: {
                     theme: 'white',
                     tokenName: 'ENQ',
+                    tokenHash: '0000000000000000000000000000000000000000000000000000000000000000',
                     favicon: 'assets/images/favicon_en.ico',
                     tokenLogoFileLink: 'logo-white.png',
                     logoLinkTarget: 'https://enecuum.com',                    
@@ -1198,6 +1197,7 @@
                 BIT: {
                     theme: 'white',
                     tokenName: 'BIT',
+                    tokenHash: '0000000000000000000000000000000000000000000000000000000000000001',
                     favicon: 'assets/images/favicon_en_bit.ico',
                     tokenLogoFileLink: 'bit-logo-white.png',
                     logoLinkTarget: 'https://mybit.network/',
@@ -1235,6 +1235,7 @@
                 BIT_BLUE: {
                     theme: 'white_blue',
                     tokenName: 'BIT',
+                    tokenHash: '0000000000000000000000000000000000000000000000000000000000000001',
                     favicon: 'assets/images/favicon_en_bit.ico',
                     tokenLogoFileLink: 'bit-logo-white.png',
                     logoLinkTarget: 'https://mybit.network/',
@@ -1490,7 +1491,7 @@
         let POSInfoTemplate = {
             website: undefined,
             media: undefined,
-            descriptionLocaleStringArray: undefined
+            description: undefined
         }
 
         return {
@@ -1504,25 +1505,35 @@
         } 
     });
 
-    app.factory('tokenInfoStorage', function($window, $rootScope, GLOBAL_APP_CONFIG) {
-        let currentPreset = GLOBAL_APP_CONFIG.presetName;
-        let tokenInfoStorage = $window['tokenInfoStorage' + currentPreset];
+    app.factory('tokenInfoStorage', function($window, $rootScope, $http, GLOBAL_APP_CONFIG, $resource, $q) {
+        let currentPreset = GLOBAL_APP_CONFIG.presetName.toLowerCase();
+        let url = '/info/token-info-storage-' + currentPreset + '.json';
+        getInfo = $resource(url, {query: {method: 'GET', isArray: true}});
         let tokenInfoTemplate = {
             website: undefined,
             media: undefined,
             documents: undefined,
-            descriptionLocaleStringArray: undefined
+            description: undefined
         }
 
+        let populateInfo = function(res, hash) {
+            let tokenInfo = res.find(tokenInfoBlock => tokenInfoBlock.token_id === hash);                
+            if (tokenInfo === undefined)
+                tokenInfo = tokenInfoTemplate;
+            return tokenInfo;
+        }
         return {
-            getInfo: function(tokenId) {
-                let tokenInfo = tokenInfoStorage.find(tokenInfoBlock => tokenInfoBlock.tokenId === tokenId);                
-                if (tokenInfo === undefined)
-                    tokenInfo = tokenInfoTemplate;               
-
-                return tokenInfo
+            getInfo: function(hash) {
+                let deferred = $q.defer();
+                getInfo.query({}, function(res) {
+                    let data = res;
+                    deferred.resolve(populateInfo(data, hash));
+                }, function(error) {                   
+                    deferred.reject(populateInfo([], hash));
+                });
+                return deferred.promise;
             }
-        } 
+        }
     });
 
     app.factory('Toast', function($translate) {
@@ -3126,42 +3137,46 @@
 
         provider.token_info.query({hash:$routeParams.hash}, function(token_info) {
             $scope.token = token_info[0];
-            $scope.token.customerInfo = tokenInfoStorage.getInfo($routeParams.hash);
             $scope.token.type = commonTools.getTokenType($scope.token);
             $scope.tokenTypeBadgeClass = getTokenTypeBadgeClass($scope.token.type);
-            $rootScope.$watch('curLang.id', function(newValue, oldValue) {
-                $scope.tokenDescriptionText = undefined;                
-                if ($scope.token.customerInfo.descriptionLocaleStringArray !== undefined && Object.keys($scope.token.customerInfo.descriptionLocaleStringArray).length !== 0) {
-                    if ($scope.token.customerInfo.descriptionLocaleStringArray.hasOwnProperty(newValue) && $scope.token.customerInfo.descriptionLocaleStringArray[newValue] !== undefined) {
-                        $scope.tokenDescriptionText = $scope.token.customerInfo.descriptionLocaleStringArray[newValue];
-                    } else if ($scope.token.customerInfo.descriptionLocaleStringArray.hasOwnProperty('en') && $scope.token.customerInfo.descriptionLocaleStringArray.en !== undefined) {
-                        $scope.tokenDescriptionText = $scope.token.customerInfo.descriptionLocaleStringArray.en;
-                    } else {
-                        let customerLangArr = Object.keys($scope.token.customerInfo.descriptionLocaleStringArray);                        
-                        customerLangArr.some(function(customerLangArrElem) {
-                            appLangArr.some(function(elem) {
-                                if (customerLangArrElem === elem && $scope.tokenDescriptionText === undefined) {
-                                    $scope.tokenDescriptionText = $scope.token.customerInfo.descriptionLocaleStringArray[elem];
-
-                                }
+            $scope.tokenDescriptionText = undefined;
+            tokenInfoStorage.getInfo($routeParams.hash).then(function(customerInfo) {                
+                $scope.token.customerInfo = customerInfo;                
+                $rootScope.$watch('curLang.id', function(newValue, oldValue) {                                    
+                    if ($scope.token.customerInfo.description !== undefined && Object.keys($scope.token.customerInfo.description).length !== 0) {
+                        if ($scope.token.customerInfo.description.hasOwnProperty(newValue) && $scope.token.customerInfo.description[newValue] !== undefined) {
+                            $scope.tokenDescriptionText = $scope.token.customerInfo.description[newValue];
+                        } else if ($scope.token.customerInfo.description.hasOwnProperty('en') && $scope.token.customerInfo.description.en !== undefined) {
+                            $scope.tokenDescriptionText = $scope.token.customerInfo.description.en;
+                        } else {
+                            let customerLangArr = Object.keys($scope.token.customerInfo.description);                        
+                            customerLangArr.some(function(customerLangArrElem) {
+                                appLangArr.some(function(elem) {
+                                    if (customerLangArrElem === elem && $scope.tokenDescriptionText === undefined) {
+                                        $scope.tokenDescriptionText = $scope.token.customerInfo.description[elem];
+                                    }
+                                });
                             });
-                        });
-                    }                    
+                        }                    
+                    }
+                });
+                if ($scope.token.customerInfo !== undefined) {
+                    if ($scope.token.customerInfo.website !== undefined) {
+                        $scope.additionalTokenData.officialSiteLink = $scope.additionalTokenData.officialSiteText = $scope.token.customerInfo.website;               
+                    }
+                    if ($scope.token.customerInfo.documents !== undefined && $scope.token.customerInfo.documents.hasOwnProperty('whitepaper')) {
+                        $scope.additionalTokenData.whitepaperLink = $scope.additionalTokenData.whitepaperLinkText = $scope.token.customerInfo.documents.whitepaper;               
+                    }
+                    if ($scope.token.customerInfo.media !== undefined) {
+                        $scope.mediaWidgetNamePrefix = 'project';               
+                    }                
                 }
-            });
-            if ($scope.token.customerInfo !== undefined) {
-                if ($scope.token.customerInfo.webSite !== undefined) {
-                    $scope.additionalTokenData.officialSiteLink = $scope.additionalTokenData.officialSiteText = $scope.token.customerInfo.webSite;               
-                }
-                if ($scope.token.customerInfo.documents !== undefined && $scope.token.customerInfo.documents.hasOwnProperty('whitepaper')) {
-                    $scope.additionalTokenData.whitepaperLink = $scope.additionalTokenData.whitepaperLinkText = $scope.token.customerInfo.documents.whitepaper;               
-                }
-                if ($scope.token.customerInfo.media !== undefined) {
-                    $scope.mediaWidgetNamePrefix = 'project';               
-                }                
-            }
 
-            $scope.media = $scope.token.customerInfo.media;
+                $scope.media = $scope.token.customerInfo.media;
+            }, function(res) {
+                $scope.token.customerInfo = res;
+            });
+
             provider.stats.get({}, function(stat) {
                 if ($scope.token.type === "Mineable") {
                     function setCalcStep() {
@@ -4117,7 +4132,9 @@
         }
     });
 
-	app.run(function($rootScope, $http, $location, $cookies, langService, provider) {
+	app.run(function($rootScope, $http, $location, $cookies, langService, provider, GLOBAL_APP_CONFIG) {
+        let currentPreset = GLOBAL_APP_CONFIG.tokenPresets[GLOBAL_APP_CONFIG.presetName];
+
         $rootScope.$on('$routeChangeSuccess', function() {
             gtag('config', 'UA-138901721-1', {'page_path': $location.path()});
         });
@@ -4125,7 +4142,7 @@
         $rootScope.lang = langService.getLang();
         langService.changeLanguage($rootScope.lang);
 
-        provider.token_info.query({hash:"0000000000000000000000000000000000000000000000000000000000000000"}, function(token_info) {
+        provider.token_info.query({hash:currentPreset.tokenHash}, function(token_info) {
             $rootScope.mainToken = token_info[0];
             $rootScope.mainTokenFactor = Math.pow(10, $rootScope.mainToken.decimals);
         });
