@@ -31,6 +31,23 @@
         "coingecko_id": "enq-enecuum"             
     },
     {
+        "token_id":"bcbb425dcbd104fc1a63f37a1926bf94c989198d132b8c25db17ddc7cc096745",
+        "website":"https://nayutacoin.info/",
+        "media": {                            
+            "facebook": "https://www.facebook.com/Nayuta-Coin-101559351813832",
+            "twitter": "https://twitter.com/NayutaCoin",
+            "medium": "https://medium.com/@nayutacoin",
+            "telegram": "https://t.me/nayutacoin",
+            "instagram": "https://www.instagram.com/nayuta_coin/"
+        },
+        "documents": {
+            "whitepaper": "https://nayutacoin.info/files/pdf/Nayuta_WP_ru.pdf"
+        },     
+        "description": {
+        },
+        "coingecko_id": "nayuta-coin"             
+    },    
+    {
         "token_id":"some-token-id",
         "website":"https://someTokenWebsite.com",
         "media": {                            

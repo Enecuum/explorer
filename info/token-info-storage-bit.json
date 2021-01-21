@@ -43,7 +43,11 @@
             "youtube":"https://www.youtube.com/some-token",
             "qq":"https://qm.qq.com/some-token",
             "weixin":"https://weixin.qq.com/some-token",
-            "telegram":"https://t.me/some-token"
+            "telegram":"https://t.me/some-token",
+            "instagram":"https://www.instagram.com/some-token"
+        },
+        "documents": {
+            "whitepaper": "https://someTokenWhitepaper.pdf"
         }, 
         "description": {
             "en":"EN text about some token",
@@ -54,7 +58,8 @@
             "vi":"VI text about some token",
             "in":"IN text about some token",
             "tr":"TR text about some token"
-        }             
+        },
+        "coingecko_id": "some-token-coingecko-id"             
     },
     {
         "token_id":"another-token-id",
@@ -70,7 +75,8 @@
             "youtube":"https://www.youtube.com/another-token",
             "qq":"https://qm.qq.com/another-token",
             "weixin":"https://weixin.qq.com/another-token",
-            "telegram":"https://t.me/another-token"
+            "telegram":"https://t.me/another-token",
+            "instagram":"https://www.instagram.com/another-token"
         },
         "description": {
             "en":"EN text about another token",
