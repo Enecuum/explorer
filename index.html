@@ -1197,7 +1197,7 @@
                 BIT: {
                     theme: 'white',
                     tokenName: 'BIT',
-                    tokenHash: '0000000000000000000000000000000000000000000000000000000000000001',
+                    tokenHash: '0000000000000000000000000000000000000000000000000000000000000000',
                     favicon: 'assets/images/favicon_en_bit.ico',
                     tokenLogoFileLink: 'bit-logo-white.png',
                     logoLinkTarget: 'https://mybit.network/',
@@ -3120,7 +3120,7 @@
         };
         $scope.getHistory(0);
     });
-    app.controller('tokenCtrl', function($scope, $rootScope, $routeParams, GLOBAL_APP_CONFIG, provider, tokenInfoStorage, commonTools, $translate, $filter, roiCalc, Toast) {
+    app.controller('tokenCtrl', function($scope, $rootScope, $routeParams, GLOBAL_APP_CONFIG, provider, tokenInfoStorage, commonTools, $translate, $filter, roiCalc, Toast, $http) {
         let currentPreset = GLOBAL_APP_CONFIG.tokenPresets[GLOBAL_APP_CONFIG.presetName];
         $scope.additionalTokenData = {
             officialSiteLink : '',
@@ -3298,15 +3298,29 @@
                     $scope.showMiningFeatures = true;
                 }
 
-                if ($routeParams.hash === $rootScope.mainToken.hash) {
-                    if ($rootScope.mainToken.ticker === 'ENQ') {
-                        let tokenPrice = stat.cg_usd;
-                        let cg_usdDecimals = stat.cg_usd.split('.')[1].length;
+                let presentPrice = function(price) {
+                    if (price !== undefined) {
+                        let cg_usdDecimals = price.split('.')[1] !== undefined ? price.split('.')[1].length : 0;
                         $scope.tokenToUSDDecimals = cg_usdDecimals + $scope.token.decimals;
-                        $scope.tokenPrice = parseFloat(tokenPrice).toFixed(5);                        
-                        $scope.marketCapUSDValue = $filter('US_COMMAS_BIGINT_DECIMALS')(BigInt(stat.csup) * commonTools.valueToBigInt(tokenPrice, cg_usdDecimals).value, $scope.tokenToUSDDecimals, 5) +' '+ 'USD';
-                        $scope.multipleBigintOnFloat = commonTools.multipleBigintOnFloat;
+                        $scope.tokenPrice = parseFloat(price).toFixed(5);                        
+                        $scope.marketCapUSDValue = $filter('US_COMMAS_BIGINT_DECIMALS')(BigInt(stat.csup) * commonTools.valueToBigInt(price, cg_usdDecimals).value, $scope.tokenToUSDDecimals, 5) +' '+ 'USD';                        
                     }
+
+                    $scope.multipleBigintOnFloat = commonTools.multipleBigintOnFloat;
+                }
+
+                $scope.$watch('token.customerInfo.coingecko_id', function(newValue, oldValue) {
+                    if (newValue !== undefined) {
+                        $http({method: 'GET', url: 'https://api.coingecko.com/api/v3/simple/price?ids=' + newValue + '&vs_currencies=USD'}).
+                        then(function (response) {
+                            if (response.data !== undefined && response.data[newValue] !== undefined && response.data[newValue].usd !== undefined) {
+                                presentPrice(response.data[newValue].usd.toString());
+                            }                                    
+                        });                                
+                    }
+                });
+
+                if ($routeParams.hash === $rootScope.mainToken.hash) {
                     $scope.tokenCsup = $filter('US_COMMAS_BIGINT_DECIMALS')(BigInt(stat.csup), $scope.token.decimals, $scope.token.decimals) +' '+ $scope.token.ticker;
                 }
             });
@@ -4159,7 +4173,8 @@
             weixin : 'fab fa-weixin',
             facebook : 'fab fa-facebook-f',
             forklog : '',
-            externalLink: 'fas fa-external-link-alt'
+            externalLink: 'fas fa-external-link-alt',
+            instagram: 'fab fa-instagram-square'
         }
 
         $rootScope.existCookies = function () {
