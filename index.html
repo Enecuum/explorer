@@ -1235,7 +1235,7 @@
                 BIT_BLUE: {
                     theme: 'white_blue',
                     tokenName: 'BIT',
-                    tokenHash: '0000000000000000000000000000000000000000000000000000000000000001',
+                    tokenHash: '0000000000000000000000000000000000000000000000000000000000000000',
                     favicon: 'assets/images/favicon_en_bit.ico',
                     tokenLogoFileLink: 'bit-logo-white.png',
                     logoLinkTarget: 'https://mybit.network/',
@@ -2268,10 +2268,12 @@
             return (new Date(unix * 1000)).toLocaleString()
         };
 
-        $scope.showExchangesSection = $scope.currentPreset.pagesSectionsVisibility.showExchangesSection;        
+        $scope.showExchangesSection = $scope.currentPreset.pagesSectionsVisibility.showExchangesSection;
 
-        $scope.stats = provider.stats.get(function(stat) {
-            $rootScope.$watch('mainToken.decimals', function(newValue, oldValue) {
+        let statRequestLink =  GLOBAL_APP_CONFIG.presetName === 'ENQ' ? 'externalStats' : 'stats';     
+
+        $scope.stats = provider[statRequestLink].get(function(stat) {
+            $rootScope.$watch('mainToken.decimals', function(newValue, oldValue) {                
                 if (newValue !== undefined) {
                     let statsPropertiesArr = ['total_daily_stake','reward_poa','poa_count','cg_usd','cg_btc'];
                     statsPropertiesArr.forEach(function(item) {
