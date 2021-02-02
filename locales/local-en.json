@@ -345,5 +345,9 @@
     "BURN": "Burn",
     "ACCOUNT_WAS_BANNED": "Account was banned",
     "WARNING": "WARNING",
-    "MINING_PREFORMANCE" : "Mining preformance"
+    "MINING_PREFORMANCE" : "Mining preformance",
+    "NON_REISSUABLE":"Non-reissuable",
+    "REISSUABLE":"Reissuable",
+    "MINEABLE":"Mineable",
+    "ALL": "All"
 }
