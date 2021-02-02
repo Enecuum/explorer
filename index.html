@@ -17,6 +17,7 @@
     <!-- third party css end -->
     <!-- App css -->
     <link href="assets/css/icons.min.css" rel="stylesheet" type="text/css" />
+    <script src="/config.js"></script>
     <!-- angularJS scripts -->
     <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
@@ -1132,159 +1133,7 @@
 <script>
 
 	let app = angular.module('myApp', ['ngResource', 'ngRoute', 'ngCookies', 'pascalprecht.translate','ngAnimate', 'ui.select','ngSanitize'])
-        .constant('GLOBAL_APP_CONFIG', {
-            presetName: 'BIT',            
-            POSChallenge: {
-                on: false,  
-                address: '03c91e88967465c44aa2afeab3b87dbeede9bd63dbe4a0121ea02fa3f0f4a4e2a8'
-            },
-            tokenPresets: {
-                ENQ: {
-                    theme: 'white',
-                    tokenName: 'ENQ',
-                    tokenHash: '0000000000000000000000000000000000000000000000000000000000000000',
-                    favicon: 'assets/images/favicon_en.ico',
-                    tokenLogoFileLink: 'logo-white.png',
-                    logoLinkTarget: 'https://enecuum.com',                    
-                    showExchangesSection: true,
-                    menuItemsVisibility: {
-                        showWallet: true,
-                        showROICalc: true,
-                        showHowToSwap: true
-                    },
-                    externalLinks: {
-                        topMenuItemsLinks: {
-                            walletLink: 'https://wallet.enecuum.com',
-                        },
-                        peerMapURL: 'https://pulse2.enecuum.com/',
-                        documents: {
-                            whitepaper: 'https://enecuum.com/pdf/pp_en.pdf',
-                        },
-                        projectMedia: {                            
-                            facebook: 'https://www.facebook.com/enecuum.EN/?ref=bookmarks',
-                            twitter: 'https://twitter.com/enq_enecuum',
-                            medium: 'https://medium.com/@EnqBlockchain',
-                            github: 'https://github.com/Enecuum',
-                            forklog: 'https://hub.forklog.com/companies/enecuum/',
-                            bitcointalk: 'https://bitcointalk.org/index.php?topic=2939909.0;topicseen',
-                            linkedin: 'https://www.linkedin.com/company/enecuum-limited/',
-                            youtube: 'https://www.youtube.com/channel/UCyZqNfzK_PP82nkAVOlmN4Q',
-                            qq: 'https://qm.qq.com/cgi-bin/qm/qr?k=YfdokyjJnlKl0eAuhVXEc6JtVsoKnxvI&authKey=6WpHwP4Cu/kAAyPyVuBWZeQCjhEyijvLyGf6Jj6P7f9LVCe/9ZZC7YIfRtudjD23&noverify=0',
-                            weixin: 'https://weixin.qq.com/g/AwYAAJdSThUYHIJmetSinRGfcwtrkRovBmLZZr5moi0UXRIW56Me4ts56gByaeYU',
-                            telegram: 'https://t.me/Enecuum_EN'
-                        }
-                    },
-                    pagesSectionsVisibility: {
-                        showFullNodesCountCard: true,
-                        showSBlocks: true,
-                        showROICalc: true,
-                        showExchangesSection: true,
-                        showCurrencyToUSDAccountDetails: true,
-                        showTestNetDisclaimer: false
-                    },
-                    bannedAccs: [
-                        "036808ae1adb7604b52345694723df6b09853e9e43105add144604d382951b0df5",
-                        "039099794d26438ceff314524d40f96003099ba4cd0b3419062f85df32792ee139",
-                        "033bf7f0aabfcc5150ca32edab63062f527a0bc47b71a1ba58759c8527dc6647fa",
-                        "03422ba778183fe11170f39034153343ae329c5f4781262588347b53e137cd8136",
-                        "039a2090d69ba1d09f3dbada9b8e1cc4d30ec3188d007fa43ee2199deb50f56e8a",
-                        "0283101404bec6696159d3fafc2bdd8c9a5e142735ce47cbd6d053a32fd0c4fd08",
-                        "03b75312c96e2dbaa107fdf449377bbd049dd27d3dfec7194371c059702a39ce01",
-                        "02218337ec2c7bebb92497244344e5660e11fd832135a47b0eb69b688623e91c1c",
-                        "03586a61df7b01c620cda8bd2a0a7f7b3089d17b76e942b498a51089cca38d63d5",
-                    ]
-                },
-                BIT: {
-                    theme: 'white',
-                    tokenName: 'BIT',
-                    tokenHash: '0000000000000000000000000000000000000000000000000000000000000000',
-                    favicon: 'assets/images/favicon_en_bit.ico',
-                    tokenLogoFileLink: 'bit-logo-white.png',
-                    logoLinkTarget: 'https://mybit.network/',
-                    showExchangesSection: false,
-                    menuItemsVisibility: {
-                        showWallet: true,
-                        walletLink: 'https://bit-wallet.enecuum.com',
-                        showROICalc: true,
-                        showHowToSwap: false
-                    },
-                    externalLinks: {
-                        topMenuItemsLinks: {
-                            walletLink: 'https://bit-wallet.enecuum.com'
-                        },
-
-                        peerMapURL: 'https://bit.enecuum.com/',
-                        documents: {
-                            whitepaper: 'https://enecuum.com/pdf/pp_en.pdf',
-                        },
-                        projectMedia: {                            
-                            twitter: 'https://twitter.com/enq_enecuum',
-                            telegram: 'https://t.me/Enecuum_EN',
-                            github: 'https://github.com/Enecuum'
-                        }
-                    },
-                    pagesSectionsVisibility: {
-                        showFullNodesCountCard: true,
-                        showSBlocks: true,
-                        showROICalc: true,
-                        showExchangesSection: false,
-                        showCurrencyToUSDAccountDetails: false,
-                        showTestNetDisclaimer: true
-                    }
-                },
-                BIT_BLUE: {
-                    theme: 'white_blue',
-                    tokenName: 'BIT',
-                    tokenHash: '0000000000000000000000000000000000000000000000000000000000000000',
-                    favicon: 'assets/images/favicon_en_bit.ico',
-                    tokenLogoFileLink: 'bit-logo-white.png',
-                    logoLinkTarget: 'https://mybit.network/',
-                    showExchangesSection: false,
-                    menuItemsVisibility: {
-                        showWallet: true,
-                        showROICalc: true,
-                        showHowToSwap: false
-                    },
-                    externalLinks: {
-                        topMenuItemsLinks: {
-                            walletLink: 'https://bit-wallet.enecuum.com'
-                        },
-                        peerMapURL: 'https://bit.enecuum.com/',
-                        documents: {
-                            whitepaper: 'https://enecuum.com/pdf/pp_en.pdf',
-                        },
-                        projectMedia: {                            
-                            twitter: 'https://twitter.com/enq_enecuum',
-                            telegram: 'https://t.me/Enecuum',
-                            github: 'https://github.com/Enecuum'
-                        }
-                    },
-                    pagesSectionsVisibility: {
-                        showFullNodesCountCard: true,
-                        showSBlocks: true,
-                        showROICalc: true,
-                        showExchangesSection: false,
-                        showCurrencyToUSDAccountDetails: false,
-                        showTestNetDisclaimer: true
-                    }
-                }
-            },
-            themeOptions: { //this is options' storage. themeOptions' properties must be use as 'theme' value ('dark','white', etc.)
-                dark: {
-                    cssName: 'dark-theme.css',
-                    cssLink: 'assets/css/'
-                },
-                white: {
-                    cssName: 'white-theme.css',
-                    cssLink: 'assets/css/'
-                },
-                white_blue: {
-                    cssName: 'white-blue-theme.css',
-                    cssLink: 'assets/css/'
-                }
-
-            }
-        });
+        .constant('GLOBAL_APP_CONFIG', explorerConfig);
 
     app.config(function ($translateProvider) {
         $translateProvider
@@ -1486,7 +1335,7 @@
     });
 
     app.factory('POSInfoStorage', function($window, $rootScope, GLOBAL_APP_CONFIG) {
-        let currentPreset = GLOBAL_APP_CONFIG.presetName;
+        let currentPreset = GLOBAL_APP_CONFIG.tokenName;
         let POSInfoStorage = $window['POSInfoStorage' + currentPreset];
         let POSInfoTemplate = {
             website: undefined,
@@ -1506,7 +1355,7 @@
     });
 
     app.factory('tokenInfoStorage', function($window, $rootScope, $http, GLOBAL_APP_CONFIG, $resource, $q) {
-        let currentPreset = GLOBAL_APP_CONFIG.presetName.toLowerCase();
+        let currentPreset = GLOBAL_APP_CONFIG.tokenName.toLowerCase();
         let url = '/info/token-info-storage-' + currentPreset + '.json';
         getInfo = $resource(url, {query: {method: 'GET', isArray: true}});
         let tokenInfoTemplate = {
@@ -2036,9 +1885,8 @@
         }
     });  
 
-    app.factory('provider', function (GLOBAL_APP_CONFIG, $resource){
-        let currentPreset = GLOBAL_APP_CONFIG.tokenPresets[GLOBAL_APP_CONFIG.presetName];
-        let nodeUrl = currentPreset.externalLinks.peerMapURL;
+    app.factory('provider', function (GLOBAL_APP_CONFIG, $resource){       
+        let nodeUrl = GLOBAL_APP_CONFIG.externalLinks.peerMapURL;
 		return {
 			page : $resource('api/v1/page?n=:n', {n:'@n'}),
 			macroblock : $resource('api/v1/macroblock?hash=:hash', {hash:'@hash'}),
@@ -2099,7 +1947,7 @@
     });
 
     app.controller('documentHeadCtrl', function(GLOBAL_APP_CONFIG, $scope) {
-       let currentPreset = GLOBAL_APP_CONFIG.tokenPresets[GLOBAL_APP_CONFIG.presetName];
+       let currentPreset = GLOBAL_APP_CONFIG;
        let themeName = currentPreset.theme;
        let theme = GLOBAL_APP_CONFIG.themeOptions[themeName];
        $scope.themeLink = theme.cssLink + theme.cssName;
@@ -2108,7 +1956,7 @@
     });
 
     app.controller('headerCtrl', function(GLOBAL_APP_CONFIG, $scope, $rootScope, $location, $http, langService) {
-        let currentPreset = GLOBAL_APP_CONFIG.tokenPresets[GLOBAL_APP_CONFIG.presetName];
+        let currentPreset = GLOBAL_APP_CONFIG;
         $scope.tokenName = currentPreset.tokenName;
         $scope.showFullNodesCountCard = currentPreset.pagesSectionsVisibility.showFullNodesCountCard;
         $scope.tokenLogoFile = currentPreset.tokenLogoFileLink;
@@ -2147,7 +1995,7 @@
     });
 
 	app.controller('homeCtrl', function(GLOBAL_APP_CONFIG, $scope, $interval, $routeParams, provider, $http) {
-        let currentPreset = GLOBAL_APP_CONFIG.tokenPresets[GLOBAL_APP_CONFIG.presetName];        
+        let currentPreset = GLOBAL_APP_CONFIG;        
         $scope.blocks = provider.lastblocks.get();
         $scope.txs = provider.lasttxs.get();
         $scope.stats = provider.stats.get();
@@ -2224,7 +2072,7 @@
     };
 
     app.controller('roiCtrl', function(GLOBAL_APP_CONFIG, $window, $scope, $rootScope, $translate, provider, validator, currencyExchange, commonTools, roiCalc, Toast) {
-        $scope.currentPreset = GLOBAL_APP_CONFIG.tokenPresets[GLOBAL_APP_CONFIG.presetName];
+        $scope.currentPreset = GLOBAL_APP_CONFIG;
         $scope.showROICalc = $scope.currentPreset.pagesSectionsVisibility.showROICalc;
 
         if ($scope.showROICalc === false) {
@@ -2233,7 +2081,7 @@
         let incorrectValue = '---';
         $scope.roiValid = true;
 
-        if (GLOBAL_APP_CONFIG.presetName !== 'ENQ') {
+        if (GLOBAL_APP_CONFIG.tokenName !== 'ENQ') {
              $scope.stake_limits = provider.stake_limits.get(function(stake_limits){                
                 $scope.stake = stake_limits.min_stake/$rootScope.mainTokenFactor;           
                 $scope.min_stake = stake_limits.min_stake/$rootScope.mainTokenFactor;
@@ -2270,7 +2118,7 @@
 
         $scope.showExchangesSection = $scope.currentPreset.pagesSectionsVisibility.showExchangesSection;
 
-        let statRequestLink =  GLOBAL_APP_CONFIG.presetName === 'ENQ' ? 'externalStats' : 'stats';     
+        let statRequestLink =  GLOBAL_APP_CONFIG.tokenName === 'ENQ' ? 'externalStats' : 'stats';     
 
         $scope.stats = provider[statRequestLink].get(function(stat) {
             $rootScope.$watch('mainToken.decimals', function(newValue, oldValue) {                
@@ -3055,7 +2903,7 @@
         $scope.page_num = 0;
         let entitiesOnPage = 20;
         $scope.mainTokenPrice = null;
-        let currentPreset = GLOBAL_APP_CONFIG.tokenPresets[GLOBAL_APP_CONFIG.presetName];
+        let currentPreset = GLOBAL_APP_CONFIG;
         let bannedAccsArr = currentPreset.bannedAccs !== undefined ? currentPreset.bannedAccs : [];
 
         $rootScope.$watch('mainToken', function(newValue, oldValue) {
@@ -3123,7 +2971,7 @@
         $scope.getHistory(0);
     });
     app.controller('tokenCtrl', function($scope, $rootScope, $routeParams, GLOBAL_APP_CONFIG, provider, tokenInfoStorage, commonTools, $translate, $filter, roiCalc, Toast, $http) {
-        let currentPreset = GLOBAL_APP_CONFIG.tokenPresets[GLOBAL_APP_CONFIG.presetName];
+        let currentPreset = GLOBAL_APP_CONFIG;
         $scope.additionalTokenData = {
             officialSiteLink : '',
             officialSiteText : '---',
@@ -3642,7 +3490,7 @@
     });
 
 	app.controller('macroblockCtrl', function(GLOBAL_APP_CONFIG, $scope, $routeParams, provider) {
-        let currentPreset = GLOBAL_APP_CONFIG.tokenPresets[GLOBAL_APP_CONFIG.presetName];
+        let currentPreset = GLOBAL_APP_CONFIG;
         $scope.showSBlocks = currentPreset.pagesSectionsVisibility.showSBlocks;
 		$scope.macroblock = provider.macroblock.get({hash:$routeParams.hash}, function(mackroblock) {
             $scope.showSnapshot = mackroblock.snapshot_hash !== null ? true : false;
@@ -3654,7 +3502,7 @@
 	});
 
     app.controller('sblockCtrl', function(GLOBAL_APP_CONFIG, $scope, $routeParams, provider) {
-        let currentPreset = GLOBAL_APP_CONFIG.tokenPresets[GLOBAL_APP_CONFIG.presetName];
+        let currentPreset = GLOBAL_APP_CONFIG;
         $scope.showSBlocks = currentPreset.pagesSectionsVisibility.showSBlocks;
         $scope.sblock = provider.sblock.get({hash:$routeParams.hash});
     });
@@ -3892,7 +3740,7 @@
                 }
 
                 getBalanceAll();
-                let currentPreset = GLOBAL_APP_CONFIG.tokenPresets[GLOBAL_APP_CONFIG.presetName];
+                let currentPreset = GLOBAL_APP_CONFIG;
                 $scope.showCurrencyToUSDAccountDetails = currentPreset.pagesSectionsVisibility.showCurrencyToUSDAccountDetails;
                 let bannedAccsArr = currentPreset.bannedAccs !== undefined ? currentPreset.bannedAccs : [];
                 $scope.get_amount = function(r){
@@ -4148,8 +3996,7 @@
         }
     });
 
-	app.run(function($rootScope, $http, $location, $cookies, langService, provider, GLOBAL_APP_CONFIG) {
-        let currentPreset = GLOBAL_APP_CONFIG.tokenPresets[GLOBAL_APP_CONFIG.presetName];
+	app.run(function($rootScope, $http, $location, $cookies, langService, provider, GLOBAL_APP_CONFIG) {      
 
         $rootScope.$on('$routeChangeSuccess', function() {
             gtag('config', 'UA-138901721-1', {'page_path': $location.path()});
@@ -4158,7 +4005,7 @@
         $rootScope.lang = langService.getLang();
         langService.changeLanguage($rootScope.lang);
 
-        provider.token_info.query({hash:currentPreset.tokenHash}, function(token_info) {
+        provider.token_info.query({hash:GLOBAL_APP_CONFIG.tokenHash}, function(token_info) {
             $rootScope.mainToken = token_info[0];
             $rootScope.mainTokenFactor = Math.pow(10, $rootScope.mainToken.decimals);
         });
