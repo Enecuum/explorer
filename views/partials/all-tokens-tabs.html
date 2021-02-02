@@ -30,6 +30,7 @@
                                             <th>{{'TOKEN' | translate}}</th>
                                             <th>{{'TYPE' | translate}}</th>
                                             <th>{{'TOTAL_SUPPLY' | translate}}</th>
+                                            <th>{{'PRICE' | translate}}</th>
                                             <th>{{'HOLDERS' | translate}}</th>
                                         </tr>
                                         </thead>
@@ -43,7 +44,8 @@
                                                     </div>
                                                 </td>
                                                 <td>{{token.type}}</td>
-                                                <td class="text-nowrap">{{token.total_supply | US_COMMAS_BIGINT_DECIMALS}} {{tickers[token.token_hash].ticker}}</td>
+                                                <td class="text-nowrap">{{token.total_supply | US_COMMAS_BIGINT_DECIMALS : token.decimals : token.decimals}} {{tickers[token.token_hash].ticker}}</td>
+                                                <td class="text-nowrap">$ ---</td>
                                                 <td>{{token.token_holders_count | US_COMMAS_INT}}</td>
                                             </tr>
                                         </tbody>

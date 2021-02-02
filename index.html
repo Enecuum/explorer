@@ -816,7 +816,6 @@
                     </div>                   
                 </script>
                 <script type="text/ng-template" id="tokens">
-                    <div class="col-12" ng-include="'views/partials/tokens-tabs-new.html'"></div>
                     <div class="col-12" ng-include="'views/partials/all-tokens-tabs.html'"></div>
                 </script>
                 <script type="text/ng-template" id="token">
@@ -1311,7 +1310,8 @@
             website: undefined,
             media: undefined,
             documents: undefined,
-            description: undefined
+            description: undefined,
+            coingecko_id: undefined
         }
 
         let populateInfo = function(res, hash) {
@@ -1321,6 +1321,7 @@
             return tokenInfo;
         }
         return {
+            getStorage: getInfo,
             getInfo: function(hash) {
                 let deferred = $q.defer();
                 getInfo.query({}, function(res) {
@@ -2892,7 +2893,8 @@
             }
         });
     });
-    app.controller('tokensCtrl', function($scope, provider, commonTools, $translate) {
+    app.controller('tokensCtrl', function($scope, provider, commonTools, $translate, tokenInfoStorage) {
+        let customersTokenInfo = undefined;
         $scope.tabsOrder = ['all', 'reissuable', 'non_reissuable', 'mineable'];
         $scope.tokensPages = {
             all : {
@@ -2961,11 +2963,12 @@
             $scope.tokensPages[paramsObj.type].page_num = paramsObj.page;
         };
 
-        $scope.tabsOrder.forEach(function(type) {
-            $scope.getPage({page: 0, type: type});
-        });
-
-        $scope.page_num = 0;
+        tokenInfoStorage.getStorage.query({}, function(allTokensCustomersInfo) {
+            customersTokenInfo = allTokensCustomersInfo;
+            $scope.tabsOrder.forEach(function(type) {
+                $scope.getPage({page: 0, type: type});
+            });
+        })
     });
     app.controller('tokenCtrl', function($scope, $rootScope, $routeParams, GLOBAL_APP_CONFIG, provider, tokenInfoStorage, commonTools, $translate, $filter, roiCalc, Toast, $http) {
         let currentPreset = GLOBAL_APP_CONFIG;
