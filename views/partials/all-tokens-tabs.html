@@ -31,6 +31,7 @@
                                             <th>{{'TYPE' | translate}}</th>
                                             <th>{{'TOTAL_SUPPLY' | translate}}</th>
                                             <th>{{'PRICE' | translate}}</th>
+                                            <th>{{'MARKET_CAP' | translate}}</th>
                                             <th>{{'HOLDERS' | translate}}</th>
                                         </tr>
                                         </thead>
@@ -45,7 +46,8 @@
                                                 </td>
                                                 <td>{{token.type}}</td>
                                                 <td class="text-nowrap">{{token.total_supply | US_COMMAS_BIGINT_DECIMALS : token.decimals : token.decimals}} {{tickers[token.token_hash].ticker}}</td>
-                                                <td class="text-nowrap">$ ---</td>
+                                                <td class="text-nowrap">{{token.price !== undefined ? token.price : '---'}}</td>
+                                                <td class="text-nowrap">{{token.marketCap !== undefined ? token.marketCap : '---'}}</td>
                                                 <td>{{token.token_holders_count | US_COMMAS_INT}}</td>
                                             </tr>
                                         </tbody>

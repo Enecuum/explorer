@@ -1378,7 +1378,7 @@
 
         this.bigIntConvertValueToCurrency = function(value_in_BigInt, rate_in_Numbers, valueDecimals, toFixed) {
             if (value_in_BigInt !== undefined) {              
-                let rateDecimals = rate_in_Numbers.split('.')[1].length;
+                let rateDecimals = rate_in_Numbers.split('.')[1] !== undefined ? rate_in_Numbers.split('.')[1].length : 0;
                 let totalDecimals = rateDecimals + valueDecimals;
                 let bigIntRate = commonTools.valueToBigInt(rate_in_Numbers, rateDecimals).value;
                 let mult = this.convertValue(BigInt(value_in_BigInt), bigIntRate);
@@ -1853,8 +1853,8 @@
             roi : $resource('api/v1/roi?hash=:hash', {hash:'@hash'}),
             stake_limits : $resource('api/v1/get_stake_limits', {}),
             get_tickers_all : $resource('api/v1/get_tickers_all', {query: {method: 'GET', isArray: true}}),
-            get_token_info_page : $resource('api/v1/get_token_info_page?page=:page&reissuable=:reissuable&minable=:minable', {page:'@page',reissuable:'@reissuable', minable:'@minable'}),
-            token_info : $resource('api/v1/token_info?hash=:hash', {hash:'@hash'}, {query: {method: 'GET', isArray: true}}),
+            get_token_info_page : $resource('api/v1/get_token_info_page?page=:page&type:=type', {page:'@page',type:'@type'}),
+            token_info : $resource('' + 'api/v1/token_info?hash=:hash', {hash:'@hash'}, {query: {method: 'GET', isArray: true}}),
             get_token_holder_count : $resource('api/v1/get_token_holder_count?token_hash=:token_hash', {token_hash:'@token_hash'}),
             get_tokens_by_owner : $resource('api/v1/get_tokens_by_owner?owner=:owner', {owner:'@owner'}, {query: {method: 'GET', isArray: true}}),
             get_tokens_count : $resource('api/v1/get_tokens_count', {}),
@@ -2893,8 +2893,8 @@
             }
         });
     });
-    app.controller('tokensCtrl', function($scope, provider, commonTools, $translate, tokenInfoStorage) {
-        let customersTokenInfo = undefined;
+    app.controller('tokensCtrl', function($scope, $http, provider, commonTools, $translate, tokenInfoStorage, currencyExchange) {
+        let allCustomersTokensInfo = undefined;
         $scope.tabsOrder = ['all', 'reissuable', 'non_reissuable', 'mineable'];
         $scope.tokensPages = {
             all : {
@@ -2905,21 +2905,21 @@
                 page_num : 0
             },
             reissuable : {
-                requestParams: {page: 0, reissuable: 1},
+                requestParams: {page: 0, type: 'reissuable'},
                 entitiesOnPage: 20,
                 page_count: 0,
                 tokens : [],
                 page_num : 0
             },
             non_reissuable: {
-                requestParams: {page: 0, reissuable: 0},
+                requestParams: {page: 0, type: 'non_reissuable'},
                 entitiesOnPage: 20,
                 page_count: 0,
                 tokens : [],
                 page_num : 0
             },
             mineable : {
-                requestParams: {page: 0, minable: 1},
+                requestParams: {page: 0, type: 'minable'},
                 entitiesOnPage: 20,
                 page_count: 0,
                 tokens : [],
@@ -2954,6 +2954,22 @@
                         provider.token_info.query({hash:token.token_hash}, function(token_info) {
                            token.type = commonTools.getTokenType(token_info[0]);
                         });
+
+                        if (allCustomersTokensInfo !== undefined) {
+                            let customerTokenInfo = allCustomersTokensInfo.find(tokenInfoBlock => tokenInfoBlock.token_id === token.token_hash);
+                            if (customerTokenInfo !== undefined  && customerTokenInfo.coingecko_id !== undefined) {
+                                $http({method: 'GET', url: 'https://api.coingecko.com/api/v3/simple/price?ids=' + customerTokenInfo.coingecko_id + '&vs_currencies=USD'}).
+                                then(function (response) {
+                                    let info = response.data[customerTokenInfo.coingecko_id];
+                                    console.log(info.usd)
+                                    if (response.data !== undefined && info !== undefined && info.usd !== undefined) {                                    
+                                        token.price = '$' + info.usd;
+                                        token.marketCap = '$' + currencyExchange.bigIntConvertValueToCurrency(token.total_supply, info.usd.toString(), token.decimals, 5);
+                                    }
+                                });                                    
+                            }
+                        }
+
                         token.rank = i + 1 + $scope.tokensPages[paramsObj.type].entitiesOnPage * requestParams.page;                         
                     });
                     $scope.tokensPages[paramsObj.type].page_count = tokenInfo.page_count
@@ -2964,7 +2980,7 @@
         };
 
         tokenInfoStorage.getStorage.query({}, function(allTokensCustomersInfo) {
-            customersTokenInfo = allTokensCustomersInfo;
+            allCustomersTokensInfo = allTokensCustomersInfo;
             $scope.tabsOrder.forEach(function(type) {
                 $scope.getPage({page: 0, type: type});
             });
@@ -3164,7 +3180,7 @@
                         $http({method: 'GET', url: 'https://api.coingecko.com/api/v3/simple/price?ids=' + newValue + '&vs_currencies=USD'}).
                         then(function (response) {
                             if (response.data !== undefined && response.data[newValue] !== undefined && response.data[newValue].usd !== undefined) {
-                                presentPrice(response.data[newValue].usd.toString());
+                                    (response.data[newValue].usd.toString());
                             }                                    
                         });                                
                     }
