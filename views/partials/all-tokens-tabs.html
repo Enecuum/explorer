@@ -11,17 +11,17 @@
                     <div class="col-12 mb-3 mb-lg-0" style="flex-grow: 3;">
                         <ul class="nav nav-tabs nav-bordered mb-3 nav-filters">
                             <li class="nav-item" ng-repeat="type in tabsOrder">
-                                <a href="javascript;" data-target="#{{type}}TokensPageTab" data-toggle="tab" aria-expanded="false" data-toggle="tab" class="nav-link h-100 d-flex align-items-center" ng-class="type === 'all' ? 'active' : ''">
+                                <a href="javascript;" data-target="#{{type}}TokensPageTab" data-toggle="tab" aria-expanded="false" data-toggle="tab" class="nav-link h-100 d-flex align-items-center px-1 px-lg-3" ng-class="type === 'all' ? 'active' : ''">
                                     <span>{{type.toUpperCase() | translate}} ({{tokensCount[type]}})</span>
                                 </a>
                             </li>                                                                                                             
                         </ul>
                     </div>
                 </div>
-                <div class="tab-content">
+                <div class="tab-content px-2">
                     <div class="tab-pane" id="{{type + 'TokensPageTab'}}" ng-class="type === 'all' ? 'active show' : ''" ng-repeat="type in tabsOrder">
                         <div class="row justify-content-md-center">                                                 
-                            <div class="col-12  px-0 pt-3 pb-0 px-lg-2" data-simplebar data-simplebar-lg data-simplebar-auto-hide="false">
+                            <div class="col-12  px-0 pt-3 pb-0 mb-3 px-lg-2" data-simplebar data-simplebar-lg data-simplebar-auto-hide="false">
                                 <table class="table table-centered table-hover animate-show-hide table-highlighted-head" style="table-layout: auto;" >
                                     <thead>
                                     <tr>
