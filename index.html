@@ -2899,28 +2899,28 @@
         $scope.tokensPages = {
             all : {
                 requestParams: {page: 0},
-                entitiesOnPage: 20,
+                entitiesOnPage: 0,
                 page_count: 0,
                 tokens : [],
                 page_num : 0
             },
             reissuable : {
                 requestParams: {page: 0, type: 'reissuable'},
-                entitiesOnPage: 20,
+                entitiesOnPage: 0,
                 page_count: 0,
                 tokens : [],
                 page_num : 0
             },
             non_reissuable: {
                 requestParams: {page: 0, type: 'non_reissuable'},
-                entitiesOnPage: 20,
+                entitiesOnPage: 0,
                 page_count: 0,
                 tokens : [],
                 page_num : 0
             },
             mineable : {
                 requestParams: {page: 0, type: 'minable'},
-                entitiesOnPage: 20,
+                entitiesOnPage: 0,
                 page_count: 0,
                 tokens : [],
                 page_num : 0
@@ -2949,6 +2949,7 @@
 
                 provider.get_token_info_page.get(requestParams, function(tokenInfo) {
                     $scope.tokensPages[paramsObj.type].page_count = tokenInfo.page_count;
+                    $scope.tokensPages[paramsObj.type].entitiesOnPage = tokenInfo.page_size;
                     $scope.tokensPages[paramsObj.type].tokens = tokenInfo.tokens;                 
                     $scope.tokensPages[paramsObj.type].tokens.forEach(function(token, i) {                        
 
@@ -2971,6 +2972,7 @@
                         token.rank = i + 1 + $scope.tokensPages[paramsObj.type].entitiesOnPage * requestParams.page;                         
                     });
                     $scope.tokensPages[paramsObj.type].page_count = tokenInfo.page_count
+                    console.log($scope.tokensPages)
                 });
 
             });
