@@ -349,5 +349,6 @@
     "NON_REISSUABLE":"Non-reissuable",
     "REISSUABLE":"Reissuable",
     "MINEABLE":"Mineable",
-    "ALL": "All"
+    "ALL": "All",
+    "MINING_SLOT": "Mining slot"
 }

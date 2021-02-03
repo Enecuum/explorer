@@ -1,72 +1,74 @@
 <div class="row pt-3">
     <div class="col-12">
-        <div class="row">
-            <div class="col-12">
-                <div class="h4 mb-3 pl-2 pl-sm-0">{{"TOKENS" | translate}}</div>
-            </div>  
-        </div>
-        <div class="row justify-content-between align-items-center">
-            <div class="col-12 mb-3 mb-lg-0" style="flex-grow: 3;">
-                <ul class="nav nav-tabs nav-bordered mb-3 nav-filters">
-                    <li class="nav-item" ng-repeat="type in tabsOrder">
-                        <a href="javascript;" data-target="#{{type}}TokensPageTab" data-toggle="tab" aria-expanded="false" data-toggle="tab" class="nav-link h-100 d-flex align-items-center" ng-class="type === 'all' ? 'active' : ''">
-                            <span>{{type.toUpperCase() | translate}} ({{tokensCount[type]}})</span>
-                        </a>
-                    </li>                                                                                                             
-                </ul>
-            </div>
-        </div>
-        <div class="tab-content">
-            <div class="tab-pane" id="{{type + 'TokensPageTab'}}" ng-class="type === 'all' ? 'active show' : ''" ng-repeat="type in tabsOrder">
-                <div class="row justify-content-md-center">
+        <div class="card">
+            <div class="card-body p-2 p-sm-3">   
+                <div class="row">
                     <div class="col-12">
-                        <div class="card">
-                            <div class="card-body p-2 p-sm-3">                                            
-                                <div class="col-12 mb-3" data-simplebar data-simplebar-lg data-simplebar-auto-hide="false">
-                                    <table class="table table-centered ordinary-table table-hover animate-show-hide table-highlighted-head" style="table-layout: auto;" >
-                                        <thead>
-                                        <tr>
-                                            <th>{{'RANK' | translate}}</th>
-                                            <th>{{'TOKEN' | translate}}</th>
-                                            <th>{{'TYPE' | translate}}</th>
-                                            <th>{{'TOTAL_SUPPLY' | translate}}</th>
-                                            <th>{{'PRICE' | translate}}</th>
-                                            <th>{{'MARKET_CAP' | translate}}</th>
-                                            <th>{{'HOLDERS' | translate}}</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody style="font-size: 12px;" >
-                                            <tr ng-repeat="token in tokensPages[type].tokens">
-                                                <td>{{token.rank}}</td>
-                                                <td class="fit">
-                                                    <div class="d-flex">                                                                 
-                                                        <span ng-if="tickers[token.token_hash].caption" class="d-flex overflow-hidden mr-1">{{tickers[token.token_hash].caption}}</span>
-                                                        <a ng-href="#!/token/{{token.token_hash}}">({{tickers[token.token_hash].ticker}})</a>
-                                                    </div>
-                                                </td>
-                                                <td>{{token.type}}</td>
-                                                <td class="text-nowrap">{{token.total_supply | US_COMMAS_BIGINT_DECIMALS : token.decimals : token.decimals}} {{tickers[token.token_hash].ticker}}</td>
-                                                <td class="text-nowrap">{{token.price !== undefined ? token.price : '---'}}</td>
-                                                <td class="text-nowrap">{{token.marketCap !== undefined ? token.marketCap : '---'}}</td>
-                                                <td>{{token.token_holders_count | US_COMMAS_INT}}</td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                                <div ng-if="tokensPages[type].page_count > 1" class="col-12 col-lg text-right">
-                                    <div class="btn-group float-right" aria-label="Rewind records">
-                                        <a class="btn-sm btn btn-secondary text-nowrap" ng-class="tokensPages[type].page_num == 0 ? 'disabled' : ''" role="button" ng-click="getPage({page : 0, type :  type})">{{'FRST' | translate}}</a>
-                                        <a class="btn-sm btn btn-secondary" ng-class="tokensPages[type].page_num == 0 ? 'disabled' : ''" role="button" ng-click="getPage({page : tokensPages[type].page_num - 1, type :  type})"><i class="fas fa-chevron-left"></i></a>
-                                        <a class="btn-sm fit btn btn-secondary disabled text-nowrap" role="button" style="opacity: 1;">{{'PAGE' | translate : {current: tokensPages[type].page_num + 1, total: tokensPages[type].page_count} }}</a>
-                                        <a class="btn-sm btn btn-secondary" ng-class="tokensPages[type].page_num == tokensPages[type].page_count-1 ? 'disabled' : ''" role="button" ng-click="getPage({page : tokensPages[type].page_num + 1, type :  type})"><i class="fas fa-chevron-right"></i></a>
-                                        <a class="btn-sm btn btn-secondary text-nowrap" ng-class="tokensPages[type].page_num == tokensPages[type].page_count-1 ? 'disabled' : ''" role="button" ng-click="getPage({page : tokensPages[type].page_count-1, type :  type})">{{'LAST' | translate}}</a>
-                                    </div>
-                                </div>                                            
-                            </div> <!-- end card-body-->
-                        </div> <!-- end card-->
-                    </div> <!-- end col-->
+                        <div class="h4 mb-3 pl-2 pl-sm-0">{{"TOKENS" | translate}}</div>
+                    </div>  
                 </div>
-            </div>
-        </div>    
+                <div class="row justify-content-between align-items-center">
+                    <div class="col-12 mb-3 mb-lg-0" style="flex-grow: 3;">
+                        <ul class="nav nav-tabs nav-bordered mb-3 nav-filters">
+                            <li class="nav-item" ng-repeat="type in tabsOrder">
+                                <a href="javascript;" data-target="#{{type}}TokensPageTab" data-toggle="tab" aria-expanded="false" data-toggle="tab" class="nav-link h-100 d-flex align-items-center" ng-class="type === 'all' ? 'active' : ''">
+                                    <span>{{type.toUpperCase() | translate}} ({{tokensCount[type]}})</span>
+                                </a>
+                            </li>                                                                                                             
+                        </ul>
+                    </div>
+                </div>
+                <div class="tab-content">
+                    <div class="tab-pane" id="{{type + 'TokensPageTab'}}" ng-class="type === 'all' ? 'active show' : ''" ng-repeat="type in tabsOrder">
+                        <div class="row justify-content-md-center">                                                 
+                            <div class="col-12  px-0 pt-3 pb-0 px-lg-2" data-simplebar data-simplebar-lg data-simplebar-auto-hide="false">
+                                <table class="table table-centered table-hover animate-show-hide table-highlighted-head" style="table-layout: auto;" >
+                                    <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>{{'TOKEN' | translate}}</th>
+                                        <th ng-if="type === 'all'">{{'TYPE' | translate}}</th>
+                                        <th>{{'TOTAL_SUPPLY' | translate}}</th>
+                                        <th>{{'PRICE' | translate}}</th>
+                                        <th>{{'MARKET_CAP' | translate}}</th>
+                                        <th>{{'HOLDERS' | translate}}</th>                                            
+                                        <th>{{'TRANSFERS' | translate}}</th>
+                                        <th ng-if="type === 'mineable'">{{'MINING_SLOT' | translate}}</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody style="font-size: 12px;" >
+                                        <tr ng-repeat="token in tokensPages[type].tokens">
+                                            <td>{{token.rank}}</td>
+                                            <td class="fit">
+                                                <div class="d-flex">                                                                 
+                                                    <span ng-if="tickers[token.token_hash].caption" class="d-flex overflow-hidden mr-1">{{tickers[token.token_hash].caption}}</span>
+                                                    <a ng-href="#!/token/{{token.token_hash}}">({{tickers[token.token_hash].ticker}})</a>
+                                                </div>
+                                            </td>
+                                            <td ng-if="type === 'all'">{{token.type}}</td>
+                                            <td class="text-nowrap">{{token.total_supply | US_COMMAS_BIGINT_DECIMALS : token.decimals : 2}} {{tickers[token.token_hash].ticker}}</td>
+                                            <td class="text-nowrap">{{token.price !== undefined ? token.price : '---'}}</td>
+                                            <td class="text-nowrap">{{token.marketCap !== undefined ? token.marketCap : '---'}}</td>
+                                            <td>{{token.token_holders_count | US_COMMAS_INT}}</td>
+                                            <td>{{token.txs_count | US_COMMAS_INT}}</td>
+                                            <td ng-if="type === 'mineable'"> <span class="badge" ng-class="token.status === 'ACTIVE' ? 'badge-success' : 'badge-danger'">{{token.status | translate}}</span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div ng-if="tokensPages[type].page_count > 1" class="col-12 col-lg text-right">
+                                <div class="btn-group float-right" aria-label="Rewind records">
+                                    <a class="btn-sm btn btn-secondary text-nowrap" ng-class="tokensPages[type].page_num == 0 ? 'disabled' : ''" role="button" ng-click="getPage({page : 0, type :  type})">{{'FRST' | translate}}</a>
+                                    <a class="btn-sm btn btn-secondary" ng-class="tokensPages[type].page_num == 0 ? 'disabled' : ''" role="button" ng-click="getPage({page : tokensPages[type].page_num - 1, type :  type})"><i class="fas fa-chevron-left"></i></a>
+                                    <a class="btn-sm fit btn btn-secondary disabled text-nowrap" role="button" style="opacity: 1;">{{'PAGE' | translate : {current: tokensPages[type].page_num + 1, total: tokensPages[type].page_count} }}</a>
+                                    <a class="btn-sm btn btn-secondary" ng-class="tokensPages[type].page_num == tokensPages[type].page_count-1 ? 'disabled' : ''" role="button" ng-click="getPage({page : tokensPages[type].page_num + 1, type :  type})"><i class="fas fa-chevron-right"></i></a>
+                                    <a class="btn-sm btn btn-secondary text-nowrap" ng-class="tokensPages[type].page_num == tokensPages[type].page_count-1 ? 'disabled' : ''" role="button" ng-click="getPage({page : tokensPages[type].page_count-1, type :  type})">{{'LAST' | translate}}</a>
+                                </div>
+                            </div>                    
+                        </div>
+                    </div>
+                </div> 
+            </div> <!-- end card-body-->
+        </div> <!-- end card-->   
     </div>
 </div>

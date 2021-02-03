@@ -2951,20 +2951,18 @@
                     $scope.tokensPages[paramsObj.type].page_count = tokenInfo.page_count;
                     $scope.tokensPages[paramsObj.type].tokens = tokenInfo.tokens;                 
                     $scope.tokensPages[paramsObj.type].tokens.forEach(function(token, i) {                        
-                        provider.token_info.query({hash:token.token_hash}, function(token_info) {
-                           token.type = commonTools.getTokenType(token_info[0]);
-                        });
 
+                        token.type = commonTools.getTokenType(token);
+                        token.status = (token.in_slot === 1 ? 'Active' : 'Inactive').toUpperCase();
                         if (allCustomersTokensInfo !== undefined) {
                             let customerTokenInfo = allCustomersTokensInfo.find(tokenInfoBlock => tokenInfoBlock.token_id === token.token_hash);
                             if (customerTokenInfo !== undefined  && customerTokenInfo.coingecko_id !== undefined) {
                                 $http({method: 'GET', url: 'https://api.coingecko.com/api/v3/simple/price?ids=' + customerTokenInfo.coingecko_id + '&vs_currencies=USD'}).
                                 then(function (response) {
                                     let info = response.data[customerTokenInfo.coingecko_id];
-                                    console.log(info.usd)
                                     if (response.data !== undefined && info !== undefined && info.usd !== undefined) {                                    
                                         token.price = '$' + info.usd;
-                                        token.marketCap = '$' + currencyExchange.bigIntConvertValueToCurrency(token.total_supply, info.usd.toString(), token.decimals, 5);
+                                        token.marketCap = '$' + currencyExchange.bigIntConvertValueToCurrency(token.total_supply, info.usd.toString(), token.decimals, 2);
                                     }
                                 });                                    
                             }
