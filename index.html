@@ -816,59 +816,7 @@
                     </div>                   
                 </script>
                 <script type="text/ng-template" id="tokens">
-                    <div class="row pt-3">
-                        <div class="col-12">
-                            <div class="row">
-                                <div class="col-12">
-                                    <div class="h4 mb-3 pl-2 pl-sm-0">{{"TOKENS" | translate}}</div>
-                                </div>  
-                            </div>
-                            <div class="row justify-content-md-center">
-                                <div class="col-12">
-                                    <div class="card">
-                                        <div class="card-body p-2 p-sm-3">                                            
-                                            <div class="col-12 mb-3" data-simplebar data-simplebar-lg data-simplebar-auto-hide="false">
-                                                <table class="table table-centered ordinary-table table-hover animate-show-hide table-highlighted-head" style="table-layout: auto;" >
-                                                    <thead>
-                                                    <tr>
-                                                        <th>{{'RANK' | translate}}</th>
-                                                        <th>{{'TOKEN' | translate}}</th>
-                                                        <th>{{'TYPE' | translate}}</th>
-                                                        <th>{{'TOTAL_SUPPLY' | translate}}</th>
-                                                        <th>{{'HOLDERS' | translate}}</th>
-                                                    </tr>
-                                                    </thead>
-                                                    <tbody style="font-size: 12px;" >
-                                                        <tr ng-repeat="token in tokens">
-                                                            <td>{{token.rank}}</td>
-                                                            <td class="fit">
-                                                                <div class="d-flex">                                                                 
-                                                                    <span ng-if="tickers[token.token_hash].caption" class="d-flex overflow-hidden mr-1">{{tickers[token.token_hash].caption}}</span>
-                                                                    <a ng-href="#!/token/{{token.token_hash}}">({{tickers[token.token_hash].ticker}})</a>
-                                                                </div>
-                                                            </td>
-                                                            <td>{{token.type}}</td>
-                                                            <td class="text-nowrap">{{token.total_supply | US_COMMAS_BIGINT_DECIMALS}} {{tickers[token.token_hash].ticker}}</td>
-                                                            <td>{{token.token_holders_count | US_COMMAS_INT}}</td>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                            <div ng-if="page_count > 1" class="col-12 col-lg text-right">
-                                                <div class="btn-group float-right" aria-label="Rewind records">
-                                                    <a class="btn-sm btn btn-secondary text-nowrap" ng-class="page_num == 0 ? 'disabled' : ''" role="button" ng-click="getHistory(0)">{{'FRST' | translate}}</a>
-                                                    <a class="btn-sm btn btn-secondary" ng-class="page_num == 0 ? 'disabled' : ''" role="button" ng-click="getHistory(page_num - 1)"><i class="fas fa-chevron-left"></i></a>
-                                                    <a class="btn-sm fit btn btn-secondary disabled text-nowrap" role="button" style="opacity: 1;">{{'PAGE' | translate : {current: page_num + 1, total: page_count} }}</a>
-                                                    <a class="btn-sm btn btn-secondary" ng-class="page_num == page_count-1 ? 'disabled' : ''" role="button" ng-click="getHistory(page_num + 1)"><i class="fas fa-chevron-right"></i></a>
-                                                    <a class="btn-sm btn btn-secondary text-nowrap" ng-class="page_num == page_count-1 ? 'disabled' : ''" role="button" ng-click="getHistory(page_count-1)">{{'LAST' | translate}}</a>
-                                                </div>
-                                            </div>                                            
-                                        </div> <!-- end card-body-->
-                                    </div> <!-- end card-->
-                                </div> <!-- end col-->
-                            </div>
-                        </div>
-                    </div> 
+                    <div class="col-12" ng-include="'views/partials/all-tokens-tabs.html'"></div>
                 </script>
                 <script type="text/ng-template" id="token">
                     <div class="row pt-3">
@@ -1362,7 +1310,8 @@
             website: undefined,
             media: undefined,
             documents: undefined,
-            description: undefined
+            description: undefined,
+            coingecko_id: undefined
         }
 
         let populateInfo = function(res, hash) {
@@ -1372,6 +1321,7 @@
             return tokenInfo;
         }
         return {
+            getStorage: getInfo,
             getInfo: function(hash) {
                 let deferred = $q.defer();
                 getInfo.query({}, function(res) {
@@ -1428,7 +1378,7 @@
 
         this.bigIntConvertValueToCurrency = function(value_in_BigInt, rate_in_Numbers, valueDecimals, toFixed) {
             if (value_in_BigInt !== undefined) {              
-                let rateDecimals = rate_in_Numbers.split('.')[1].length;
+                let rateDecimals = rate_in_Numbers.split('.')[1] !== undefined ? rate_in_Numbers.split('.')[1].length : 0;
                 let totalDecimals = rateDecimals + valueDecimals;
                 let bigIntRate = commonTools.valueToBigInt(rate_in_Numbers, rateDecimals).value;
                 let mult = this.convertValue(BigInt(value_in_BigInt), bigIntRate);
@@ -1903,10 +1853,11 @@
             roi : $resource('api/v1/roi?hash=:hash', {hash:'@hash'}),
             stake_limits : $resource('api/v1/get_stake_limits', {}),
             get_tickers_all : $resource('api/v1/get_tickers_all', {query: {method: 'GET', isArray: true}}),
-            get_token_info_page : $resource('api/v1/get_token_info_page?page=:page', {page:'@page'}),
-            token_info : $resource('api/v1/token_info?hash=:hash', {hash:'@hash'}, {query: {method: 'GET', isArray: true}}),
+            get_token_info_page : $resource('api/v1/get_token_info_page?page=:page&type:=type', {page:'@page',type:'@type'}),
+            token_info : $resource('' + 'api/v1/token_info?hash=:hash', {hash:'@hash'}, {query: {method: 'GET', isArray: true}}),
             get_token_holder_count : $resource('api/v1/get_token_holder_count?token_hash=:token_hash', {token_hash:'@token_hash'}),
             get_tokens_by_owner : $resource('api/v1/get_tokens_by_owner?owner=:owner', {owner:'@owner'}, {query: {method: 'GET', isArray: true}}),
+            get_tokens_count : $resource('api/v1/get_tokens_count', {}),
             balance_main_token : $resource('/api/v1/balance?id=:id', {id:'@id'}),
             balance_all : $resource('/api/v1/balance_all?id=:id', {id:'@id'}, {query: {method: 'GET', isArray: true}}),
             get_pos_total_stake : $resource('/api/v1/get_pos_total_stake'),
@@ -2942,33 +2893,97 @@
             }
         });
     });
-    app.controller('tokensCtrl', function($scope, provider, commonTools, $translate) {
-        $scope.page_num = 0;
-        let entitiesOnPage = 20;
-        $scope.getHistory = function(page){
-            $scope.isLoading = true;
+    app.controller('tokensCtrl', function($scope, $http, provider, commonTools, $translate, tokenInfoStorage, currencyExchange) {
+        let allCustomersTokensInfo = undefined;
+        $scope.tabsOrder = ['all', 'reissuable', 'non_reissuable', 'mineable'];
+        $scope.tokensPages = {
+            all : {
+                requestParams: {page: 0},
+                entitiesOnPage: 0,
+                page_count: 0,
+                tokens : [],
+                page_num : 0
+            },
+            reissuable : {
+                requestParams: {page: 0, type: 'reissuable'},
+                entitiesOnPage: 0,
+                page_count: 0,
+                tokens : [],
+                page_num : 0
+            },
+            non_reissuable: {
+                requestParams: {page: 0, type: 'non_reissuable'},
+                entitiesOnPage: 0,
+                page_count: 0,
+                tokens : [],
+                page_num : 0
+            },
+            mineable : {
+                requestParams: {page: 0, type: 'minable'},
+                entitiesOnPage: 0,
+                page_count: 0,
+                tokens : [],
+                page_num : 0
+            }
+        }
+
+        provider.get_tokens_count.get(function(response) {
+            $scope.tokensCount = {
+                all : response.count,
+                reissuable : response.reissuable,
+                non_reissuable : response.non_reissuable,
+                mineable : response.minable
+            }
+        });
+
+        $scope.getPage = function(paramsObj = {page: 0, type: 'all'}) {
             provider.get_tickers_all.query(function(tickers_all) {
                 $scope.tickers = {};
                 tickers_all.forEach(function(ticker) {
                     $scope.tickers[ticker.hash] = {ticker: ticker.ticker, caption: ticker.caption};
                 });
-                provider.get_token_info_page.get({page:page}, function(tokenInfo) {
-                    $scope.page_count = tokenInfo.page_count;
-                    $scope.tokens = tokenInfo.tokens;                 
-                    $scope.tokens.forEach(function(token, i) {                        
-                        provider.token_info.query({hash:token.token_hash}, function(token_info) {
-                           token.type = commonTools.getTokenType(token_info[0]);
-                        });
-                        token.rank = i + 1 + entitiesOnPage * page;                         
+
+
+                $scope.tokensPages[paramsObj.type].requestParams.page = paramsObj.page;
+                let requestParams = $scope.tokensPages[paramsObj.type].requestParams;
+
+                provider.get_token_info_page.get(requestParams, function(tokenInfo) {
+                    $scope.tokensPages[paramsObj.type].page_count = tokenInfo.page_count;
+                    $scope.tokensPages[paramsObj.type].entitiesOnPage = tokenInfo.page_size;
+                    $scope.tokensPages[paramsObj.type].tokens = tokenInfo.tokens;                 
+                    $scope.tokensPages[paramsObj.type].tokens.forEach(function(token, i) {                        
+
+                        token.type = commonTools.getTokenType(token);
+                        token.status = (token.in_slot === 1 ? 'Active' : 'Inactive').toUpperCase();
+                        if (allCustomersTokensInfo !== undefined) {
+                            let customerTokenInfo = allCustomersTokensInfo.find(tokenInfoBlock => tokenInfoBlock.token_id === token.token_hash);
+                            if (customerTokenInfo !== undefined  && customerTokenInfo.coingecko_id !== undefined) {
+                                $http({method: 'GET', url: 'https://api.coingecko.com/api/v3/simple/price?ids=' + customerTokenInfo.coingecko_id + '&vs_currencies=USD'}).
+                                then(function (response) {
+                                    let info = response.data[customerTokenInfo.coingecko_id];
+                                    if (response.data !== undefined && info !== undefined && info.usd !== undefined) {                                    
+                                        token.price = '$' + info.usd;
+                                        token.marketCap = '$' + currencyExchange.bigIntConvertValueToCurrency(token.total_supply, info.usd.toString(), token.decimals, 2);
+                                    }
+                                });                                    
+                            }
+                        }
+
+                        token.rank = i + 1 + $scope.tokensPages[paramsObj.type].entitiesOnPage * requestParams.page;                         
                     });
-                    $scope.page_count = tokenInfo.page_count
-                    $scope.isLoading = false;
+                    $scope.tokensPages[paramsObj.type].page_count = tokenInfo.page_count;
                 });
 
             });
-            $scope.page_num = page;
+            $scope.tokensPages[paramsObj.type].page_num = paramsObj.page;
         };
-        $scope.getHistory(0);
+
+        tokenInfoStorage.getStorage.query({}, function(allTokensCustomersInfo) {
+            allCustomersTokensInfo = allTokensCustomersInfo;
+            $scope.tabsOrder.forEach(function(type) {
+                $scope.getPage({page: 0, type: type});
+            });
+        })
     });
     app.controller('tokenCtrl', function($scope, $rootScope, $routeParams, GLOBAL_APP_CONFIG, provider, tokenInfoStorage, commonTools, $translate, $filter, roiCalc, Toast, $http) {
         let currentPreset = GLOBAL_APP_CONFIG;
@@ -3164,7 +3179,7 @@
                         $http({method: 'GET', url: 'https://api.coingecko.com/api/v3/simple/price?ids=' + newValue + '&vs_currencies=USD'}).
                         then(function (response) {
                             if (response.data !== undefined && response.data[newValue] !== undefined && response.data[newValue].usd !== undefined) {
-                                presentPrice(response.data[newValue].usd.toString());
+                                    (response.data[newValue].usd.toString());
                             }                                    
                         });                                
                     }

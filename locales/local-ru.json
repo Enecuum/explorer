@@ -325,5 +325,6 @@
     "MINT": "Mint",
     "BURN": "Burn",
     "ACCOUNT_WAS_BANNED": "Аккаунт заблокирован",
-    "WARNING": "Предупреждение"
+    "WARNING": "Предупреждение",
+    "MINING_SLOT": "Майнинговый слот"
 }
