@@ -3530,12 +3530,66 @@
 	app.controller('accountCtrl', function(GLOBAL_APP_CONFIG, $rootScope, $scope, $routeParams, validator, dateTimeConverter, provider, commonTools, apexRadialChart) {
         $rootScope.$watch('mainToken', function(newValue, oldValue) {
             if (newValue !== undefined || oldValue !== undefined) {
-                let chartElementSelector = 'accountBalanceChart';
-                let tokenLabelsTitles = ['TOKENS', $rootScope.mainToken.ticker];
+                $scope.accountPage = {
+                    accountData : {
+                        id : $routeParams.id,
+                        balanceAll :  [],
+                        mainTokenBalance : {
+                                            total: BigInt(0),
+                                            amount: {
+                                                toUSD : 0,
+                                                value : 0,
+                                                percentage : 0
+                                            },
+                                            delegated: {
+                                                toUSD : 0,
+                                                value : 0,
+                                                percentage : 0                                                
+                                            },
+                                            undelegated: {
+                                                toUSD : 0,
+                                                value : 0,
+                                                percentage : 0                                                
+                                            },
+                                            transit: {
+                                                toUSD : 0,
+                                                value : 0,
+                                                percentage : 0                                                
+                                            },
+                                            reward: {
+                                                toUSD : 0,
+                                                value : 0,
+                                                percentage : 0                                                
+                                            }
+                                        }
+                    },
+                    tickers: {},
+                    selectors: {
+                        chartElementSelector : 'accountBalanceChart'
+                    },
+                    tokenLabelsTitles : ['TOKENS', $rootScope.mainToken.ticker],
+                    translationData : $rootScope.mainToken.ticker,
+
+                    
+
+                }
+
+
+
+
+
+            }
+        });        
+
+        $rootScope.$watch('mainToken', function(newValue, oldValue) {
+            if (newValue !== undefined || oldValue !== undefined) {
+                let chartElementSelector = 'accountBalanceChart';//////////
+                let tokenLabelsTitles = ['TOKENS', $rootScope.mainToken.ticker];//////////
                 function getBalanceAll() {
                     provider.balance_all.query({id:$routeParams.id}, function(balance_all) {
                         if (balance_all.length > 0) {
                             $scope.balanceAll = balance_all;
+                            console.log($scope.balanceAll)
                             provider.get_tickers_all.query(function(tickers_all) {
                                 $scope.tickers = {};
                                 tickers_all.forEach(function(ticker) {
@@ -3550,9 +3604,9 @@
                                     });
                                 });
 
-                                $scope.translationData = {
-                                    mainTokenTicker: $rootScope.mainToken.ticker
-                                }
+                                $scope.translationData = {//////
+                                    mainTokenTicker: $rootScope.mainToken.ticker//////
+                                }//////
 
                                 provider.stats.get({}, function(stat) {
                                     $scope.stat = stat;
