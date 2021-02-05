@@ -326,5 +326,12 @@
     "BURN": "Burn",
     "ACCOUNT_WAS_BANNED": "Аккаунт заблокирован",
     "WARNING": "Предупреждение",
+    "NON_REISSUABLE":"Фиксированный",
+    "REISSUABLE":"Нефиксированный",
+    "MINEABLE":"Майнинговый",    
+    "NON_REISSUABLE_PLURAL":"Фиксированные",
+    "REISSUABLE_PLURAL":"Нефиксированные",
+    "MINEABLE_PLURAL":"Майнинговые",
+    "ALL_PLURAL": "Все",    
     "MINING_SLOT": "Майнинговый слот"
 }
