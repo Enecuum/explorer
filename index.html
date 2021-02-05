@@ -2953,7 +2953,7 @@
                     $scope.tokensPages[paramsObj.type].tokens = tokenInfo.tokens;                 
                     $scope.tokensPages[paramsObj.type].tokens.forEach(function(token, i) {                        
 
-                        token.type = commonTools.getTokenType(token);
+                        token.type = commonTools.getTokenType(token).toUpperCase();
                         token.status = (token.in_slot === 1 ? 'Active' : 'Inactive').toUpperCase();
                         if (allCustomersTokensInfo !== undefined) {
                             let customerTokenInfo = allCustomersTokensInfo.find(tokenInfoBlock => tokenInfoBlock.token_id === token.token_hash);
