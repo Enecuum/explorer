@@ -12,7 +12,7 @@
                         <ul class="nav nav-tabs nav-bordered mb-3 nav-filters">
                             <li class="nav-item" ng-repeat="type in tabsOrder">
                                 <a href="javascript;" data-target="#{{type}}TokensPageTab" data-toggle="tab" aria-expanded="false" data-toggle="tab" class="nav-link h-100 d-flex align-items-center px-1 px-lg-3" ng-class="type === 'all' ? 'active' : ''">
-                                    <span>{{type.toUpperCase() | translate}} ({{tokensCount[type]}})</span>
+                                    <span>{{type.toUpperCase() + '_PLURAL' | translate}} ({{tokensCount[type]}})</span>
                                 </a>
                             </li>                                                                                                             
                         </ul>
@@ -45,7 +45,7 @@
                                                     <a ng-href="#!/token/{{token.token_hash}}">({{tickers[token.token_hash].ticker}})</a>
                                                 </div>
                                             </td>
-                                            <td ng-if="type === 'all'">{{token.type}}</td>
+                                            <td ng-if="type === 'all'">{{token.type === "NON-REISSUABLE" ? "NON_REISSUABLE" : token.type | translate}}</td>
                                             <td class="text-nowrap">{{token.total_supply | US_COMMAS_BIGINT_DECIMALS : token.decimals : 2}} {{tickers[token.token_hash].ticker}}</td>
                                             <td class="text-nowrap">{{token.price !== undefined ? token.price : '---'}}</td>
                                             <td class="text-nowrap">{{token.marketCap !== undefined ? token.marketCap : '---'}}</td>
