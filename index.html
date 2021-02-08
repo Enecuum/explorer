@@ -3528,418 +3528,704 @@
         }));
     }
 	app.controller('accountCtrl', function(GLOBAL_APP_CONFIG, $rootScope, $scope, $routeParams, validator, dateTimeConverter, provider, commonTools, apexRadialChart) {
-        $rootScope.$watch('mainToken', function(newValue, oldValue) {
-            if (newValue !== undefined || oldValue !== undefined) {
-                $scope.accountPage = {
-                    accountData : {
-                        id : $routeParams.id,
-                        balanceAll :  [],
-                        mainTokenBalance : {
-                                            total: BigInt(0),
-                                            amount: {
-                                                toUSD : 0,
-                                                value : 0,
-                                                percentage : 0
-                                            },
-                                            delegated: {
-                                                toUSD : 0,
-                                                value : 0,
-                                                percentage : 0                                                
-                                            },
-                                            undelegated: {
-                                                toUSD : 0,
-                                                value : 0,
-                                                percentage : 0                                                
-                                            },
-                                            transit: {
-                                                toUSD : 0,
-                                                value : 0,
-                                                percentage : 0                                                
-                                            },
-                                            reward: {
-                                                toUSD : 0,
-                                                value : 0,
-                                                percentage : 0                                                
-                                            }
-                                        }
+        let currentPreset = GLOBAL_APP_CONFIG;
+        let incorrectValue =  '---';        
+        $scope.account = {
+            id : $routeParams.id,
+            isAgent : false,
+            referralRange : 1000,
+            refcode : incorrectValue,
+            banned : defineIfBanned($routeParams.id, currentPreset.bannedAccs),
+            balances : {
+                mainTokenDetails : {
+                    total: {
+                        toUSD : 0,
+                        value : undefined,
+                        percentage : undefined,
+                        tokenToUSDDecimals: undefined
                     },
-                    tickers: {},
-                    selectors: {
-                        chartElementSelector : 'accountBalanceChart'
+                    available: {
+                        toUSD : 0,/////////// Возможно undefined, а не нуль
+                        value : 0,
+                        percentage : 0
                     },
-                    tokenLabelsTitles : ['TOKENS', $rootScope.mainToken.ticker],
-                    translationData : $rootScope.mainToken.ticker,
-
-                    
-
+                    delegated: {
+                        toUSD : 0,
+                        value : 0,
+                        percentage : 0                                                
+                    },
+                    undelegated: {
+                        toUSD : 0,
+                        value : 0,
+                        percentage : 0                                                
+                    },
+                    transit: {
+                        toUSD : 0,
+                        value : 0,
+                        percentage : 0                                                
+                    },
+                    reward: {
+                        toUSD : 0,
+                        value : 0,
+                        percentage : 0                                                
+                    }
+                },
+                allTokensAsList :  {},
+                generalRepresentation : {
+                    totalBalanceUSD : 0,
+                    mainTokenUSDValue : 0,
+                    otherTokensUSDValue : 0,
+                    mainTokenPercentage : 0,
+                    otherTokensPercentage : 0
                 }
+            },
+            referralsInfo : {
+                ref_count: incorrectValue,
+                ref_reward : incorrectValue,
+                lastcalc : incorrectValue
+            },
+            txs : {
+                records : [],
+                page_count : 0,
+                page_num : 0                        
+            },
+            rewards : {
+                records : [],
+                page_count : 0,
+                page_num : 0
+            },
+            pos : {//delegation of account
 
+            },
+            posID : { //POSs created by account
 
-
-
+            },
+            tokenID : { //tokens created by account
 
             }
-        });        
+        }
+
+        $scope.networkData = {
+            tickers : {},
+            posNames : {}
+        }
+
+        $scope.viewData = {
+            mainTokenBalancesTypesArr : ['available', 'delegated', 'undelegated', 'transit', 'reward'],
+            selectors: {
+                chartElement : 'accountBalanceChart',
+                qrCode : '#qrcode',
+                refQrCode : '#refqrcode'
+            },
+            tokenLabelsTitles : ['TOKENS'], //, $rootScope.mainToken.ticker
+            translationData : undefined, //$rootScope.mainToken.ticker,            
+            showCurrencyToUSDAccountDetails : currentPreset.pagesSectionsVisibility.showCurrencyToUSDAccountDetails          
+        }
+
+
+// 
+
+// convert : {
+//     wholeBalanceUSD//
+//     mainTokenUSDValue//
+//     otherTokensUSDValue//
+//     totalTokensUSDValue                        
+//     mainTokenToUSDDecimals!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+//     maxTokensDecimals!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+//     mainTokenPercentage//
+//     otherTokensPercentage//
+//     maxDecimals!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+// } 
+
 
         $rootScope.$watch('mainToken', function(newValue, oldValue) {
             if (newValue !== undefined || oldValue !== undefined) {
-                let chartElementSelector = 'accountBalanceChart';//////////
-                let tokenLabelsTitles = ['TOKENS', $rootScope.mainToken.ticker];//////////
-                function getBalanceAll() {
-                    provider.balance_all.query({id:$routeParams.id}, function(balance_all) {
-                        if (balance_all.length > 0) {
-                            $scope.balanceAll = balance_all;
-                            console.log($scope.balanceAll)
-                            provider.get_tickers_all.query(function(tickers_all) {
-                                $scope.tickers = {};
-                                tickers_all.forEach(function(ticker) {
-                                    $scope.tickers[ticker.hash] = ticker.ticker;
-                                    $scope.balanceAll.forEach(function(token) {
-                                        if (token.token === ticker.hash) {
-                                            token.caption = ticker.caption;
-                                            provider.token_info.query({hash:token.token}, function(token_info) {
-                                                token.type = commonTools.getTokenType(token_info[0]);
-                                            }); 
-                                        }
-                                    });
-                                });
-
-                                $scope.translationData = {//////
-                                    mainTokenTicker: $rootScope.mainToken.ticker//////
-                                }//////
-
-                                provider.stats.get({}, function(stat) {
-                                    $scope.stat = stat;
-                                    $scope.wholeBalanceUSD = BigInt(0);
-                                    if ($rootScope.mainToken.ticker !== 'ENQ')
-                                         $scope.stat.cg_usd = '0.0';
-                                    let cg_usdDecimals = $scope.stat.cg_usd.split('.')[1].length;
-                                    $scope.mainTokenToUSDDecimals = cg_usdDecimals + $rootScope.mainToken.decimals;
-                                    $scope.otherTokensUSDValue = $scope.totalTokensUSDValue = $scope.mainTokenUSDValue = BigInt(0);
-                                    let decimalsMultiplier = 0;
-                                    let previousDecimals = 0;
-                                    $scope.maxTokensDecimals = 0;
-                                    let counter = null;
-                                    let customTokenUSDValue = BigInt(0);                           
-                                    $scope.balanceAll.forEach(function(item, i, arr) {
-                                        if (item.token !== $rootScope.mainToken.hash) {
-                                            if (item.price !== undefined) { //item.price here is supposed (in future) USD-price of custom token
-                                                customTokenUSDValue = BigInt(item.amount);
-                                                let itemPriceDecimals = item.price.toString().split('.')[1].length;
-                                                item.tokenToUSDDecimals = itemPriceDecimals + item.decimals;
-                                                
-                                                if (arr[counter] !== undefined) {
-                                                    if (item.tokenToUSDDecimals > arr[counter].tokenToUSDDecimals) {
-                                                        $scope.maxTokensDecimals = item.tokenToUSDDecimals;
-                                                        decimalsMultiplier = item.tokenToUSDDecimals - arr[counter].tokenToUSDDecimals;
-                                                        counter = i;
-                                                        $scope.otherTokensUSDValue = $scope.otherTokensUSDValue * (10n ** BigInt(decimalsMultiplier));                                                
-                                                    } else if (item.tokenToUSDDecimals < arr[counter].tokenToUSDDecimals) {
-                                                       customTokenUSDValue = BigInt(item.amount) * (10n ** BigInt(arr[counter].tokenToUSDDecimals - item.tokenToUSDDecimals))
-                                                    }
-                                                } else {
-                                                    $scope.maxTokensDecimals = item.tokenToUSDDecimals;
-                                                    decimalsMultiplier = 0;
-                                                    counter = i;
-                                                }
-
-                                                item.usdValue = BigInt(item.amount) * commonTools.valueToBigInt(item.price, itemPriceDecimals).value;
-                                                customTokenUSDValue = customTokenUSDValue * commonTools.valueToBigInt(item.price, itemPriceDecimals).value;
-                                                
-                                            } else {
-                                                item.usdValue = BigInt(0);
-                                            }
-
-                                            $scope.otherTokensUSDValue = customTokenUSDValue + $scope.otherTokensUSDValue;
-                                        }                       
-                                    });
-
-                                    provider.balance_main_token.get({id:$routeParams.id}, function(response) {
-                                        let balances = response;
-                                        $scope.mainTokenBalance = {
-                                            total: BigInt(0),
-                                            amount: {},
-                                            delegated: {},
-                                            undelegated: {},
-                                            transit: {},
-                                            reward: {}
-                                        };
-                                        $scope.mainTokenPercentage = 0;
-                                        $scope.otherTokensPercentage = 0;
-
-                                        $scope.balancesTypeArr = ['amount', 'delegated', 'undelegated', 'transit', 'reward'];
-                                        $scope.balancesTypeArr.forEach(function(balanceType) {
-                                            $scope.mainTokenBalance[balanceType].value = BigInt(balances[balanceType]);
-                                            $scope.mainTokenBalance.total += $scope.mainTokenBalance[balanceType].value;
-                                            $scope.mainTokenBalance.totalUSD = $scope.mainTokenBalance.total * commonTools.valueToBigInt($scope.stat.cg_usd, cg_usdDecimals).value;
-                                        });
-
-                                        $scope.mainTokenBalance.amount.toUSD = $scope.mainTokenBalance.amount.value * commonTools.valueToBigInt($scope.stat.cg_usd, cg_usdDecimals).value;
-
-                                         $scope.balancesTypeArr.forEach(function(balanceType) {
-                                            if ($scope.mainTokenBalance.total !== BigInt(0))
-                                                $scope.mainTokenBalance[balanceType].percentage = (parseFloat($scope.mainTokenBalance[balanceType].value)/parseFloat($scope.mainTokenBalance.total) * 100).toFixed(2);
-                                            else
-                                                $scope.mainTokenBalance[balanceType].percentage = (0).toFixed(2);
-                                        });
-
-                                        if ($scope.mainTokenToUSDDecimals > $scope.maxTokensDecimals) {
-                                            $scope.maxDecimals = $scope.mainTokenToUSDDecimals;
-                                            let multiplier = $scope.mainTokenToUSDDecimals - $scope.maxTokensDecimals;                                    
-                                            $scope.mainTokenUSDValue = $scope.mainTokenBalance.totalUSD;
-                                            $scope.totalTokensUSDValue = $scope.otherTokensUSDValue * (10n ** BigInt(multiplier));
-                                        } if ($scope.maxTokensDecimals > $scope.mainTokenToUSDDecimals) {
-                                            $scope.maxDecimals = $scope.maxTokensDecimals;
-                                            let multiplier = $scope.maxTokensDecimals - $scope.mainTokenToUSDDecimals;
-                                            $scope.mainTokenUSDValue = $scope.mainTokenBalance.totalUSD * (10n ** BigInt(multiplier));
-                                            $scope.totalTokensUSDValue = $scope.otherTokensUSDValue;
-                                        }
-
-                                        $scope.wholeBalanceUSD = $scope.totalTokensUSDValue + $scope.mainTokenUSDValue;
-
-                                        if ($scope.wholeBalanceUSD !== BigInt(0)) {
-                                            $scope.mainTokenPercentage = (parseFloat($scope.mainTokenUSDValue)/parseFloat($scope.wholeBalanceUSD) * 100).toFixed(2);
-                                            $scope.otherTokensPercentage = (parseFloat($scope.totalTokensUSDValue)/parseFloat($scope.wholeBalanceUSD) * 100).toFixed(2);                                    
-                                        }
-
-                                        renderChart();
-                                    });
-                                });
-
-                                provider.get_pos_names.query(function(pos_names) {
-                                    $scope.posNames = {};
-                                    pos_names.forEach(function(pos) {
-                                        $scope.posNames[pos.pos_id] = pos.name;
-                                    });
-                                    provider.get_pos_list_all.get(function(pos_list_all) {
-                                        provider.get_delegated_list.query({delegator:$routeParams.id}, function(my_delegation_list) {
-                                            $scope.my_delegation_list = my_delegation_list;
-
-                                            $scope.my_delegation_list.forEach(function(staking_provider) {
-                                                staking_provider.name = $scope.posNames[staking_provider.pos_id];
-                                                staking_provider.status = pos_list_all.pos_contracts.find(pos => pos.pos_id === staking_provider.pos_id).active;
-                                            });            
-                                            
-                                            provider.get_pos_list.query({owner:$routeParams.id}, function(my_pos_list) {
-                                                $scope.my_pos_list_names = my_pos_list;                                                                           
-                                                $scope.my_pos_list_data = pos_list_all.pos_contracts.filter(pos => pos.owner === $routeParams.id);
-                                                if ($scope.my_pos_list_names.length === $scope.my_pos_list_data.length) {
-                                                    $scope.validPOSData = true;
-                                                    $scope.my_pos_list_data.forEach(function(my_pos_data) {
-                                                        if (!$scope.my_pos_list_names.some(elem => elem.pos_id === my_pos_data.pos_id))
-                                                            $scope.validPOSData = false;
-                                                        else {
-                                                           my_pos_data.name =  $scope.my_pos_list_names.find(elem => elem.pos_id === my_pos_data.pos_id).name;
-                                                           let my_validator = $scope.my_delegation_list.find(elem => elem.pos_id === my_pos_data.pos_id)
-                                                           my_pos_data.selfDelegatedAmount = my_validator !== undefined ? my_validator.delegated : 0;
-                                                        }
-                                                    });
-                                                    if (!$scope.validPOSData)
-                                                        console.log('Some problem` with the source data of the staking provider has occured');
-                                                }
-                                            });                                   
-                                        });
-                                        $scope.isLoading = false;
-                                    });
-                                });
-
-                                provider.get_tokens_by_owner.query({owner:$routeParams.id}, function(my_tokens_list) {
-                                    my_tokens_list.forEach(function(token) {
-                                        provider.token_info.query({hash:token.token_hash}, function(token_info) {
-                                            token.type = commonTools.getTokenType(token_info[0]);
-                                            token.decimals = token_info[0].decimals;
-                                         });   
-                                        provider.get_token_holder_count.get({token_hash: token.token_hash}, function(holders) {
-                                            token.holders_count = holders.count;
-                                        });
-                                    });
-
-                                    $scope.my_tokens_list = my_tokens_list;
-
-                                });
-                            });
+                $scope.viewData.translationData = {
+                    mainTokenTicker: $rootScope.mainToken.ticker
+                }                
+                populateMainTokenBalanceDetails();
+                $scope.$watch('account.balances.mainTokenDetails.available.value', function(newAvailableBalance, oldAvailableBalance) {
+                    if (newAvailableBalance !== undefined || oldAvailableBalance !== undefined) {
+                        if ($scope.account.balances.mainTokenDetails.available.value >= (BigInt(1000) * BigInt(Math.pow(10, $rootScope.mainToken.decimals)))) {
+                            $scope.account.isAgent = true;
+                            $scope.account.refcode = evaluateRefCode($scope.account.id);
+                            commonTools.genQR($scope.viewData.selectors.refQrCode, $scope.account.refcode);
+                            populateReferralsInfo();                            
                         }
-                    });
-                }
-
-                $rootScope.$on('$translateChangeSuccess', function(event, current, previous) {
-                    if (document.getElementById(chartElementSelector)) {
-                        $('#' + chartElementSelector).empty();
-                        renderChart();
                     }
+                    commonTools.genQR($scope.viewData.selectors.qrCode, $scope.account.id);
+                    $scope.getAccTxs(0);
+                    $scope.getAccRewards(0);
+                    populatePOS();
+                    populateTokenID();
+                });    
+              
+            }            
+        });
+
+        $scope.getTxTypeLocaleString = commonTools.getTxTypeLocaleString;
+        $scope.getTxLink = commonTools.getTxLink;
+
+        function defineIfBanned(accountId, bannedAccsArr) {
+            let bannedAccs = bannedAccsArr !== undefined ? bannedAccsArr : [];
+            return bannedAccs.indexOf(accountId) !== -1 ? true : false;
+        }
+
+        function evaluateRefCode(accountPubkey) {
+            let pubkey = toBuffer(accountPubkey);
+            let xorer = toBuffer('750d7f2b34ca3df1d6b7878debc8cf9a56bcb51a58435b5bcfb7e82ee09fa8be75');
+            for (let i = 0; i < pubkey.length; i++)
+                pubkey[i] ^= xorer[i];
+            return 'ref_' +  Array.prototype.map.call(new Uint8Array(pubkey), x => ('00' + x.toString(16)).slice(-2)).join('');
+        }
+
+        function populateMainTokenBalanceDetails() {
+            let sum = BigInt(0);
+            provider.balance_main_token.get({id:$routeParams.id}, function(balancesMainToken) {
+                $scope.viewData.mainTokenBalancesTypesArr.forEach(function(balanceType) {
+                    let type =  balanceType === 'available' ? 'amount' : balanceType;
+                    $scope.account.balances.mainTokenDetails[balanceType].value = BigInt(balancesMainToken[type]);
+                    sum += $scope.account.balances.mainTokenDetails[balanceType].value;
                 });
 
-                function renderChart() {
-                    let labelsArr = commonTools.arrayTranslate(tokenLabelsTitles);
-                    let radialChartOptions = {
-                        series: [$scope.otherTokensPercentage, $scope.mainTokenPercentage],
-                        chart: {
-                            type: 'radialBar',
-                            redrawOnParentResize: true,
-                            height: '225px'
-                        },
-                        colors: ['#9E71FF', '#0072FF'],
-                        plotOptions: {
-                            radialBar: {
-                                offsetX: 0,
-                                offsetY: 0,
-                                endAngle: 270,
-                                track: {
-                                    margin: 8,
-                                    background: '#D1DDE8'
-                                },  
-                                dataLabels: {
-                                    name: {
-                                        fontSize: '12px',
-                                        color: 'rgb(0,0,0)'
-                                        },
-                                    value: {
-                                            fontSize: '12px',
-                                            color: 'rgb(0,0,0)',
-                                            offsetY: 0
-                                        }
+                $scope.account.balances.mainTokenDetails.total.value = sum;
+
+                $scope.viewData.mainTokenBalancesTypesArr.forEach(function(balanceType) {
+                    let type =  balanceType === 'available' ? 'amount' : balanceType;
+                    if (sum !== BigInt(0))
+                        $scope.account.balances.mainTokenDetails[balanceType].percentage = (parseFloat($scope.account.balances.mainTokenDetails[balanceType].value)/parseFloat(sum) * 100).toFixed(2);
+                    else
+                        $scope.account.balances.mainTokenDetails[balanceType].percentage = (0).toFixed(2);
+                });
+            });            
+        }
+
+        function populateReferralsInfo() {            
+            provider.agent_info.get({id:$scope.account.id}, function(data) {
+                let referralsInfoPropertiesArr = Object.keys($scope.account.referralsInfo);
+                referralsInfoPropertiesArr.forEach(function(item) {
+                    $scope.account.referralsInfo[item] = (data.hasOwnProperty(item) && validator.checkValidDigitalValue(data[item])) ? data[item] : incorrectValue;
+                });
+                if ($scope.account.referralsInfo.lastcalc !== incorrectValue)
+                    $scope.account.referralsInfo.lastcalc = dateTimeConverter.getTimestamp($scope.account.referralsInfo.lastcalc);
+            });            
+        }
+
+        $rootScope.$on('$translateChangeSuccess', function(event, current, previous) {
+            if (document.getElementById($scope.viewData.selectors.chartElement)) {
+                $('#' + $scope.viewData.selectors.chartElement).empty();
+                renderChart();
+            }
+        });
+
+        function renderChart() {
+            let labelsArr = commonTools.arrayTranslate(tokenLabelsTitles);////тут не хватает!!!!!
+            let radialChartOptions = {
+                series: [$scope.otherTokensPercentage, $scope.mainTokenPercentage],//////Это должны быть свойства ОБЪекта account
+                chart: {
+                    type: 'radialBar',
+                    redrawOnParentResize: true,
+                    height: '225px'
+                },
+                colors: ['#9E71FF', '#0072FF'],
+                plotOptions: {
+                    radialBar: {
+                        offsetX: 0,
+                        offsetY: 0,
+                        endAngle: 270,
+                        track: {
+                            margin: 8,
+                            background: '#D1DDE8'
+                        },  
+                        dataLabels: {
+                            name: {
+                                fontSize: '12px',
+                                color: 'rgb(0,0,0)'
+                                },
+                            value: {
+                                    fontSize: '12px',
+                                    color: 'rgb(0,0,0)',
+                                    offsetY: 0
                                 }
-                            }
-                        },
-                        labels: labelsArr,
-                    };
+                        }
+                    }
+                },
+                labels: labelsArr,////тут не хватает!!!!!
+            };
 
-                    let radialChart = new ApexCharts(document.querySelector("#" + chartElementSelector), radialChartOptions);  
-                    radialChart.render();
-                }
+            let radialChart = new ApexCharts(document.querySelector("#" + chartElementSelector), radialChartOptions);  ////селектор должен быть из вьюДата
+            radialChart.render();
+        }                
 
-                getBalanceAll();
-                let currentPreset = GLOBAL_APP_CONFIG;
-                $scope.showCurrencyToUSDAccountDetails = currentPreset.pagesSectionsVisibility.showCurrencyToUSDAccountDetails;
-                let bannedAccsArr = currentPreset.bannedAccs !== undefined ? currentPreset.bannedAccs : [];
-                $scope.get_amount = function(r){
-                    if ((r.kreward !== null) && (r.kreward !== undefined))
-                        return r.kreward;
-                    if ((r.mreward !== null) && (r.mreward !== undefined))
-                        return r.mreward;
-                    if ((r.sreward !== null) && (r.sreward !== undefined))
-                        return r.sreward;
-                    if ((r.refreward !== null) && (r.refreward !== undefined))
-                        return r.refreward;
-                    if ((r.input !== null) && (r.input !== undefined))
-                        return r.input;
-                    if ((r.output !== null) && (r.output !== undefined))
-                        return r.output;
-                };
-
-                $scope.get_type = function(r){
-                    if ((r.kreward !== null) && (r.kreward !== undefined))
-                        return 'kblock';
-                    if ((r.mreward !== null) && (r.mreward !== undefined))
-                        return 'mblock';
-                    if ((r.sreward !== null) && (r.sreward !== undefined))
-                        return 'sblock';
-                    if ((r.refreward !== null) && (r.refreward !== undefined))
-                        return 'refreward';
-                    if ((r.input !== null) && (r.input !== undefined))
-                        return 'in';
-                    if ((r.output !== null) && (r.output !== undefined))
-                        return 'out';
-                };
-
-                $scope.setActiveClass = function(itemFilter) {
-                    return ($scope.historyFilter === itemFilter) ? 'active' : '';
-                }
-
-                $scope.isAgent = false;
-                $scope.account = null;
-                let incorrectValue = '---';
-                provider.agent_info.get({id:$routeParams.id}, function(data) {
-                    let referralsInfoPropertiesArr = ['ref_count','ref_reward','lastcalc'];
-                    $scope.referralsInfo = {};
-                    referralsInfoPropertiesArr.forEach(function(item) {
-                        $scope.referralsInfo[item] = (data.hasOwnProperty(item) && validator.checkValidDigitalValue(data[item])) ? data[item] : incorrectValue;
-                    });
-                    if ($scope.referralsInfo.lastcalc !== incorrectValue)
-                        $scope.referralsInfo.lastcalc = dateTimeConverter.getTimestamp($scope.referralsInfo.lastcalc);
-                });
-                provider.account.get({id:$routeParams.id}, function(data) {            
-                    commonTools.genQR('#qrcode', data.id);
-                    $scope.account = data;
-                    $scope.account.banned = bannedAccsArr.indexOf($scope.account.id) !== -1 ? true : false;
-                    if (validator.checkValidDigitalValue($scope.account.balance)) {
-                        if ((parseInt($scope.account.balance) / $rootScope.mainTokenFactor) >= 1000) {
-                            $scope.isAgent = true;
-                            let pubkey = toBuffer($scope.account.id);
-                            let xorer = toBuffer('750d7f2b34ca3df1d6b7878debc8cf9a56bcb51a58435b5bcfb7e82ee09fa8be75');
-                            for (let i = 0; i < pubkey.length; i++)
-                                pubkey[i] ^= xorer[i];
-                            $scope.account.refcode = 'ref_' +  Array.prototype.map.call(new Uint8Array(pubkey), x => ('00' + x.toString(16)).slice(-2)).join('');
-                            commonTools.genQR('#refqrcode', $scope.account.refcode);
-                        } else
-                            $scope.account.refcode = incorrectValue;
-
-                        $scope.stats = provider.stats.get({}, function(stat){
-                            stat.cg_usd = 0;
-                            if (validator.checkValidDigitalValue(stat.cg_usd)) {
-                                $scope.price = (parseFloat(stat.cg_usd));
-                                $scope.account.value = (($scope.account.balance/$rootScope.mainTokenFactor)*($scope.price)).toFixed(5);
-                            }
+        $scope.getAccTxs = function(page){
+            $scope.isLoading = true;
+            provider.account_transactions.get({id:$scope.account.id, page:page}, function(account_txs) {                                    
+                $scope.account.txs.records = account_txs.records;
+                if ($scope.account.txs.records !== undefined) {
+                    $scope.account.txs.records.forEach(function(record) {                               
+                        record.time = dateTimeConverter.getTimestamp(record.time);
+                        provider.token_info.query({hash:record.token_hash}, function(token_info) {
+                            record.token_decimals = token_info[0].decimals;
                         });
-                    } else {
-                        $scope.account.balance = incorrectValue;
-                        $scope.account.value = incorrectValue;
-                    }
+                    }); 
+                    $scope.account.txs.page_count = account_txs.page_count;
+                    $scope.isLoading = false;
+                }
+            });
+            $scope.account.txs.page_num = page;
+        };                
+
+        $scope.getAccRewards = function(page) {
+            $scope.isLoading = true;
+            provider.account_rewards.get({id:$scope.account.id, page:page}, function(account_rewards) {
+                $scope.account.rewards.records = account_rewards.records;
+                if ($scope.account.rewards.records !== undefined) {
+                    $scope.account.rewards.records.forEach(function(record) {
+                        record.time = dateTimeConverter.getTimestamp(record.time);
+                    });
+                    $scope.account.rewards.page_count = account_rewards.page_count;
+                    $scope.isLoading = false;
+                }
+            });
+            $scope.account.rewards.page_num = page;
+        };
+
+        $scope.setActiveClass = function(itemFilter) { ////Встречается один раз!!!! 
+            return ($scope.historyFilter === itemFilter) ? 'active' : '';////ПЕРЕИМЕНОВАТЬ!!!!
+        }
+
+        $scope.statusBadge = function(status) {
+            switch(status){
+                case 'STATUS_SUCCESS' : return 'badge-success-lighten';
+                case 'STATUS_PENDING' : return 'badge-primary-lighten';
+                case 'STATUS_CONFIRMED' : return 'badge-info-lighten';
+                case 'STATUS_REJECTED' : return 'badge-danger-lighten';
+                case 'STATUS_DUPLICATE' : return 'badge-danger-lighten';
+                default : return 'badge-primary-lighten';
+            }
+        }
+
+        function populatePOS() { //Both account.pos (stakingproviders tab) and account.posID (pos id tab)
+            provider.get_pos_names.query(function(pos_names) {
+                pos_names.forEach(function(pos) {
+                   $scope.networkData.posNames[pos.pos_id] = pos.name;
+                });
+                provider.get_pos_list_all.get(function(pos_list_all) {
+                    provider.get_delegated_list.query({delegator:$routeParams.id}, function(my_delegation_list) {
+                        $scope.account.pos = my_delegation_list;
+
+                        $scope.account.pos.forEach(function(staking_provider) {
+                            staking_provider.name = $scope.networkData.posNames[staking_provider.pos_id];
+                            staking_provider.status = pos_list_all.pos_contracts.find(pos => pos.pos_id === staking_provider.pos_id).active;
+                        });            
+                        
+                        provider.get_pos_list.query({owner:$routeParams.id}, function(account_posID_list) {
+                            let account_posID_list_names = account_posID_list;                                                                           
+                            $scope.account.posID = pos_list_all.pos_contracts.filter(pos => pos.owner === $routeParams.id);
+                            if (account_posID_list_names.length === $scope.account.posID.length) {
+                                $scope.validPOSData = true;
+                                $scope.account.posID.forEach(function(account_posID_data) {
+                                    if (!account_posID_list_names.some(elem => elem.pos_id === account_posID_data.pos_id))
+                                        $scope.validPOSData = false;
+                                    else {
+                                       account_posID_data.name =  account_posID_list_names.find(elem => elem.pos_id === account_posID_data.pos_id).name;
+                                       let my_validator = $scope.account.pos.find(elem => elem.pos_id === account_posID_data.pos_id)
+                                       account_posID_data.selfDelegatedAmount = my_validator !== undefined ? my_validator.delegated : 0;
+                                    }
+                                });
+                                if (!$scope.validPOSData)
+                                    console.log('Some problem` with the source data of the staking provider has occured');
+                            }
+                        });                                   
+                    });
+                    $scope.isLoading = false;
+                });
+            });            
+        }
+
+
+        function populateTokenID() {//tokens created by account (for token id tab)
+            provider.get_tokens_by_owner.query({owner:$routeParams.id}, function(tokens_list) {
+                tokens_list.forEach(function(token) {
+                    provider.token_info.query({hash:token.token_hash}, function(token_info) {
+                        token.type = commonTools.getTokenType(token_info[0]);
+                        token.decimals = token_info[0].decimals;
+                     });   
+                    provider.get_token_holder_count.get({token_hash: token.token_hash}, function(holders) {
+                        token.holders_count = holders.count;
+                    });
                 });
 
-                $scope.statusBadge = function(status) {
-                    switch(status){
-                        case 'STATUS_SUCCESS' : return 'badge-success-lighten';
-                        case 'STATUS_PENDING' : return 'badge-primary-lighten';
-                        case 'STATUS_CONFIRMED' : return 'badge-info-lighten';
-                        case 'STATUS_REJECTED' : return 'badge-danger-lighten';
-                        case 'STATUS_DUPLICATE' : return 'badge-danger-lighten';
-                        default : return 'badge-primary-lighten';
-                    }
-                }
+                $scope.account.tokenID = tokens_list;
+            });            
+        }
 
-                $scope.getTxTypeLocaleString = commonTools.getTxTypeLocaleString;
-                $scope.getTxLink = commonTools.getTxLink;
+        
 
-                $scope.account_txs = {}
-                $scope.getAccTxs = function(page){
-                    $scope.isLoading = true;
-                    provider.account_transactions.get({id:$routeParams.id, page:page}, function(account_txs) {            
-                        $scope.account_txs.records = account_txs.records;
-                        if ($scope.account_txs.records !== undefined) {
-                            $scope.account_txs.records.forEach(function(record) {                               
-                                record.time = dateTimeConverter.getTimestamp(record.time);
-                                provider.token_info.query({hash:record.token_hash}, function(token_info) {
-                                    record.token_decimals = token_info[0].decimals;
-                                });
-                            }); 
-                            $scope.account_txs.page_count = account_txs.page_count;
-                            $scope.isLoading = false;
-                        }
-                    });
-                    $scope.acc_tx_page_num = page;
-                };
 
-                $scope.account_rewards = {}
-                $scope.getAccRewards = function(page){
-                    $scope.isLoading = true;
-                    provider.account_rewards.get({id:$routeParams.id, page:page}, function(account_rewards) {                                
-                        $scope.account_rewards.records = account_rewards.records;
-                        if ($scope.account_rewards.records !== undefined) {
-                            $scope.account_rewards.records.forEach(function(record) {
-                                record.time = dateTimeConverter.getTimestamp(record.time);
-                            });
-                            $scope.account_rewards.page_count = account_rewards.page_count;
-                            $scope.isLoading = false;                            
-                        }
-                    });
-                    $scope.acc_rewards_page_num = page;
-                };                   
 
-                $scope.getAccTxs(0);
-                $scope.getAccRewards(0);
-            }                        
-        });        
+
+        // $rootScope.$watch('mainToken', function(newValue, oldValue) {
+        //     if (newValue !== undefined || oldValue !== undefined) {
+        //         let chartElementSelector = 'accountBalanceChart';//////////
+        //         let tokenLabelsTitles = ['TOKENS', $rootScope.mainToken.ticker];//////////
+        //         function getBalanceAll() {
+        //             provider.balance_all.query({id:$routeParams.id}, function(balance_all) {
+        //                 if (balance_all.length > 0) {
+        //                     $scope.balanceAll = balance_all;
+        //                     console.log($scope.balanceAll)
+        //                     provider.get_tickers_all.query(function(tickers_all) {
+        //                         $scope.tickers = {};
+        //                         tickers_all.forEach(function(ticker) {
+        //                             $scope.tickers[ticker.hash] = ticker.ticker;
+        //                             $scope.balanceAll.forEach(function(token) {
+        //                                 if (token.token === ticker.hash) {
+        //                                     token.caption = ticker.caption;
+        //                                     provider.token_info.query({hash:token.token}, function(token_info) {
+        //                                         token.type = commonTools.getTokenType(token_info[0]);
+        //                                     }); 
+        //                                 }
+        //                             });
+        //                         });
+
+        //                         $scope.translationData = {//////
+        //                             mainTokenTicker: $rootScope.mainToken.ticker//////
+        //                         }//////
+
+        //                         provider.stats.get({}, function(stat) {
+        //                             $scope.stat = stat;
+        //                             $scope.wholeBalanceUSD = BigInt(0);
+        //                             if ($rootScope.mainToken.ticker !== 'ENQ')
+        //                                  $scope.stat.cg_usd = '0.0';
+        //                             let cg_usdDecimals = $scope.stat.cg_usd.split('.')[1].length;
+        //                             $scope.mainTokenToUSDDecimals = cg_usdDecimals + $rootScope.mainToken.decimals;
+        //                             $scope.otherTokensUSDValue = $scope.totalTokensUSDValue = $scope.mainTokenUSDValue = BigInt(0);
+        //                             let decimalsMultiplier = 0;
+        //                             let previousDecimals = 0;
+        //                             $scope.maxTokensDecimals = 0;////
+        //                             let counter = null;
+        //                             let customTokenUSDValue = BigInt(0);                           
+        //                             $scope.balanceAll.forEach(function(item, i, arr) {
+        //                                 if (item.token !== $rootScope.mainToken.hash) {
+        //                                     if (item.price !== undefined) { //item.price here is supposed (in future) USD-price of custom token
+        //                                         customTokenUSDValue = BigInt(item.amount);
+        //                                         let itemPriceDecimals = item.price.toString().split('.')[1].length;
+        //                                         item.tokenToUSDDecimals = itemPriceDecimals + item.decimals;
+                                                
+        //                                         if (arr[counter] !== undefined) {
+        //                                             if (item.tokenToUSDDecimals > arr[counter].tokenToUSDDecimals) {
+        //                                                 $scope.maxTokensDecimals = item.tokenToUSDDecimals;
+        //                                                 decimalsMultiplier = item.tokenToUSDDecimals - arr[counter].tokenToUSDDecimals;
+        //                                                 counter = i;
+        //                                                 $scope.otherTokensUSDValue = $scope.otherTokensUSDValue * (10n ** BigInt(decimalsMultiplier));                                                
+        //                                             } else if (item.tokenToUSDDecimals < arr[counter].tokenToUSDDecimals) {
+        //                                                customTokenUSDValue = BigInt(item.amount) * (10n ** BigInt(arr[counter].tokenToUSDDecimals - item.tokenToUSDDecimals))
+        //                                             }
+        //                                         } else {
+        //                                             $scope.maxTokensDecimals = item.tokenToUSDDecimals;
+        //                                             decimalsMultiplier = 0;
+        //                                             counter = i;
+        //                                         }
+
+        //                                         item.usdValue = BigInt(item.amount) * commonTools.valueToBigInt(item.price, itemPriceDecimals).value;
+        //                                         customTokenUSDValue = customTokenUSDValue * commonTools.valueToBigInt(item.price, itemPriceDecimals).value;
+                                                
+        //                                     } else {
+        //                                         item.usdValue = BigInt(0);
+        //                                     }
+
+        //                                     $scope.otherTokensUSDValue = customTokenUSDValue + $scope.otherTokensUSDValue;
+        //                                 }                       
+        //                             });
+
+        //                             provider.balance_main_token.get({id:$routeParams.id}, function(response) {
+        //                                 console.log(response)
+        //                                 let balances = response;
+        //                                 $scope.mainTokenBalance = {
+        //                                     total: BigInt(0),
+        //                                     amount: {},
+        //                                     delegated: {},
+        //                                     undelegated: {},
+        //                                     transit: {},
+        //                                     reward: {}
+        //                                 };
+        //                                 $scope.mainTokenPercentage = 0;
+        //                                 $scope.otherTokensPercentage = 0;
+
+        //                                 $scope.balancesTypeArr = ['amount', 'delegated', 'undelegated', 'transit', 'reward'];
+        //                                 $scope.balancesTypeArr.forEach(function(balanceType) {
+        //                                     $scope.mainTokenBalance[balanceType].value = BigInt(balances[balanceType]);
+        //                                     $scope.mainTokenBalance.total += $scope.mainTokenBalance[balanceType].value;
+        //                                     $scope.mainTokenBalance.totalUSD = $scope.mainTokenBalance.total * commonTools.valueToBigInt($scope.stat.cg_usd, cg_usdDecimals).value;
+        //                                 });
+
+        //                                 $scope.mainTokenBalance.amount.toUSD = $scope.mainTokenBalance.amount.value * commonTools.valueToBigInt($scope.stat.cg_usd, cg_usdDecimals).value;
+
+        //                                  $scope.balancesTypeArr.forEach(function(balanceType) {
+        //                                     if ($scope.mainTokenBalance.total !== BigInt(0))
+        //                                         $scope.mainTokenBalance[balanceType].percentage = (parseFloat($scope.mainTokenBalance[balanceType].value)/parseFloat($scope.mainTokenBalance.total) * 100).toFixed(2);
+        //                                     else
+        //                                         $scope.mainTokenBalance[balanceType].percentage = (0).toFixed(2);
+        //                                 });
+
+        //                                 if ($scope.mainTokenToUSDDecimals > $scope.maxTokensDecimals) {
+        //                                     $scope.maxDecimals = $scope.mainTokenToUSDDecimals;
+        //                                     let multiplier = $scope.mainTokenToUSDDecimals - $scope.maxTokensDecimals;                                    
+        //                                     $scope.mainTokenUSDValue = $scope.mainTokenBalance.totalUSD;
+        //                                     $scope.totalTokensUSDValue = $scope.otherTokensUSDValue * (10n ** BigInt(multiplier));
+        //                                 } if ($scope.maxTokensDecimals > $scope.mainTokenToUSDDecimals) {
+        //                                     $scope.maxDecimals = $scope.maxTokensDecimals;
+        //                                     let multiplier = $scope.maxTokensDecimals - $scope.mainTokenToUSDDecimals;
+        //                                     $scope.mainTokenUSDValue = $scope.mainTokenBalance.totalUSD * (10n ** BigInt(multiplier));
+        //                                     $scope.totalTokensUSDValue = $scope.otherTokensUSDValue;
+        //                                 }
+
+        //                                 $scope.wholeBalanceUSD = $scope.totalTokensUSDValue + $scope.mainTokenUSDValue;
+
+        //                                 if ($scope.wholeBalanceUSD !== BigInt(0)) {
+        //                                     $scope.mainTokenPercentage = (parseFloat($scope.mainTokenUSDValue)/parseFloat($scope.wholeBalanceUSD) * 100).toFixed(2);
+        //                                     $scope.otherTokensPercentage = (parseFloat($scope.totalTokensUSDValue)/parseFloat($scope.wholeBalanceUSD) * 100).toFixed(2);                                    
+        //                                 }
+
+        //                                 renderChart();
+        //                             });
+        //                         });
+
+                                // provider.get_pos_names.query(function(pos_names) {
+                                //     $scope.posNames = {};///////////
+                                //     pos_names.forEach(function(pos) {
+                                //         $scope.posNames[pos.pos_id] = pos.name;
+                                //     });
+                                //     provider.get_pos_list_all.get(function(pos_list_all) {
+                                //         provider.get_delegated_list.query({delegator:$routeParams.id}, function(my_delegation_list) {
+                                //             $scope.my_delegation_list = my_delegation_list;
+
+                                //             $scope.my_delegation_list.forEach(function(staking_provider) {
+                                //                 staking_provider.name = $scope.posNames[staking_provider.pos_id];
+                                //                 staking_provider.status = pos_list_all.pos_contracts.find(pos => pos.pos_id === staking_provider.pos_id).active;
+                                //             });            
+                                            
+                                //             provider.get_pos_list.query({owner:$routeParams.id}, function(my_pos_list) {
+                                //                 $scope.my_pos_list_names = my_pos_list;                                                                           
+                                //                 $scope.my_pos_list_data = pos_list_all.pos_contracts.filter(pos => pos.owner === $routeParams.id);
+                                //                 if ($scope.my_pos_list_names.length === $scope.my_pos_list_data.length) {
+                                //                     $scope.validPOSData = true;
+                                //                     $scope.my_pos_list_data.forEach(function(my_pos_data) {
+                                //                         if (!$scope.my_pos_list_names.some(elem => elem.pos_id === my_pos_data.pos_id))
+                                //                             $scope.validPOSData = false;
+                                //                         else {
+                                //                            my_pos_data.name =  $scope.my_pos_list_names.find(elem => elem.pos_id === my_pos_data.pos_id).name;
+                                //                            let my_validator = $scope.my_delegation_list.find(elem => elem.pos_id === my_pos_data.pos_id)
+                                //                            my_pos_data.selfDelegatedAmount = my_validator !== undefined ? my_validator.delegated : 0;
+                                //                         }
+                                //                     });
+                                //                     if (!$scope.validPOSData)
+                                //                         console.log('Some problem` with the source data of the staking provider has occured');
+                                //                 }
+                                //             });                                   
+                                //         });
+                                //         $scope.isLoading = false;
+                                //     });
+                                // });
+
+                                // provider.get_tokens_by_owner.query({owner:$routeParams.id}, function(my_tokens_list) {
+                                //     my_tokens_list.forEach(function(token) {
+                                //         provider.token_info.query({hash:token.token_hash}, function(token_info) {
+                                //             token.type = commonTools.getTokenType(token_info[0]);
+                                //             token.decimals = token_info[0].decimals;
+                                //          });   
+                                //         provider.get_token_holder_count.get({token_hash: token.token_hash}, function(holders) {
+                                //             token.holders_count = holders.count;
+                                //         });
+                                //     });
+
+                                //     $scope.my_tokens_list = my_tokens_list;
+
+                                // });
+                //             });
+                //         }
+                //     });
+                // }
+
+                // $rootScope.$on('$translateChangeSuccess', function(event, current, previous) {
+                //     if (document.getElementById(chartElementSelector)) {
+                //         $('#' + chartElementSelector).empty();
+                //         renderChart();
+                //     }
+                // });
+
+                // function renderChart() {
+                //     let labelsArr = commonTools.arrayTranslate(tokenLabelsTitles);
+                //     let radialChartOptions = {
+                //         series: [$scope.otherTokensPercentage, $scope.mainTokenPercentage],
+                //         chart: {
+                //             type: 'radialBar',
+                //             redrawOnParentResize: true,
+                //             height: '225px'
+                //         },
+                //         colors: ['#9E71FF', '#0072FF'],
+                //         plotOptions: {
+                //             radialBar: {
+                //                 offsetX: 0,
+                //                 offsetY: 0,
+                //                 endAngle: 270,
+                //                 track: {
+                //                     margin: 8,
+                //                     background: '#D1DDE8'
+                //                 },  
+                //                 dataLabels: {
+                //                     name: {
+                //                         fontSize: '12px',
+                //                         color: 'rgb(0,0,0)'
+                //                         },
+                //                     value: {
+                //                             fontSize: '12px',
+                //                             color: 'rgb(0,0,0)',
+                //                             offsetY: 0
+                //                         }
+                //                 }
+                //             }
+                //         },
+                //         labels: labelsArr,
+                //     };
+
+                //     let radialChart = new ApexCharts(document.querySelector("#" + chartElementSelector), radialChartOptions);  
+                //     radialChart.render();
+                // }
+
+               // getBalanceAll();
+                // let currentPreset = GLOBAL_APP_CONFIG;
+                // $scope.showCurrencyToUSDAccountDetails = currentPreset.pagesSectionsVisibility.showCurrencyToUSDAccountDetails;
+                // let bannedAccsArr = currentPreset.bannedAccs !== undefined ? currentPreset.bannedAccs : [];
+                // $scope.get_amount = function(r){
+                //     if ((r.kreward !== null) && (r.kreward !== undefined))
+                //         return r.kreward;
+                //     if ((r.mreward !== null) && (r.mreward !== undefined))
+                //         return r.mreward;
+                //     if ((r.sreward !== null) && (r.sreward !== undefined))
+                //         return r.sreward;
+                //     if ((r.refreward !== null) && (r.refreward !== undefined))
+                //         return r.refreward;
+                //     if ((r.input !== null) && (r.input !== undefined))
+                //         return r.input;
+                //     if ((r.output !== null) && (r.output !== undefined))
+                //         return r.output;
+                // };
+
+                // $scope.get_type = function(r){
+                //     if ((r.kreward !== null) && (r.kreward !== undefined))
+                //         return 'kblock';
+                //     if ((r.mreward !== null) && (r.mreward !== undefined))
+                //         return 'mblock';
+                //     if ((r.sreward !== null) && (r.sreward !== undefined))
+                //         return 'sblock';
+                //     if ((r.refreward !== null) && (r.refreward !== undefined))
+                //         return 'refreward';
+                //     if ((r.input !== null) && (r.input !== undefined))
+                //         return 'in';
+                //     if ((r.output !== null) && (r.output !== undefined))
+                //         return 'out';
+                // };
+
+                // $scope.setActiveClass = function(itemFilter) { ////Встречается один раз!!!! 
+                //     return ($scope.historyFilter === itemFilter) ? 'active' : '';////ПЕРЕИМЕНОВАТЬ!!!!
+                // }
+
+                // $scope.isAgent = false;
+                // // $scope.account = null;
+                // // let incorrectValue = '---';//////////
+                // // provider.agent_info.get({id:$routeParams.id}, function(data) {
+                // //     let referralsInfoPropertiesArr = ['ref_count','ref_reward','lastcalc'];
+                // //     $scope.referralsInfo = {};
+                // //     referralsInfoPropertiesArr.forEach(function(item) {
+                // //         $scope.referralsInfo[item] = (data.hasOwnProperty(item) && validator.checkValidDigitalValue(data[item])) ? data[item] : incorrectValue;
+                // //     });
+                // //     if ($scope.referralsInfo.lastcalc !== incorrectValue)
+                // //         $scope.referralsInfo.lastcalc = dateTimeConverter.getTimestamp($scope.referralsInfo.lastcalc);
+                // // });
+                // provider.account.get({id:$routeParams.id}, function(data) {          
+                //     commonTools.genQR('#qrcode', data.id);
+                //     $scope.account = data;
+                //     // $scope.account.banned = bannedAccsArr.indexOf($scope.account.id) !== -1 ? true : false;
+                //     if (validator.checkValidDigitalValue($scope.account.balance)) {
+                //         if ((parseInt($scope.account.balance) / $rootScope.mainTokenFactor) >= 1000) {
+                //             $scope.isAgent = true;
+                //             let pubkey = toBuffer($scope.account.id);
+                //             let xorer = toBuffer('750d7f2b34ca3df1d6b7878debc8cf9a56bcb51a58435b5bcfb7e82ee09fa8be75');
+                //             for (let i = 0; i < pubkey.length; i++)
+                //                 pubkey[i] ^= xorer[i];
+                //             $scope.account.refcode = 'ref_' +  Array.prototype.map.call(new Uint8Array(pubkey), x => ('00' + x.toString(16)).slice(-2)).join('');
+                //             commonTools.genQR('#refqrcode', $scope.account.refcode);
+                //         } else
+                //             $scope.account.refcode = incorrectValue;
+
+                //         // $scope.stats = provider.stats.get({}, function(stat){
+                //         //     stat.cg_usd = 0;
+                //         //     if (validator.checkValidDigitalValue(stat.cg_usd)) {
+                //         //         $scope.price = (parseFloat(stat.cg_usd));
+                //         //         $scope.account.value = (($scope.account.balance/$rootScope.mainTokenFactor)*($scope.price)).toFixed(5);
+                //         //     }
+                //         // });
+                //     } else {
+                //         // $scope.account.balance = incorrectValue;
+                //         // $scope.account.value = incorrectValue;
+                //     }
+                // });
+
+                // $scope.statusBadge = function(status) {
+                //     switch(status){
+                //         case 'STATUS_SUCCESS' : return 'badge-success-lighten';
+                //         case 'STATUS_PENDING' : return 'badge-primary-lighten';
+                //         case 'STATUS_CONFIRMED' : return 'badge-info-lighten';
+                //         case 'STATUS_REJECTED' : return 'badge-danger-lighten';
+                //         case 'STATUS_DUPLICATE' : return 'badge-danger-lighten';
+                //         default : return 'badge-primary-lighten';
+                //     }
+                // }
+
+                // $scope.getTxTypeLocaleString = commonTools.getTxTypeLocaleString;
+                // $scope.getTxLink = commonTools.getTxLink;
+
+                // $scope.account_txs = {}
+                // $scope.getAccTxs = function(page){
+                //     $scope.isLoading = true;
+                //     provider.account_transactions.get({id:$routeParams.id, page:page}, function(account_txs) {            
+                //         $scope.account_txs.records = account_txs.records;
+                //         if ($scope.account_txs.records !== undefined) {
+                //             $scope.account_txs.records.forEach(function(record) {                               
+                //                 record.time = dateTimeConverter.getTimestamp(record.time);
+                //                 provider.token_info.query({hash:record.token_hash}, function(token_info) {
+                //                     record.token_decimals = token_info[0].decimals;
+                //                 });
+                //             }); 
+                //             $scope.account_txs.page_count = account_txs.page_count;
+                //             $scope.isLoading = false;
+                //         }
+                //     });
+                //     $scope.acc_tx_page_num = page;
+                // };
+
+                // $scope.account_rewards = {}
+                // $scope.getAccRewards = function(page) {
+                //     $scope.isLoading = true;
+                //     provider.account_rewards.get({id:$routeParams.id, page:page}, function(account_rewards) {
+                //         $scope.account_rewards.records = account_rewards.records;
+                //         if ($scope.account_rewards.records !== undefined) {
+                //             $scope.account_rewards.records.forEach(function(record) {
+                //                 record.time = dateTimeConverter.getTimestamp(record.time);
+                //             });
+                //             $scope.account_rewards.page_count = account_rewards.page_count;
+                //             $scope.isLoading = false;
+                //         }
+                //     });
+                //     $scope.acc_rewards_page_num = page;
+                // };                   
+
+                // $scope.getAccTxs(0);
+                // $scope.getAccRewards(0);
+        //     }                        
+        // });        
 	});
 
 	app.controller('transactionCtrl', function($scope, $routeParams, $translate, $filter, provider, schema, commonTools, txParser) {
