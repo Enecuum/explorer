@@ -11,11 +11,11 @@
             </tr>
         </thead>
         <tbody style="font-size: 12px;">
-            <tr ng-repeat="token in balanceAll">
-                <td><a ng-href="#!/token/{{token.token}}">{{token.caption}} ({{tickers[token.token]}})</a></td>
+            <tr ng-repeat="token in account.balances.allTokensAsList">
+                <td><a ng-href="#!/token/{{token.token}}">{{token.caption}} ({{networkData.tickers[token.token].ticker}})</a></td>
                 <td>{{token.type}}</td>
                 <td><a class="d-block fit" style="width: 100px;" ng-href="#!/tx/{{token.token}}">{{token.token}}</a></td>
-                <td class="text-nowrap">{{token.amount | US_COMMAS_BIGINT_DECIMALS : token.decimals : token.decimals}} {{tickers[token.token]}}</td>
+                <td class="text-nowrap">{{token.amount | US_COMMAS_BIGINT_DECIMALS : token.decimals : token.decimals}} {{networkData.tickers[token.token].ticker}}</td>
                 <td class="text-nowrap" ng-if="token.token !== mainToken.hash">
                     $ {{token.price !== undefined ? token.price : 0 | US_COMMAS_4}}
                 </td>

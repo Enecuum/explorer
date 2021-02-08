@@ -149,17 +149,17 @@
 			    				</tr>
 			    			</thead>
 			    			<tbody>
-			    				<tr ng-if="token.token !== mainToken.hash" ng-repeat="token in balanceAll">
-			    					<td class="text-muted"><a ng-href="#!/token/{{token.token}}">{{token.caption}} ({{tickers[token.token]}})</a></td>
+			    				<tr ng-if="token.token !== mainToken.hash" ng-repeat="token in account.balances.allTokensAsList">
+			    					<td class="text-muted"><a ng-href="#!/token/{{token.token}}">{{token.caption}} ({{networkData.tickers[token.token].ticker}})</a></td>
 			    					<td class="fit"><span class="font-weight-bolder text-nowrap">{{token.amount | US_COMMAS_BIGINT_DECIMALS : token.decimals : token.decimals}}</span></td>
 			    					<td style="width: 80px;">
-			    						<span class="font-weight-bolder">
+			    						<span class="font-weight-bolder text-nowrap">
 			    						$ {{token.price !== undefined ? token.price : 0 | US_COMMAS_4}}
 			    						</span>
 			    					</td>
 			    					<td class="fit">
 			    						<span class="font-weight-bolder">
-			    							$ {{token.usdValue | US_COMMAS_BIGINT_DECIMALS : token.tokenToUSDDecimals : 2}}
+			    							$ {{token.usdValue  !== undefined ? token.usdValue : 0 | US_COMMAS_BIGINT_DECIMALS : token.tokenToUSDDecimals : 2}}
 			    						</span>
 			    					</td>
 			    				</tr>

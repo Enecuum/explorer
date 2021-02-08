@@ -11,9 +11,9 @@
         </thead>
         <tbody style="font-size: 12px;">
             <tr ng-repeat="token in account.tokenID">
-                <td><a ng-href="#!/token/{{token.token_hash}}">{{token.caption}} ({{tickers[token.token_hash]}})</a></td>
+                <td><a ng-href="#!/token/{{token.token_hash}}">{{networkData.tickers[token.token_hash].caption}} ({{networkData.tickers[token.token_hash].ticker}})</a></td>
                 <td>{{token.type}}</td>                
-                <td class="text-nowrap">{{token.total_supply | US_COMMAS_BIGINT_DECIMALS : token.decimals : token.decimals}} {{tickers[token.token_hash]}}</td>
+                <td class="text-nowrap">{{token.total_supply | US_COMMAS_BIGINT_DECIMALS : token.decimals : token.decimals}} {{networkData.tickers[token.token_hash].ticker}}</td>
                 <td>{{token.holders_count | US_COMMAS_INT}}</td>
                 <td><a class="d-block fit responsive-hash" ng-href="#!/tx/{{token.token_hash}}">{{token.token_hash}}</a></td>
             </tr>

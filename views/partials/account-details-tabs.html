@@ -53,8 +53,8 @@
                         <div ng-if="account.rewards.records.length > 0" class="row" ng-include="'views/partials/account-rewards-tab.html'"></div>
                     </div>                    
                     <div class="tab-pane" id="accountTokenBalanceTab">
-                        <div ng-if="balanceAll.length === 0" ng-include="'views/partials/common-no-records.html'"></div>
-                        <div ng-if="balanceAll.length > 0" class="row" ng-include="'views/partials/account-token-balance-tab.html'"></div>
+                        <div ng-if="account.balances.allTokensAsList.length === 0" ng-include="'views/partials/common-no-records.html'"></div>
+                        <div ng-if="account.balances.allTokensAsList.length > 0" class="row" ng-include="'views/partials/account-token-balance-tab.html'"></div>
                     </div>
                     <div class="tab-pane" id="accountStakingProvidersTab">
                         <div ng-if="account.pos.length === 0" ng-include="'views/partials/common-no-records.html'"></div>
