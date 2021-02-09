@@ -48,7 +48,7 @@
 						<div class="d-flex align-items-center justify-content-between">
 				    		<div class="mb-2 d-flex align-items-center">
 				    			<div class="header-title mr-2 text-uppercase mb-0">{{'TOTAL_BALANCE' | translate}}:</div>
-				    			<div class="font-size-20 font-weight-bolder">$ {{wholeBalanceUSD | US_COMMAS_BIGINT_DECIMALS : maxDecimals : 2}}</div>	    			
+				    			<div class="font-size-20 font-weight-bolder">$ {{account.balances.generalRepresentation.totalBalanceUSD | US_COMMAS_BIGINT_DECIMALS : account.balances.generalRepresentation.totalMaxDecimals : 2}}</div>	    			
 				    		</div>		    			
 				    	</div>
 				    	<div class="pt-xl-3">
@@ -64,17 +64,17 @@
 										<td>
 											<div class="d-flex align-items-center">
 												<div class="apex-chart-legend blue mr-1"></div>
-												<span>{{mainTokenPercentage}}%</span>												
+												<span>{{account.balances.generalRepresentation.mainTokenPercentage}}%</span>												
 											</div>
 										</td>
 									</tr>
 									<tr>
 										<td class="font-size-15 text-muted">{{'TOKEN_VALUE' | translate}}:</td>
-										<td class="font-weight-bolder">$ {{otherTokensUSDValue | US_COMMAS_BIGINT_DECIMALS : maxTokensDecimals : 2}}</td>
+										<td class="font-weight-bolder">$ {{account.balances.generalRepresentation.otherTokensUSDValue | US_COMMAS_BIGINT_DECIMALS : account.balances.generalRepresentation.otherTokensMaxDecimals : 2}}</td>
 										<td>
 											<div class="d-flex align-items-center">
 												<div class="apex-chart-legend pink mr-1"></div>
-												<span>{{otherTokensPercentage}} %</span>												
+												<span>{{account.balances.generalRepresentation.otherTokensPercentage}} %</span>												
 											</div>
 										</td>
 									</tr>									
