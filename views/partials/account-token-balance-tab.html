@@ -20,13 +20,10 @@
                     $ {{token.price !== undefined ? token.price : 0 | US_COMMAS_4}}
                 </td>
                 <td class="text-nowrap" ng-if="token.token === mainToken.hash">
-                    $ {{stat.cg_usd !== undefined ? stat.cg_usd : 0 | US_COMMAS_4}}
+                    $ {{token.price !== undefined ? token.price : 0 | US_COMMAS_4}}
                 </td>
-                <td class="text-nowrap" ng-if="token.token !== mainToken.hash">
+                <td class="text-nowrap">
                     $ {{token.usdValue  !== undefined ? token.usdValue : 0 | US_COMMAS_BIGINT_DECIMALS : token.tokenToUSDDecimals : 2}}
-                </td>
-                <td class="text-nowrap" ng-if="token.token === mainToken.hash">
-                    $ {{mainTokenBalance.amount.toUSD  !== undefined ? mainTokenBalance.amount.toUSD : 0 | US_COMMAS_BIGINT_DECIMALS : mainTokenToUSDDecimals : 2}}
                 </td>
             </tr>
         </tbody>

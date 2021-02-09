@@ -55,12 +55,12 @@
 				    		<table id="totalBalanceTable" class="table no-border table-centered mb-0" style="table-layout: auto;">
 								<tbody>
 									<tr>
-										<td class="font-size-15 text-muted">{{'TOTAL_MAIN_TOKEN' | translate: translationData}}:</td>
-										<td colspan="2" class="font-weight-bolder">{{mainTokenBalance.total | US_COMMAS_BIGINT_DECIMALS : mainToken.decimals : mainToken.decimals}}</td>
+										<td class="font-size-15 text-muted">{{'TOTAL_MAIN_TOKEN' | translate: viewData.translationData}}:</td>
+										<td colspan="2" class="font-weight-bolder">{{account.balances.mainTokenDetails.total.value | US_COMMAS_BIGINT_DECIMALS : mainToken.decimals : mainToken.decimals}}</td>
 									</tr>
 									<tr>
 										<td class="font-size-15 text-muted">{{'MAIN_TOKEN_VALUE' | translate: translationData}}:</td>
-										<td class="font-weight-bolder">$ {{mainTokenBalance.totalUSD | US_COMMAS_BIGINT_DECIMALS : mainTokenToUSDDecimals : 2}} </td>
+										<td class="font-weight-bolder">$ {{account.balances.mainTokenDetails.total.toUSD}} </td>
 										<td>
 											<div class="d-flex align-items-center">
 												<div class="apex-chart-legend blue mr-1"></div>
@@ -98,7 +98,7 @@
 		    			<div class="header-title mr-2 text-uppercase mb-0 text-nowrap">{{'MAIN_TOKEN_BALANCE' | translate: viewData.translationData}}:</div>
 		    			<div class="font-size-20 font-weight-bolder">
 		    				<span class="text-nowrap">{{account.balances.mainTokenDetails.total.value | US_COMMAS_BIGINT_DECIMALS : mainToken.decimals : mainToken.decimals}} </span>
-		    				<span class="text-nowrap">($ {{mainTokenBalance.totalUSD | US_COMMAS_BIGINT_DECIMALS : mainTokenToUSDDecimals : 2}})</span>
+		    				<span class="text-nowrap">($ {{account.balances.mainTokenDetails.total.toUSD}})</span>
 		    			</div>	    			
 		    		</div>		    			
 		    	</div>
