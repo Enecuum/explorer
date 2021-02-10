@@ -3612,6 +3612,7 @@
                 qrCode : '#qrcode',
                 refQrCode : '#refqrcode'
             },
+            radialChart : undefined,
             translationData : undefined,            
             showCurrencyToUSDAccountDetails : currentPreset.pagesSectionsVisibility.showCurrencyToUSDAccountDetails          
         }
@@ -3635,6 +3636,7 @@
                             tickers_all.forEach(function(ticker) {
                                 $scope.networkData.tickers[ticker.hash] = {ticker: ticker.ticker, caption: ticker.caption};                                
                             });
+                            renderChart();
                             populateBalancesAndPrices();                             
                         });
                     }
@@ -3863,9 +3865,15 @@
                 labels: labelsArr,
             };
 
-            let radialChart = new ApexCharts(document.querySelector("#" + $scope.viewData.selectors.chartElement), radialChartOptions);
-            radialChart.render();
-        }                
+            if ($scope.viewData.radialChart === undefined) {
+                $scope.viewData.radialChart = new ApexCharts(document.querySelector("#" + $scope.viewData.selectors.chartElement), radialChartOptions);
+                $scope.viewData.radialChart.render();                
+            } else {
+                $scope.viewData.radialChart.updateSeries([$scope.account.balances.generalRepresentation.otherTokensPercentage, $scope.account.balances.generalRepresentation.mainTokenPercentage]);
+            }
+
+        }
+             
 
         $scope.getAccTxs = function(page){
             $scope.isLoading = true;
