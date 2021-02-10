@@ -350,5 +350,9 @@
     "REISSUABLE":"Reissuable",
     "MINEABLE":"Mineable",
     "ALL": "All",
+    "NON_REISSUABLE_PLURAL":"Non-reissuable",
+    "REISSUABLE_PLURAL":"Reissuable",
+    "MINEABLE_PLURAL":"Mineable",
+    "ALL_PLURAL": "All",    
     "MINING_SLOT": "Mining slot"
 }

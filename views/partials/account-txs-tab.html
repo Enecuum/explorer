@@ -13,23 +13,23 @@
             </tr>
         </thead>
         <tbody style="font-size: 12px;">
-            <tr ng-repeat="record in account_txs.records">
+            <tr ng-repeat="record in account.txs.records">
                 <td>{{record.time === null ? 'null' : record.time}}</td>
                 <td>{{getTxTypeLocaleString(record.rectype) | translate}}</td>
-                <td>{{record.amount | US_COMMAS_BIGINT_DECIMALS : token.decimals : token.decimals}} {{tickers[record.token_hash]}}</td>
-                <td>{{record.fee_value| US_COMMAS_BIGINT_DECIMALS : token.decimals : token.decimals}} {{tickers[record.token_hash]}}</td>
+                <td>{{record.amount | US_COMMAS_BIGINT_DECIMALS : token.decimals : token.decimals}} {{networkData.tickers[record.token_hash].ticker}}</td>
+                <td>{{record.fee_value| US_COMMAS_BIGINT_DECIMALS : token.decimals : token.decimals}} {{networkData.tickers[record.token_hash].ticker}}</td>
                 <td><a class="d-block fit" style="width: 100px;" ng-href="{{getTxLink(record)}}">{{record.hash}}</a></td>
                 <td><span class="badge" ng-class="statusBadge(record.status | TX_STATUS)">{{record.status | TX_STATUS | translate}}</span></td>                
             </tr>
         </tbody>
     </table>
 </div>
-<div ng-if="account_txs.page_count > 1" class="col-12 col-lg text-right">
-    <div class="btn-group" aria-label="Rewind records" ng-hide="account_txs.page_count == null || account_txs.page_count == undefined || account_txs.page_count <= 0">
-        <a class="btn-sm btn btn-secondary text-nowrap" ng-click="getAccTxs(0)" ng-class="acc_tx_page_num == 0 ? 'disabled' : ''" role="button">{{'FRST' | translate}}</a>
-        <a class="btn-sm btn btn-secondary" ng-click="getAccTxs(acc_tx_page_num - 1)" ng-class="acc_tx_page_num == 0 ? 'disabled' : ''" role="button"><i class="fas fa-chevron-left"></i></a>
-        <a class="btn-sm btn btn-secondary disabled text-nowrap" role="button" style="opacity: 1;"><span class="text-blue">{{'PAGE' | translate : {current: acc_tx_page_num+1, total: account_txs.page_count} }}</span></a>
-        <a class="btn-sm btn btn-secondary text-nowrap" ng-click="getAccTxs(acc_tx_page_num + 1)" ng-class="acc_tx_page_num == account_txs.page_count-1 ? 'disabled' : ''" role="button"><i class="fas fa-chevron-right"></i></a>
-        <a class="btn-sm btn btn-secondary text-nowrap" ng-click="getAccTxs(account_txs.page_count-1)" ng-class="acc_tx_page_num == account_txs.page_count-1 ? 'disabled' : ''" role="button">{{'LAST' | translate}}</a>
+<div ng-if="account.txs.page_count > 1" class="col-12 col-lg text-right">
+    <div class="btn-group" aria-label="Rewind records" ng-hide="account.txs.page_count == null || account.txs.page_count == undefined || account.txs.page_count <= 0">
+        <a class="btn-sm btn btn-secondary text-nowrap" ng-click="getAccTxs(0)" ng-class="account.txs.page_num == 0 ? 'disabled' : ''" role="button">{{'FRST' | translate}}</a>
+        <a class="btn-sm btn btn-secondary" ng-click="getAccTxs(account.txs.page_num - 1)" ng-class="account.txs.page_num == 0 ? 'disabled' : ''" role="button"><i class="fas fa-chevron-left"></i></a>
+        <a class="btn-sm btn btn-secondary disabled text-nowrap" role="button" style="opacity: 1;"><span class="text-blue">{{'PAGE' | translate : {current: account.txs.page_num+1, total: account.txs.page_count} }}</span></a>
+        <a class="btn-sm btn btn-secondary text-nowrap" ng-click="getAccTxs(account.txs.page_num + 1)" ng-class="account.txs.page_num == account.txs.page_count-1 ? 'disabled' : ''" role="button"><i class="fas fa-chevron-right"></i></a>
+        <a class="btn-sm btn btn-secondary text-nowrap" ng-click="getAccTxs(account.txs.page_count-1)" ng-class="account.txs.page_num == account.txs.page_count-1 ? 'disabled' : ''" role="button">{{'LAST' | translate}}</a>
     </div>
 </div>

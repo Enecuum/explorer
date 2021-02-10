@@ -12,7 +12,7 @@
         </tr>
         </thead>
         <tbody style="font-size: 12px;">
-            <tr ng-repeat="staking_provider in my_delegation_list | orderBy: 'rank'">
+            <tr ng-repeat="staking_provider in account.pos | orderBy: 'rank'">
                 <td>{{staking_provider.rank}}</td>
                 <td><a ng-href="#!/pos-contract/{{staking_provider.pos_id}}" class="d-flex overflow-hidden">{{staking_provider.name}}</a></td>
                 <td>

@@ -6,7 +6,7 @@
                     <div class="col-12 mb-3 mb-lg-0"  style="flex-grow: 3;">
                         <ul class="nav nav-tabs nav-bordered mb-3 nav-justified nav-filters">
                             <li class="nav-item">
-                                <a ng-click="setFilter('')" href="javascript;" aria-expanded="true" data-target="#accountTransactionsTab" data-toggle="tab" class="nav-link h-100 d-flex align-items-center justify-content-center rounded-0 active px-1" ng-class="setActiveClass('')">
+                                <a ng-click="setFilter('')" href="javascript;" aria-expanded="true" data-target="#accountTransactionsTab" data-toggle="tab" class="nav-link h-100 d-flex align-items-center justify-content-center rounded-0 active px-1 active">
                                     <span>{{'TRANSACTIONS' | translate}}</span>
                                 </a>
                             </li>
@@ -45,28 +45,28 @@
                 </div>
                 <div class="tab-content">
                     <div class="tab-pane active show" id="accountTransactionsTab">
-                        <div ng-if="account_txs.records.length === 0" ng-include="'views/partials/common-no-records.html'"></div>
-                        <div ng-if="account_txs.records.length > 0" class="row" ng-include="'views/partials/account-txs-tab.html'"></div>
+                        <div ng-if="account.txs.records.length === 0" ng-include="'views/partials/common-no-records.html'"></div>
+                        <div ng-if="account.txs.records.length > 0" class="row" ng-include="'views/partials/account-txs-tab.html'"></div>
                     </div>
                     <div class="tab-pane" id="accountRewardsTab">
-                        <div ng-if="account_rewards.records.length === 0" ng-include="'views/partials/common-no-records.html'"></div>
-                        <div ng-if="account_rewards.records.length > 0" class="row" ng-include="'views/partials/account-rewards-tab.html'"></div>
+                        <div ng-if="account.rewards.records.length === 0" ng-include="'views/partials/common-no-records.html'"></div>
+                        <div ng-if="account.rewards.records.length > 0" class="row" ng-include="'views/partials/account-rewards-tab.html'"></div>
                     </div>                    
                     <div class="tab-pane" id="accountTokenBalanceTab">
-                        <div ng-if="balanceAll.length === 0" ng-include="'views/partials/common-no-records.html'"></div>
-                        <div ng-if="balanceAll.length > 0" class="row" ng-include="'views/partials/account-token-balance-tab.html'"></div>
+                        <div ng-if="account.balances.allTokensAsList.length === 0" ng-include="'views/partials/common-no-records.html'"></div>
+                        <div ng-if="account.balances.allTokensAsList.length > 0" class="row" ng-include="'views/partials/account-token-balance-tab.html'"></div>
                     </div>
                     <div class="tab-pane" id="accountStakingProvidersTab">
-                        <div ng-if="my_delegation_list.length === 0" ng-include="'views/partials/common-no-records.html'"></div>
-                        <div ng-if="my_delegation_list.length > 0" class="row" ng-include="'views/partials/account-staking-providers-tab.html'"></div>
+                        <div ng-if="account.pos.length === 0" ng-include="'views/partials/common-no-records.html'"></div>
+                        <div ng-if="account.pos.length > 0" class="row" ng-include="'views/partials/account-staking-providers-tab.html'"></div>
                     </div>
                     <div class="tab-pane" id="accountPOSIdTab">
-                        <div ng-if="my_pos_list_data.length === 0" ng-include="'views/partials/common-no-records.html'"></div>
-                        <div ng-if="my_pos_list_data.length > 0" class="row" ng-include="'views/partials/account-pos-id-tab.html'"></div>
+                        <div ng-if="account.posID.length === 0" ng-include="'views/partials/common-no-records.html'"></div>
+                        <div ng-if="account.posID.length > 0" class="row" ng-include="'views/partials/account-pos-id-tab.html'"></div>
                     </div>
                     <div class="tab-pane" id="accountTokensIdTab">
-                        <div ng-if="my_tokens_list.length === 0" ng-include="'views/partials/common-no-records.html'"></div>
-                        <div ng-if="my_tokens_list.length > 0" class="row" ng-include="'views/partials/account-tokens-id-tab.html'"></div>
+                        <div ng-if="account.tokenID.length === 0" ng-include="'views/partials/common-no-records.html'"></div>
+                        <div ng-if="account.tokenID.length > 0" class="row" ng-include="'views/partials/account-tokens-id-tab.html'"></div>
                     </div>
                 </div>
             </div>

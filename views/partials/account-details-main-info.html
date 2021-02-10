@@ -48,33 +48,33 @@
 						<div class="d-flex align-items-center justify-content-between">
 				    		<div class="mb-2 d-flex align-items-center">
 				    			<div class="header-title mr-2 text-uppercase mb-0">{{'TOTAL_BALANCE' | translate}}:</div>
-				    			<div class="font-size-20 font-weight-bolder">$ {{wholeBalanceUSD | US_COMMAS_BIGINT_DECIMALS : maxDecimals : 2}}</div>	    			
+				    			<div class="font-size-20 font-weight-bolder">$ {{account.balances.generalRepresentation.totalBalanceUSD | US_COMMAS_BIGINT_DECIMALS : account.balances.generalRepresentation.totalMaxDecimals : 2}}</div>	    			
 				    		</div>		    			
 				    	</div>
 				    	<div class="pt-xl-3">
 				    		<table id="totalBalanceTable" class="table no-border table-centered mb-0" style="table-layout: auto;">
 								<tbody>
 									<tr>
-										<td class="font-size-15 text-muted">{{'TOTAL_MAIN_TOKEN' | translate: translationData}}:</td>
-										<td colspan="2" class="font-weight-bolder">{{mainTokenBalance.total | US_COMMAS_BIGINT_DECIMALS : mainToken.decimals : mainToken.decimals}}</td>
+										<td class="font-size-15 text-muted">{{'TOTAL_MAIN_TOKEN' | translate: viewData.translationData}}:</td>
+										<td colspan="2" class="font-weight-bolder">{{account.balances.mainTokenDetails.total.value | US_COMMAS_BIGINT_DECIMALS : mainToken.decimals : mainToken.decimals}}</td>
 									</tr>
 									<tr>
 										<td class="font-size-15 text-muted">{{'MAIN_TOKEN_VALUE' | translate: translationData}}:</td>
-										<td class="font-weight-bolder">$ {{mainTokenBalance.totalUSD | US_COMMAS_BIGINT_DECIMALS : mainTokenToUSDDecimals : 2}} </td>
+										<td class="font-weight-bolder">$ {{account.balances.mainTokenDetails.total.toUSD}} </td>
 										<td>
 											<div class="d-flex align-items-center">
 												<div class="apex-chart-legend blue mr-1"></div>
-												<span>{{mainTokenPercentage}}%</span>												
+												<span>{{account.balances.generalRepresentation.mainTokenPercentage}}%</span>												
 											</div>
 										</td>
 									</tr>
 									<tr>
 										<td class="font-size-15 text-muted">{{'TOKEN_VALUE' | translate}}:</td>
-										<td class="font-weight-bolder">$ {{otherTokensUSDValue | US_COMMAS_BIGINT_DECIMALS : maxTokensDecimals : 2}}</td>
+										<td class="font-weight-bolder">$ {{account.balances.generalRepresentation.otherTokensUSDValue | US_COMMAS_BIGINT_DECIMALS : account.balances.generalRepresentation.otherTokensMaxDecimals : 2}}</td>
 										<td>
 											<div class="d-flex align-items-center">
 												<div class="apex-chart-legend pink mr-1"></div>
-												<span>{{otherTokensPercentage}} %</span>												
+												<span>{{account.balances.generalRepresentation.otherTokensPercentage}} %</span>												
 											</div>
 										</td>
 									</tr>									
@@ -95,28 +95,28 @@
 		    <div class="card-body" style="min-height: 266px;">
 		    	<div class="d-flex align-items-center justify-content-between">
 		    		<div class="mb-2 d-flex align-items-center">
-		    			<div class="header-title mr-2 text-uppercase mb-0 text-nowrap">{{'MAIN_TOKEN_BALANCE' | translate: translationData}}:</div>
+		    			<div class="header-title mr-2 text-uppercase mb-0 text-nowrap">{{'MAIN_TOKEN_BALANCE' | translate: viewData.translationData}}:</div>
 		    			<div class="font-size-20 font-weight-bolder">
-		    				<span class="text-nowrap">{{mainTokenBalance.total | US_COMMAS_BIGINT_DECIMALS : mainToken.decimals : mainToken.decimals}} </span>
-		    				<span class="text-nowrap">($ {{mainTokenBalance.totalUSD | US_COMMAS_BIGINT_DECIMALS : mainTokenToUSDDecimals : 2}})</span>
+		    				<span class="text-nowrap">{{account.balances.mainTokenDetails.total.value | US_COMMAS_BIGINT_DECIMALS : mainToken.decimals : mainToken.decimals}} </span>
+		    				<span class="text-nowrap">($ {{account.balances.mainTokenDetails.total.toUSD}})</span>
 		    			</div>	    			
 		    		</div>		    			
 		    	</div>
 		    	<div class="pt-2">
-		    		<div ng-repeat="type in balancesTypeArr">		    			
+		    		<div ng-repeat="type in viewData.mainTokenBalancesTypesArr">		    			
                         <div class="progress-w-percent mb-1">
                         	<div class="d-flex justify-content-between align-items-center mr-2" style="width: calc(100% - 70px);">
-                        		<h5 class="mb-0 mt-0 font-weight-normal">{{type === 'amount'? 'AVAILABLE_BALANCE' : type.toUpperCase() | translate}}</h5>
+                        		<h5 class="mb-0 mt-0 font-weight-normal">{{type === 'available'? 'AVAILABLE_BALANCE' : type.toUpperCase() | translate}}</h5>
                         		<span class=" font-weight-bold">
-                        			{{type === 'amount' || type === 'reward'? (mainTokenBalance[type].value | US_COMMAS_BIGINT_DECIMALS : mainToken.decimals : mainToken.decimals) : (mainTokenBalance[type].value | US_COMMAS_BIGINT_DECIMALS : mainToken.decimals : 2)}}
+                        			{{type === 'available' || type === 'reward'? (account.balances.mainTokenDetails[type].value | US_COMMAS_BIGINT_DECIMALS : mainToken.decimals : mainToken.decimals) : (account.balances.mainTokenDetails[type].value | US_COMMAS_BIGINT_DECIMALS : mainToken.decimals : 2)}}
                         		</span>
                         	</div>
                         	<div class="d-flex align-items-center" style="margin-top: -10px;">
 	                            <div class="progress progress-sm mt-0" style="width: calc(100% - 70px);">
-	                                <div class="progress-bar" role="progressbar" style="width: {{mainTokenBalance[type].percentage}}%;" ng-attr-aria-valuenow="{{mainTokenBalance[type].percentage}}" aria-valuemin="0" aria-valuemax="100"></div>
+	                                <div class="progress-bar" role="progressbar" style="width: {{account.balances.mainTokenDetails[type].percentage}}%;" ng-attr-aria-valuenow="{{account.balances.mainTokenDetails[type].percentage}}" aria-valuemin="0" aria-valuemax="100"></div>
 	                            </div>
 	                            <div class="text-blue font-weight-bolder ml-2 font-size-13">
-	                            	{{mainTokenBalance[type].percentage}}%
+	                            	{{account.balances.mainTokenDetails[type].percentage}}%
 	                            </div>                        		
                         	</div>
                         </div>
@@ -134,7 +134,7 @@
 				<div class="d-flex align-items-center justify-content-between">
 		    		<div class="mb-2 d-flex align-items-center">
 		    			<div class="header-title mr-2 text-uppercase mb-0">{{'TOKEN_BALANCE' | translate}}:</div>
-		    			<div class="font-size-20 font-weight-bolder">$ {{otherTokensUSDValue | US_COMMAS_BIGINT_DECIMALS : maxTokensDecimals : 2}}</div>	    			
+		    			<div class="font-size-20 font-weight-bolder">$ {{account.balances.generalRepresentation.otherTokensUSDValue | US_COMMAS_BIGINT_DECIMALS : account.balances.generalRepresentation.otherTokensMaxDecimals : 2}}</div>	    			
 		    		</div>		    			
 		    	</div>
     			<div data-simplebar data-simplebar-lg data-simplebar-auto-hide="false" class="mt-2" style="max-height: 120px;">
@@ -149,17 +149,17 @@
 			    				</tr>
 			    			</thead>
 			    			<tbody>
-			    				<tr ng-if="token.token !== mainToken.hash" ng-repeat="token in balanceAll">
-			    					<td class="text-muted"><a ng-href="#!/token/{{token.token}}">{{token.caption}} ({{tickers[token.token]}})</a></td>
+			    				<tr ng-if="token.token !== mainToken.hash" ng-repeat="token in account.balances.allTokensAsList">
+			    					<td class="text-muted"><a ng-href="#!/token/{{token.token}}">{{token.caption}} ({{networkData.tickers[token.token].ticker}})</a></td>
 			    					<td class="fit"><span class="font-weight-bolder text-nowrap">{{token.amount | US_COMMAS_BIGINT_DECIMALS : token.decimals : token.decimals}}</span></td>
 			    					<td style="width: 80px;">
-			    						<span class="font-weight-bolder">
+			    						<span class="font-weight-bolder text-nowrap">
 			    						$ {{token.price !== undefined ? token.price : 0 | US_COMMAS_4}}
 			    						</span>
 			    					</td>
 			    					<td class="fit">
 			    						<span class="font-weight-bolder">
-			    							$ {{token.usdValue | US_COMMAS_BIGINT_DECIMALS : token.tokenToUSDDecimals : 2}}
+			    							$ {{token.usdValue  !== undefined ? token.usdValue : 0 | US_COMMAS_BIGINT_DECIMALS : token.tokenToUSDDecimals : 2}}
 			    						</span>
 			    					</td>
 			    				</tr>
@@ -184,7 +184,7 @@
 						        	<i class="mdi mdi-information-outline ml-1"></i>
 						        </a>
 							</div>
-	                        <div ng-show="isAgent" class="d-flex flex-nowrap">
+	                        <div ng-show="account.isAgent" class="d-flex flex-nowrap">
 	                            <a href="" class="text-muted ml-1 line-height-normal" data-copy-from-id="refcodeStorage" rel="btnTooltip" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="{{'COPY' | translate}}">
 	                                <i class="mdi mdi-content-copy text-blue"></i>
 	                            </a>
@@ -205,9 +205,9 @@
                                 <th scope="row" class="text-nowrap font-weight-normal text-muted">Updated:</th>
                             </tr>
                             <tr>
-                                <td class="font-weight-bolder">{{referralsInfo.ref_count}}</td>
-                                <td class="font-weight-bolder">{{referralsInfo.ref_reward | US_COMMAS_BIGINT_DECIMALS : mainToken.decimals : mainToken.decimals}} {{mainToken.ticker}}</td>
-                                <td class="font-weight-bolder">{{referralsInfo.lastcalc}}</td>
+                                <td class="font-weight-bolder">{{account.referralsInfo.ref_count}}</td>
+                                <td class="font-weight-bolder">{{account.referralsInfo.ref_reward | US_COMMAS_BIGINT_DECIMALS : mainToken.decimals : mainToken.decimals}} {{mainToken.ticker}}</td>
+                                <td class="font-weight-bolder">{{account.referralsInfo.lastcalc}}</td>
                             </tr>
                         </tbody>
                     </table>
