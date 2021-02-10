@@ -3798,11 +3798,11 @@
                 if (mainToken.tokenToUSDDecimals > generalRepresentation.totalMaxDecimals) {
                     multiplier = mainToken.tokenToUSDDecimals - generalRepresentation.totalMaxDecimals;
                     generalRepresentation.otherTokensUSDValue = generalRepresentation.totalBalanceUSD * (10n ** BigInt(multiplier)) - mainToken.amount * commonTools.valueToBigInt(mainToken.price, mainToken.priceDecimals).value;
-                    generalRepresentation.otherTokensMaxDecimals =  generalRepresentation.totalMaxDecimals + multiplier;
+                    generalRepresentation.otherTokensMaxDecimals = mainToken.tokenToUSDDecimals;
                 } else if (mainToken.tokenToUSDDecimals < generalRepresentation.totalMaxDecimals) {
                     multiplier = generalRepresentation.totalMaxDecimals - mainToken.tokenToUSDDecimals;
                     generalRepresentation.otherTokensUSDValue = generalRepresentation.totalBalanceUSD - mainToken.amount * commonTools.valueToBigInt(mainToken.price, mainToken.priceDecimals).value  * (10n ** BigInt(multiplier));
-                    generalRepresentation.otherTokensMaxDecimals =  generalRepresentation.totalMaxDecimals - multiplier;
+                    generalRepresentation.otherTokensMaxDecimals = generalRepresentation.totalMaxDecimals;
                 } else {
                     generalRepresentation.otherTokensUSDValue = generalRepresentation.totalBalanceUSD - mainToken.amount * commonTools.valueToBigInt(mainToken.price, mainToken.priceDecimals).value;
                     generalRepresentation.otherTokensMaxDecimals = generalRepresentation.totalMaxDecimals;
