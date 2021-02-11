@@ -86,7 +86,7 @@
 						</tr>						
 						<tr>
 							<td>{{'TRANSFERS' | translate}}</td>
-							<td class="text-nowrap text-right font-weight-bolder">{{'---' | US_COMMAS_INT}}</td>
+							<td class="text-nowrap text-right font-weight-bolder">{{token.txs_count !== undefined ?  token.txs_count : 0 | US_COMMAS_INT}}</td>
 						</tr>
 						<tr>
 							<td>{{'HOLDERS' | translate}}</td>
@@ -105,11 +105,11 @@
 					<table class="table table-centered ordinary-table animate-show-hide table-td-font-size-15 mb-0">
 						<tr>
 							<td class="border-top-0">{{'PRICE' | translate}}</td>
-							<td class="text-nowrap text-right font-weight-bolder border-top-0">{{tokenPrice !== undefined ? tokenPrice + ' USD': '---'}}</td>
+							<td class="text-nowrap text-right font-weight-bolder border-top-0">$ {{token.price !== undefined ? token.price: '---'}}</td>
 						</tr>
 						<tr>
 							<td>{{'MARKET_CAP' | translate}}</td>
-							<td class="text-nowrap text-right font-weight-bolder">{{marketCapUSDValue !== undefined ? marketCapUSDValue : '---'}}</td>
+							<td class="text-nowrap text-right font-weight-bolder">$ {{token.marketCap !== undefined ? token.marketCap : '---'}}</td>
 						</tr>						
 						<tr>
 							<td>{{'FULLY_MC' | translate}}</td>

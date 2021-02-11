@@ -1377,8 +1377,9 @@
         }
 
         this.bigIntConvertValueToCurrency = function(value_in_BigInt, rate_in_Numbers, valueDecimals, toFixed) {
-            if (value_in_BigInt !== undefined) {              
-                let rateDecimals = rate_in_Numbers.split('.')[1] !== undefined ? rate_in_Numbers.split('.')[1].length : 0;
+            if (value_in_BigInt !== undefined) {
+                let decimalPart =  rate_in_Numbers.toString().split('.')[1];             
+                let rateDecimals = decimalPart !== undefined ? decimalPart.length : 0;
                 let totalDecimals = rateDecimals + valueDecimals;
                 let bigIntRate = commonTools.valueToBigInt(rate_in_Numbers, rateDecimals).value;
                 let mult = this.convertValue(BigInt(value_in_BigInt), bigIntRate);
@@ -2963,7 +2964,7 @@
                                     let info = response.data[customerTokenInfo.coingecko_id];
                                     if (response.data !== undefined && info !== undefined && info.usd !== undefined) {                                    
                                         token.price = '$' + info.usd;
-                                        token.marketCap = '$' + currencyExchange.bigIntConvertValueToCurrency(token.total_supply, info.usd.toString(), token.decimals, 2);
+                                        token.marketCapUSD = '$' + currencyExchange.bigIntConvertValueToCurrency(token.total_supply, info.usd, token.decimals, 2);
                                     }
                                 });                                    
                             }
@@ -2985,7 +2986,7 @@
             });
         })
     });
-    app.controller('tokenCtrl', function($scope, $rootScope, $routeParams, GLOBAL_APP_CONFIG, provider, tokenInfoStorage, commonTools, $translate, $filter, roiCalc, Toast, $http) {
+    app.controller('tokenCtrl', function($scope, $rootScope, $routeParams, GLOBAL_APP_CONFIG, provider, tokenInfoStorage, commonTools, $translate, $filter, roiCalc, Toast, $http, currencyExchange) {
         let currentPreset = GLOBAL_APP_CONFIG;
         $scope.additionalTokenData = {
             officialSiteLink : '',
@@ -2999,7 +3000,7 @@
         $scope.page_num = 0;
         let entitiesOnPage = 20;
         $scope.showMiningFeatures = false;
-
+        $scope.currencyExchange = currencyExchange;
         provider.token_info.query({hash:$routeParams.hash}, function(token_info) {
             $scope.token = token_info[0];
             $scope.token.type = commonTools.getTokenType($scope.token);
@@ -3033,11 +3034,21 @@
                         $scope.additionalTokenData.whitepaperLink = $scope.additionalTokenData.whitepaperLinkText = $scope.token.customerInfo.documents.whitepaper;               
                     }
                     if ($scope.token.customerInfo.media !== undefined) {
+                        $scope.media = $scope.token.customerInfo.media;
                         $scope.mediaWidgetNamePrefix = 'project';               
-                    }                
-                }
-
-                $scope.media = $scope.token.customerInfo.media;
+                    }
+                    if ($scope.token.customerInfo.coingecko_id !== undefined) {
+                        let coingecko_id = $scope.token.customerInfo.coingecko_id;
+                        $http({method: 'GET', url: 'https://api.coingecko.com/api/v3/simple/price?ids=' + coingecko_id + '&vs_currencies=USD'}).
+                        then(function (response) {
+                            let info = response.data[coingecko_id];
+                            if (response.data !== undefined && info !== undefined && info.usd !== undefined) {                                    
+                                $scope.token.price = info.usd;
+                                $scope.token.marketCap = currencyExchange.bigIntConvertValueToCurrency($scope.token.total_supply, info.usd, $scope.token.decimals, 2);
+                            }
+                        });               
+                    }
+                }                
             }, function(res) {
                 $scope.token.customerInfo = res;
             });
@@ -3162,28 +3173,6 @@
                     });                                    
                     $scope.showMiningFeatures = true;
                 }
-
-                let presentPrice = function(price) {
-                    if (price !== undefined) {
-                        let cg_usdDecimals = price.split('.')[1] !== undefined ? price.split('.')[1].length : 0;
-                        $scope.tokenToUSDDecimals = cg_usdDecimals + $scope.token.decimals;
-                        $scope.tokenPrice = parseFloat(price).toFixed(5);                        
-                        $scope.marketCapUSDValue = $filter('US_COMMAS_BIGINT_DECIMALS')(BigInt(stat.csup) * commonTools.valueToBigInt(price, cg_usdDecimals).value, $scope.tokenToUSDDecimals, 5) +' '+ 'USD';                        
-                    }
-
-                    $scope.multipleBigintOnFloat = commonTools.multipleBigintOnFloat;
-                }
-
-                $scope.$watch('token.customerInfo.coingecko_id', function(newValue, oldValue) {
-                    if (newValue !== undefined) {
-                        $http({method: 'GET', url: 'https://api.coingecko.com/api/v3/simple/price?ids=' + newValue + '&vs_currencies=USD'}).
-                        then(function (response) {
-                            if (response.data !== undefined && response.data[newValue] !== undefined && response.data[newValue].usd !== undefined) {
-                                    (response.data[newValue].usd.toString());
-                            }                                    
-                        });                                
-                    }
-                });
 
                 if ($routeParams.hash === $rootScope.mainToken.hash) {
                     $scope.tokenCsup = $filter('US_COMMAS_BIGINT_DECIMALS')(BigInt(stat.csup), $scope.token.decimals, $scope.token.decimals) +' '+ $scope.token.ticker;
@@ -3730,9 +3719,9 @@
                                             let info = response.data[token.coingecko_id];                                            
                                             if (info !== undefined && info.usd !== undefined) {
                                                 token.price = info.usd;
-                                                token.usdValue = currencyExchange.bigIntConvertValueToCurrency(token.amount, info.usd.toString(), token.decimals, 2);
+                                                token.usdValue = currencyExchange.bigIntConvertValueToCurrency(token.amount, info.usd, token.decimals, 2);
                                                 if (token.token === $rootScope.mainToken.hash) {
-                                                    $scope.account.balances.mainTokenDetails.total.toUSD = currencyExchange.bigIntConvertValueToCurrency($scope.account.balances.mainTokenDetails.total.value, info.usd.toString(), token.decimals, 2);
+                                                    $scope.account.balances.mainTokenDetails.total.toUSD = currencyExchange.bigIntConvertValueToCurrency($scope.account.balances.mainTokenDetails.total.value, info.usd, token.decimals, 2);
                                                 }
                                                 cgTokensArr.push({
                                                     hash: token.token,

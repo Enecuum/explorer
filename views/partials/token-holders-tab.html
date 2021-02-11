@@ -5,7 +5,7 @@
             <th>{{'RANK' | translate}}</th>
             <th>{{'ADDRESS' | translate}}</th>
             <th>{{'AMOUNT' | translate}}</th>
-            <th  ng-if="mainToken.ticker === 'ENQ'">{{'VALUE' | translate}}, USD</th>
+            <th ng-if="token.price !== undefined">{{'VALUE' | translate}}, USD</th>
             <th>{{'PERCENTAGE' | translate}}</th>
         </tr>
         </thead>
@@ -14,7 +14,7 @@
                 <td>{{acc.rank}}</td>
                 <td><a ng-href="#!/account/{{acc.id}}" class="d-block fit responsive-hash">{{acc.id}}</a></td>
                 <td class="text-nowrap">{{acc.amount | US_COMMAS_BIGINT_DECIMALS : token.decimals : token.decimals}} {{token.ticker}}</td>
-                <td class="text-nowrap" ng-if="mainToken.ticker === 'ENQ'">{{multipleBigintOnFloat(acc.amount, token.decimals, tokenPrice, 2)}} USD</td>
+                <td class="text-nowrap" ng-if="token.price !== undefined">$ {{ currencyExchange.bigIntConvertValueToCurrency(acc.amount, token.price, token.decimals, 2) }}</td>
                 <td class="text-nowrap">{{acc.percentage}}</td>
             </tr>
         </tbody>
