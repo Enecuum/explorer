@@ -86,7 +86,7 @@
 						</tr>						
 						<tr>
 							<td>{{'TRANSFERS' | translate}}</td>
-							<td class="text-nowrap text-right font-weight-bolder">{{'---' | US_COMMAS_INT}}</td>
+							<td class="text-nowrap text-right font-weight-bolder">{{token.txs_count !== undefined ?  token.txs_count : 0 | US_COMMAS_INT}}</td>
 						</tr>
 						<tr>
 							<td>{{'HOLDERS' | translate}}</td>
