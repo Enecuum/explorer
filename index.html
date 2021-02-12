@@ -3629,13 +3629,12 @@
                             populateBalancesAndPrices();                             
                         });
                     }
-                    commonTools.genQR($scope.viewData.selectors.qrCode, $scope.account.id);
-                    $scope.getAccTxs(0);
-                    $scope.getAccRewards(0);
-                    populatePOS();
-                    populateTokenID();
-                });    
-              
+                });
+                commonTools.genQR($scope.viewData.selectors.qrCode, $scope.account.id);
+                $scope.getAccTxs(0);
+                $scope.getAccRewards(0);
+                populatePOS();
+                populateTokenID();
             }            
         });
 
