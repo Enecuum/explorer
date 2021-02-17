@@ -2,7 +2,7 @@
 	let explorerConfig = {
         theme: 'white',
         tokenName: 'BIT',
-        tokenHash: '0000000000000000000000000000000000000000000000000000000000000000',
+        tokenHash: '0000000000000000000000000000000000000000000000000000000000000001',
         favicon: 'assets/images/favicon_en_bit.ico',
         tokenLogoFileLink: 'bit-logo-white.png',
         logoLinkTarget: 'https://mybit.network/',
