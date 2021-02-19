@@ -224,7 +224,7 @@
                                             </dl>
                                             <dl class="row mb-0">
                                                 <dt class="text-muted font-14 col-6 text-nowrap">{{'TOTAL_SUPPLY' | translate}}:</dt>
-                                                <dd class="text-muted font-14 col-6 mb-0">{{stats.tsup !== undefined ? stats.tsup : "N/A" | US_COMMAS_BIGINT_DECIMALS : mainToken.decimals : 0}} {{mainToken.ticker}}</dd>
+                                                <dd class="text-muted font-14 col-6 mb-0">{{mainToken.total_supply !== undefined ? mainToken.total_supply : "---" | US_COMMAS_BIGINT_DECIMALS : mainToken.decimals : 0}} {{mainToken.ticker}}</dd>
                                             </dl>
                                             <dl class="row" style="margin-bottom: 12px;">
                                                 <dt class="text-muted font-14 col-6">{{'MAX_SUPPLY' | translate}}:</dt>
