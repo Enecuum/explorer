@@ -2767,6 +2767,17 @@
                         }
                     ],
                     errMsgSelector: '#customTokenROICalc #setTokenMaxSupplyWrapper .errMsg'        
+                },
+                stakedTokens: {
+                    checks: [
+                        {
+                            method: 'moreOrEqualThan',
+                            args: {value: Number($scope.customToken.stakedTokens.tokens), max: Number($scope.customToken.minStake.tokens.value)},
+                            desiredResult: true,
+                            errMsg: 'STAKED_TOKENS_VS_MINIMAL_STAKE'
+                        }
+                    ],
+                    errMsgSelector: '#customTokenROICalc #setStakedTokensWrapper .errMsg'
                 }            
             };
             return validationRules;       
@@ -2782,7 +2793,6 @@
                 let secondStepValidationRules = getSecondStepValidationRules();
                 $scope.checkDataSecondStep = dataValidator.batchValidate($scope.customToken, secondStepValidationRules);
                 if ($scope.checkDataSecondStep) {
-                    $('#customTokenROICalc .output-box-group').css({'opacity': 1});
                     $scope.customToken.maxSupply.usd = toUSD($scope.customToken.maxSupply.tokens.value);
                     //Market Capitalization                
                     $scope.customToken.premine.usd = toUSD($scope.customToken.premine.tokens);
@@ -2808,8 +2818,11 @@
                     $scope.customToken.roi.percent.annually = $scope.customToken.annualEmission.tokens/$scope.customToken.stakedTokens.tokens*100;
 
                     $scope.checkDataThirdStep = dataValidator.batchValidate($scope.customToken, getThirdStepValidationRules());
-                    if (dataValidator.batchValidate($scope.customToken, $scope.checkDataThirdStep))
+                    if ($scope.checkDataThirdStep) {
+                        $('#customTokenROICalc .output-box-group').css({'opacity': 1});
                         $scope.showExportControl = true;
+                    } else
+                       $('#customTokenROICalc .output-box-group').css({'opacity': 0.25}); 
                 } 
             }
         }
