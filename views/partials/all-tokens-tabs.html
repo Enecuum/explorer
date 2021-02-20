@@ -48,7 +48,7 @@
                                             <td ng-if="type === 'all'">{{token.type === "NON-REISSUABLE" ? "NON_REISSUABLE" : token.type | translate}}</td>
                                             <td class="text-nowrap">{{token.total_supply | US_COMMAS_BIGINT_DECIMALS : token.decimals : 2}} {{tickers[token.token_hash].ticker}}</td>
                                             <td class="text-nowrap">{{token.price !== undefined ? token.price : '---'}}</td>
-                                            <td class="text-nowrap">{{token.marketCap !== undefined ? token.marketCap : '---'}}</td>
+                                            <td class="text-nowrap">{{token.marketCapUSD !== undefined ? token.marketCapUSD : '---'}}</td>
                                             <td>{{token.token_holders_count | US_COMMAS_INT}}</td>
                                             <td>{{token.txs_count | US_COMMAS_INT}}</td>
                                             <td ng-if="type === 'mineable'"> <span class="badge" ng-class="token.status === 'ACTIVE' ? 'badge-success' : 'badge-danger'">{{token.status | translate}}</span></td>
