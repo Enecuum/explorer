@@ -1304,20 +1304,26 @@
 
     app.factory('tokenInfoStorage', function($window, $rootScope, $http, GLOBAL_APP_CONFIG, $resource, $q) {
         let currentPreset = GLOBAL_APP_CONFIG.tokenName.toLowerCase();
-        let url = '/info/token-info-storage-' + currentPreset + '.json';
-        getInfo = $resource(url, {query: {method: 'GET', isArray: true}});
+        let storagePath = '/info/';
+        let logoPath = storagePath + 'token/logo/' + currentPreset + '/';
+        let infoStorageURL = storagePath + 'token-info-storage-' + currentPreset + '.json';        
+        getInfo = $resource(infoStorageURL, {query: {method: 'GET', isArray: true}});
         let tokenInfoTemplate = {
             website: undefined,
             media: undefined,
             documents: undefined,
             description: undefined,
-            coingecko_id: undefined
+            coingecko_id: undefined,
+            logoURL: undefined
         }
 
         let populateInfo = function(res, hash) {
             let tokenInfo = res.find(tokenInfoBlock => tokenInfoBlock.token_id === hash);                
             if (tokenInfo === undefined)
                 tokenInfo = tokenInfoTemplate;
+            else
+                tokenInfo.logoURL = tokenInfo.logo !== undefined ? logoPath + tokenInfo.logo : undefined;
+
             return tokenInfo;
         }
         return {
@@ -3020,7 +3026,7 @@
             $scope.tokenTypeBadgeClass = getTokenTypeBadgeClass($scope.token.type);
             $scope.tokenDescriptionText = undefined;
             tokenInfoStorage.getInfo($routeParams.hash).then(function(customerInfo) {                
-                $scope.token.customerInfo = customerInfo;                
+                $scope.token.customerInfo = customerInfo;
                 $rootScope.$watch('curLang.id', function(newValue, oldValue) {                                    
                     if ($scope.token.customerInfo.description !== undefined && Object.keys($scope.token.customerInfo.description).length !== 0) {
                         if ($scope.token.customerInfo.description.hasOwnProperty(newValue) && $scope.token.customerInfo.description[newValue] !== undefined) {
@@ -3060,6 +3066,28 @@
                                 $scope.token.marketCap = currencyExchange.bigIntConvertValueToCurrency($scope.token.total_supply, info.usd, $scope.token.decimals, 2);
                             }
                         });               
+                    }
+
+                    if ($scope.token.customerInfo.logoURL !== undefined) {
+                        $scope.token.customerInfo.logoImg = undefined;                        
+                        $http({method: 'GET', url: $scope.token.customerInfo.logoURL, responseType: 'blob'}).
+                        then(function (logo) {                            
+                            let file = logo.data;
+                            if (file) {
+                                let reader  = new FileReader();
+                                reader.readAsDataURL(file);
+                                reader.onload = function() {
+                                    $scope.token.customerInfo.logoImg = reader.result;
+                                    $scope.$apply();
+                                };
+                                reader.onerror = function() {
+                                    console.log(reader.error);
+                                };
+                            }
+                        })
+                        .catch(function(error) {
+                            console.log("Failed to load token's logo. Error status: " + error.status + "(" + error.statusText +")");
+                        })                        
                     }
                 }                
             }, function(res) {

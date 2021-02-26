@@ -2,6 +2,7 @@
     {
         "token_id":"0000000000000000000000000000000000000000000000000000000000000000",
         "website":"https://enecuum.com",
+        "logo": "enq-color.png",
         "media": {                            
             "facebook": "https://www.facebook.com/enecuum.EN/?ref=bookmarks",
             "twitter": "https://twitter.com/enq_enecuum",
@@ -33,6 +34,7 @@
     {
         "token_id":"bcbb425dcbd104fc1a63f37a1926bf94c989198d132b8c25db17ddc7cc096745",
         "website":"https://nayutacoin.info/",
+        "logo": "nayuta.jpg",
         "media": {                            
             "facebook": "https://www.facebook.com/Nayuta-Coin-101559351813832",
             "twitter": "https://twitter.com/NayutaCoin",
