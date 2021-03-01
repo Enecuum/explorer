@@ -21,9 +21,9 @@
                 whitepaper: 'https://enecuum.com/pdf/pp_en.pdf',
             },
             projectMedia: {                            
-                facebook: 'https://www.facebook.com/enecuum.EN/?ref=bookmarks',
+                // facebook: 'https://www.facebook.com/enecuum.EN/?ref=bookmarks',
                 twitter: 'https://twitter.com/enq_enecuum',
-                medium: 'https://medium.com/@EnqBlockchain',
+                medium: 'https://blog.enecuum.com/',
                 github: 'https://github.com/Enecuum',
                 forklog: 'https://hub.forklog.com/companies/enecuum/',
                 bitcointalk: 'https://bitcointalk.org/index.php?topic=2939909.0;topicseen',

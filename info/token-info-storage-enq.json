@@ -2,10 +2,9 @@
     {
         "token_id":"0000000000000000000000000000000000000000000000000000000000000000",
         "website":"https://enecuum.com",
-        "media": {                            
-            "facebook": "https://www.facebook.com/enecuum.EN/?ref=bookmarks",
+        "media": { 
             "twitter": "https://twitter.com/enq_enecuum",
-            "medium": "https://medium.com/@EnqBlockchain",
+            "medium": "https://blog.enecuum.com/",
             "github": "https://github.com/Enecuum",
             "forklog": "https://hub.forklog.com/companies/enecuum/",
             "bitcointalk": "https://bitcointalk.org/index.php?topic=2939909.0;topicseen",
