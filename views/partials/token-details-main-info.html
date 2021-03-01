@@ -11,7 +11,6 @@
 			    	<div class="d-flex justify-content-start">
 			    		<div ng-if="token.customerInfo.logoURL === undefined" class="item-avatar-blank-wrapper d-flex align-items-center justify-content-center mr-2 flex-shrink-0 flex-grow-0">		    			
 			    			<span class="item-avatar-blank-content flex-shrink-0 flex-grow-0">{{token.ticker.charAt(0)}}</span>
-			    			<!-- <img ng-if="token.customerInfo.logoURL !== undefined"  ng-src="{{token.customerInfo.logoURL}}" class="flex-shrink-0 flex-grow-0"> -->
 			    		</div>
 			    		<div ng-if="token.customerInfo.logoURL !== undefined" class="item-avatar-wrapper d-flex mr-2 flex-shrink-0 flex-grow-0" ng-style="{'background-image': 'url(' + token.customerInfo.logoImg + ')'}"></div>
 			    		<div class="pt-2 mr-2" id="tokenTitle">

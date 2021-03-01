@@ -35,9 +35,7 @@
     <!-- angularJS translate -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-translate/2.18.1/angular-translate.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-translate/2.18.1/angular-translate-loader-static-files/angular-translate-loader-static-files.min.js"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simplebar@5.2.1/dist/simplebar.css"/>
-    <script src="/assets/info/pos-info-storage-enq.js"></script>
-    <script src="/assets/info/pos-info-storage-bit.js"></script>    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simplebar@5.2.1/dist/simplebar.css"/> 
     <!-- Global site tag (gtag.js) - Google Analytics -->
 
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-138901721-1"></script>
@@ -1282,64 +1280,157 @@
         }
     });
 
-    app.factory('POSInfoStorage', function($window, $rootScope, GLOBAL_APP_CONFIG) {
-        let currentPreset = GLOBAL_APP_CONFIG.tokenName;
-        let POSInfoStorage = $window['POSInfoStorage' + currentPreset];
-        let POSInfoTemplate = {
-            website: undefined,
-            media: undefined,
-            description: undefined
-        }
+    // app.factory('POSInfoStorage', function($window, $rootScope, GLOBAL_APP_CONFIG) {
+    //     let currentPreset = GLOBAL_APP_CONFIG.tokenName;
+    //     let POSInfoStorage = $window['POSInfoStorage' + currentPreset];
+    //     let POSInfoTemplate = {
+    //         website: undefined,
+    //         media: undefined,
+    //         description: undefined
+    //     }
 
-        return {
-            getInfo: function(posId) {
-                let posInfo = POSInfoStorage.find(posInfoBlock => posInfoBlock.posId === posId);                
-                if (posInfo === undefined)
-                    posInfo = POSInfoTemplate;               
+    //     return {
+    //         getInfo: function(posId) {
+    //             let posInfo = POSInfoStorage.find(posInfoBlock => posInfoBlock.posId === posId);                
+    //             if (posInfo === undefined)
+    //                 posInfo = POSInfoTemplate;               
 
-                return posInfo
-            }
-        } 
-    });
+    //             return posInfo
+    //         }
+    //     } 
+    // });
 
-    app.factory('tokenInfoStorage', function($window, $rootScope, $http, GLOBAL_APP_CONFIG, $resource, $q) {
+    // app.factory('customerInfoStorage', function($window, $rootScope, $http, GLOBAL_APP_CONFIG, $resource, $q) {
+    //     let currentPreset = GLOBAL_APP_CONFIG.tokenName.toLowerCase();
+    //     let storagePath = '/info/';
+    //     let logoPath = storagePath + 'token/logo/' + currentPreset + '/';
+    //     let infoStorageURL = storagePath + 'token-info-storage-' + currentPreset + '.json';        
+    //     let getStorage = $resource(infoStorageURL, {query: {method: 'GET', isArray: true}});
+    //     let infoTemplate = {
+    //         website: undefined,
+    //         media: undefined,
+    //         documents: undefined,
+    //         description: undefined,
+    //         coingecko_id: undefined,
+    //         logoURL: undefined
+    //     }
+
+    //     let populateInfo = function(res, hash) {
+    //         let info = res.find(infoBlock => infoBlock.token_id === hash);                
+    //         if (info === undefined)
+    //             info = infoTemplate;
+    //         else
+    //             info.logoURL = info.logo !== undefined ? logoPath + info.logo : undefined;
+
+    //         return info;
+    //     }
+    //     return {
+    //         getStorage: getStorage,
+    //         getInfo: function(hash) {
+    //             let deferred = $q.defer();
+    //             getStorage.query({}, function(res) {
+    //                 let data = res;
+    //                 deferred.resolve(populateInfo(data, hash));
+    //             }, function(error) {                   
+    //                 deferred.reject(populateInfo([], hash));
+    //             });
+    //             return deferred.promise;
+    //         }
+    //     }
+    // });
+
+    app.factory('customerInfoStorage', function($window, $rootScope, $http, GLOBAL_APP_CONFIG, $resource, $q) {
         let currentPreset = GLOBAL_APP_CONFIG.tokenName.toLowerCase();
-        let storagePath = '/info/';
-        let logoPath = storagePath + 'token/logo/' + currentPreset + '/';
-        let infoStorageURL = storagePath + 'token-info-storage-' + currentPreset + '.json';        
-        getInfo = $resource(infoStorageURL, {query: {method: 'GET', isArray: true}});
-        let tokenInfoTemplate = {
-            website: undefined,
-            media: undefined,
-            documents: undefined,
-            description: undefined,
-            coingecko_id: undefined,
-            logoURL: undefined
+        let storagePath = 'info';
+        let models = {
+            account: {
+                tag: undefined
+            },
+            pos: {
+                website: undefined,
+                media: undefined,
+                description: undefined,
+                logoURL: undefined
+            },
+            token: {
+                website: undefined,
+                media: undefined,
+                documents: undefined,
+                description: undefined,
+                coingecko_id: undefined,
+                logoURL: undefined
+            }
         }
 
-        let populateInfo = function(res, hash) {
-            let tokenInfo = res.find(tokenInfoBlock => tokenInfoBlock.token_id === hash);                
-            if (tokenInfo === undefined)
-                tokenInfo = tokenInfoTemplate;
-            else
-                tokenInfo.logoURL = tokenInfo.logo !== undefined ? logoPath + tokenInfo.logo : undefined;
-
-            return tokenInfo;
+        function typeIsValid(type) {
+            return models.hasOwnProperty(type.toLowerCase());
         }
+
+        function getStorageURL(type) {
+            if (typeIsValid(type)) {
+                return '/' + storagePath + '/' + (type +'-info-storage-' + currentPreset + '.json');                
+            } else {
+                console.log('Warning: "' + type + '" is invalid type of customer\'s info storage!');
+                return undefined;
+            }
+        }
+
+        let getStorage = function(type='token') {
+            let infoStorageURL = getStorageURL(type);
+            return $resource(infoStorageURL, {query: {method: 'GET', isArray: true}});
+        }
+
+        let populateInfo = function(res, hash, type=undefined) {
+            let info = res.find(infoBlock => infoBlock[type + '_id'] === hash);                
+            if (info === undefined)
+                info = models[type];
+            else if (info.logo !== undefined) {
+                let logoPath = storagePath + '/' + type + '/' + 'logo' + '/' + currentPreset;
+                info.logoURL = info.logo !== undefined ? (logoPath + '/' + info.logo) : undefined;
+            }
+
+            return info;
+        }
+
+        let assignLogo = function(scope, entityName, logoURL) {
+            if (scope[entityName].customerInfo.logoURL !== undefined) {
+                scope[entityName].customerInfo.logoImg = undefined;                        
+                $http({method: 'GET', url: scope[entityName].customerInfo.logoURL, responseType: 'blob'}).
+                then(function (logo) {                            
+                    let file = logo.data;
+                    if (file) {
+                        let reader  = new FileReader();
+                        reader.readAsDataURL(file);
+                        reader.onload = function() {
+                            scope[entityName].customerInfo.logoImg = reader.result;
+                            scope.$apply();
+                        };
+                        reader.onerror = function() {
+                            console.log(reader.error);
+                        };
+                    }
+                })
+                .catch(function(error) {
+                    console.log("Failed to load" + entityName + "'s logo. Error status: " + error.status + "(" + error.statusText +")");
+                })                        
+            }
+        }
+
         return {
-            getStorage: getInfo,
-            getInfo: function(hash) {
+            getStorage: getStorage,
+            getInfo: function(type, hash) {
                 let deferred = $q.defer();
-                getInfo.query({}, function(res) {
+                getStorage(type).query({}, function(res) {
                     let data = res;
-                    deferred.resolve(populateInfo(data, hash));
+                    deferred.resolve(populateInfo(data, hash, type));
                 }, function(error) {                   
                     deferred.reject(populateInfo([], hash));
                 });
                 return deferred.promise;
-            }
+            },
+            assignLogo: assignLogo
         }
-    });
+    });    
 
     app.factory('Toast', function($translate) {
         return {
@@ -2913,7 +3004,7 @@
             }
         });
     });
-    app.controller('tokensCtrl', function($scope, $http, provider, commonTools, $translate, tokenInfoStorage, currencyExchange) {
+    app.controller('tokensCtrl', function($scope, $http, provider, commonTools, $translate, customerInfoStorage, currencyExchange) {
         let allCustomersTokensInfo = undefined;
         $scope.tabsOrder = ['all', 'reissuable', 'non_reissuable', 'mineable'];
         $scope.tokensPages = {
@@ -2998,14 +3089,14 @@
             $scope.tokensPages[paramsObj.type].page_num = paramsObj.page;
         };
 
-        tokenInfoStorage.getStorage.query({}, function(allTokensCustomersInfo) {
+        customerInfoStorage.getStorage('token').query({}, function(allTokensCustomersInfo) {
             allCustomersTokensInfo = allTokensCustomersInfo;
             $scope.tabsOrder.forEach(function(type) {
                 $scope.getPage({page: 0, type: type});
             });
         })
     });
-    app.controller('tokenCtrl', function($scope, $rootScope, $routeParams, GLOBAL_APP_CONFIG, provider, tokenInfoStorage, commonTools, $translate, $filter, roiCalc, Toast, $http, currencyExchange) {
+    app.controller('tokenCtrl', function($scope, $rootScope, $routeParams, GLOBAL_APP_CONFIG, provider, customerInfoStorage, commonTools, $translate, $filter, roiCalc, Toast, $http, currencyExchange) {
         let currentPreset = GLOBAL_APP_CONFIG;
         $scope.additionalTokenData = {
             officialSiteLink : '',
@@ -3025,7 +3116,7 @@
             $scope.token.type = commonTools.getTokenType($scope.token);
             $scope.tokenTypeBadgeClass = getTokenTypeBadgeClass($scope.token.type);
             $scope.tokenDescriptionText = undefined;
-            tokenInfoStorage.getInfo($routeParams.hash).then(function(customerInfo) {                
+            customerInfoStorage.getInfo('token', $routeParams.hash).then(function(customerInfo) {                
                 $scope.token.customerInfo = customerInfo;
                 $rootScope.$watch('curLang.id', function(newValue, oldValue) {                                    
                     if ($scope.token.customerInfo.description !== undefined && Object.keys($scope.token.customerInfo.description).length !== 0) {
@@ -3068,27 +3159,29 @@
                         });               
                     }
 
-                    if ($scope.token.customerInfo.logoURL !== undefined) {
-                        $scope.token.customerInfo.logoImg = undefined;                        
-                        $http({method: 'GET', url: $scope.token.customerInfo.logoURL, responseType: 'blob'}).
-                        then(function (logo) {                            
-                            let file = logo.data;
-                            if (file) {
-                                let reader  = new FileReader();
-                                reader.readAsDataURL(file);
-                                reader.onload = function() {
-                                    $scope.token.customerInfo.logoImg = reader.result;
-                                    $scope.$apply();
-                                };
-                                reader.onerror = function() {
-                                    console.log(reader.error);
-                                };
-                            }
-                        })
-                        .catch(function(error) {
-                            console.log("Failed to load token's logo. Error status: " + error.status + "(" + error.statusText +")");
-                        })                        
-                    }
+                    customerInfoStorage.assignLogo($scope, 'token', $scope.token.customerInfo.logoURL);
+
+                    // if ($scope.token.customerInfo.logoURL !== undefined) {
+                    //     $scope.token.customerInfo.logoImg = undefined;                        
+                    //     $http({method: 'GET', url: $scope.token.customerInfo.logoURL, responseType: 'blob'}).
+                    //     then(function (logo) {                            
+                    //         let file = logo.data;
+                    //         if (file) {
+                    //             let reader  = new FileReader();
+                    //             reader.readAsDataURL(file);
+                    //             reader.onload = function() {
+                    //                 $scope.token.customerInfo.logoImg = reader.result;
+                    //                 $scope.$apply();
+                    //             };
+                    //             reader.onerror = function() {
+                    //                 console.log(reader.error);
+                    //             };
+                    //         }
+                    //     })
+                    //     .catch(function(error) {
+                    //         console.log("Failed to load token's logo. Error status: " + error.status + "(" + error.statusText +")");
+                    //     })                        
+                    // }
                 }                
             }, function(res) {
                 $scope.token.customerInfo = res;
@@ -3318,7 +3411,7 @@
         getPOSContracts();
     });
 
-    app.controller('posContractCtrl', function($scope, $routeParams, $rootScope, $filter, GLOBAL_APP_CONFIG, provider, POSInfoStorage, commonTools, apexRadialChart, langService) {
+    app.controller('posContractCtrl', function($scope, $routeParams, $rootScope, $filter, GLOBAL_APP_CONFIG, provider, customerInfoStorage, commonTools, apexRadialChart, langService) {
         if (GLOBAL_APP_CONFIG.POSChallenge.on === true) {
             $scope.usePOSChallengeAddress = GLOBAL_APP_CONFIG.POSChallenge.on
             $scope.POSChallengeAddress = GLOBAL_APP_CONFIG.POSChallenge.address;
@@ -3501,27 +3594,34 @@
         provider.get_pos_info.query({pos_id:$routeParams.pos_id}, function(pos_info) {
             let appLangArr = langService.languages.map(elem => elem.id);
             $scope.posContract = pos_info[0];
-            $scope.posContract.customerInfo = POSInfoStorage.getInfo($routeParams.pos_id);
-            $rootScope.$watch('curLang.id', function(newValue, oldValue) {
-                $scope.posDescriptionText = undefined;                
-                if ($scope.posContract.customerInfo.descriptionLocaleStringArray !== undefined && Object.keys($scope.posContract.customerInfo.descriptionLocaleStringArray).length !== 0) {
-                    if ($scope.posContract.customerInfo.descriptionLocaleStringArray.hasOwnProperty(newValue) && $scope.posContract.customerInfo.descriptionLocaleStringArray[newValue] !== undefined) {
-                        $scope.posDescriptionText = $scope.posContract.customerInfo.descriptionLocaleStringArray[newValue];
-                    } else if ($scope.posContract.customerInfo.descriptionLocaleStringArray.hasOwnProperty('en') && $scope.posContract.customerInfo.descriptionLocaleStringArray.en !== undefined) {
-                        $scope.posDescriptionText = $scope.posContract.customerInfo.descriptionLocaleStringArray.en;
-                    } else {
-                        let customerLangArr = Object.keys($scope.posContract.customerInfo.descriptionLocaleStringArray);                        
-                        customerLangArr.some(function(customerLangArrElem) {
-                            appLangArr.some(function(elem) {
-                                if (customerLangArrElem === elem && $scope.posDescriptionText === undefined) {
-                                    $scope.posDescriptionText = $scope.posContract.customerInfo.descriptionLocaleStringArray[elem];
-                                }
+
+            customerInfoStorage.getInfo('pos', $routeParams.pos_id).then(function(customerInfo) {
+                $scope.posContract.customerInfo = customerInfo;
+                $rootScope.$watch('curLang.id', function(newValue, oldValue) {
+                    $scope.posDescriptionText = undefined;                
+                    if ($scope.posContract.customerInfo.description !== undefined && Object.keys($scope.posContract.customerInfo.description).length !== 0) {
+                        if ($scope.posContract.customerInfo.description.hasOwnProperty(newValue) && $scope.posContract.customerInfo.description[newValue] !== undefined) {
+                            $scope.posDescriptionText = $scope.posContract.customerInfo.description[newValue];
+                        } else if ($scope.posContract.customerInfo.description.hasOwnProperty('en') && $scope.posContract.customerInfo.description.en !== undefined) {
+                            $scope.posDescriptionText = $scope.posContract.customerInfo.description.en;
+                        } else {
+                            let customerLangArr = Object.keys($scope.posContract.customerInfo.description);                        
+                            customerLangArr.some(function(customerLangArrElem) {
+                                appLangArr.some(function(elem) {
+                                    if (customerLangArrElem === elem && $scope.posDescriptionText === undefined) {
+                                        $scope.posDescriptionText = $scope.posContract.customerInfo.description[elem];
+                                    }
+                                });
                             });
-                        });
-                    }                    
-                }
+                        }                    
+                    }
+                });
+                $scope.media = $scope.posContract.customerInfo.media;
+                customerInfoStorage.assignLogo($scope, 'posContract', $scope.posContract.customerInfo.logoURL);
+            }, function(res) {
+                $scope.posContract.customerInfo = res;
             });
-            $scope.media = $scope.posContract.customerInfo.media;
+
             commonTools.genQR('#qrPOSOwnerCode', $scope.posContract.owner);
             commonTools.genQR('#qrPOSIDCode', $scope.posContract.pos_id);
             $scope.posContract.stake_power = ($scope.posContract.stake_power*100).toFixed(2) + '%';
@@ -3557,7 +3657,7 @@
             return parseInt(h, 16)
         }));
     }
-	app.controller('accountCtrl', function(GLOBAL_APP_CONFIG, $rootScope, $scope, $http, $routeParams, validator, dateTimeConverter, provider, commonTools, tokenInfoStorage, apexRadialChart, currencyExchange) {
+	app.controller('accountCtrl', function(GLOBAL_APP_CONFIG, $rootScope, $scope, $http, $routeParams, validator, dateTimeConverter, provider, commonTools, customerInfoStorage, apexRadialChart, currencyExchange) {
         let currentPreset = GLOBAL_APP_CONFIG;
         let incorrectValue =  '---';        
         $scope.account = {
@@ -3730,7 +3830,7 @@
         function populateBalancesAndPrices() {
             provider.balance_all.query({id:$routeParams.id}, function(balance_all) {
                 if (balance_all.length > 0) {
-                    tokenInfoStorage.getStorage.query({}, function(allTokensCustomersInfo) {                            
+                    customerInfoStorage.getStorage('token').query({}, function(allTokensCustomersInfo) {                            
                         allCustomersTokensInfo = allTokensCustomersInfo;
                         if (allCustomersTokensInfo !== undefined) {
                             let coingeckoIDsString = '';

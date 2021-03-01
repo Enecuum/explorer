@@ -310,7 +310,7 @@ table.ordinary-table tr td {
 
 .item-avatar-wrapper {
     background-repeat: no-repeat;
-    background-size: cover;
+    background-size: contain;
     background-position: center;
 }    
 
