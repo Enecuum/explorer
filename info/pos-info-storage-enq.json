@@ -50,6 +50,7 @@
     {
         "pos_id": "0dc30e84a6be4dff923a84c7511006e195531817c5b54650a42f6fcdc6ebc253",
         "webSite": "https://genesislab.net",
+        "logo": "genesis-lab.svg",
         "media": {
             "twitter": "https://twitter.com/genesislab_net",
             "github": "https://github.com/genesis-lab-team",
@@ -58,5 +59,13 @@
         "description": {
             "en": "Genesis Lab is a blockchain-focused development company and trusted Proof-of-Stake validator to comfortably stake your coins and earn rewards with Enecuum, Near, Cosmos, Polkadot, IRIS, Kusama, Kava, Terra and other networks."
         }
+    },
+    {
+        "pos_id": "b38bdd60ec73324ec7668236dd3f791dafbe8d1c8a939c124493ce4fbf11d801",
+        "logo": "KCS-logo.png"
+    },
+    {
+        "pos_id": "018f23b3fd60c28e12bd428296b98250394b44839d438b5022a9a20686ebd99d",
+        "logo": "trinitylab-logo-256x256.png"
     }
 ]

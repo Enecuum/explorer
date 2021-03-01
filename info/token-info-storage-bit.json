@@ -1,6 +1,6 @@
 [
 	{
-		"token_id":"1111111111111111111111111111111111111111111111111111111111111111",
+		"token_id":"0000000000000000000000000000000000000000000000000000000000000000",
 		"website":"https://enecuum.com",
         "logo": "bit-black.png",
 		"media": {                            
@@ -28,8 +28,7 @@
             "vi":"Test network BIT allows users to experience mobile mining without buying minimal stake and to try out PoW and PoS nodes as well as to test services built upon Enecuum node API.",
             "in":"Test network BIT allows users to experience mobile mining without buying minimal stake and to try out PoW and PoS nodes as well as to test services built upon Enecuum node API.",
             "tr":"Test network BIT allows users to experience mobile mining without buying minimal stake and to try out PoW and PoS nodes as well as to test services built upon Enecuum node API."
-        },
-        "coingecko_id": "enq-enecuum"                     
+        }                     
 	},
     {
         "token_id":"some-token-id",

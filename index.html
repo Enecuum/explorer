@@ -1280,65 +1280,6 @@
         }
     });
 
-    // app.factory('POSInfoStorage', function($window, $rootScope, GLOBAL_APP_CONFIG) {
-    //     let currentPreset = GLOBAL_APP_CONFIG.tokenName;
-    //     let POSInfoStorage = $window['POSInfoStorage' + currentPreset];
-    //     let POSInfoTemplate = {
-    //         website: undefined,
-    //         media: undefined,
-    //         description: undefined
-    //     }
-
-    //     return {
-    //         getInfo: function(posId) {
-    //             let posInfo = POSInfoStorage.find(posInfoBlock => posInfoBlock.posId === posId);                
-    //             if (posInfo === undefined)
-    //                 posInfo = POSInfoTemplate;               
-
-    //             return posInfo
-    //         }
-    //     } 
-    // });
-
-    // app.factory('customerInfoStorage', function($window, $rootScope, $http, GLOBAL_APP_CONFIG, $resource, $q) {
-    //     let currentPreset = GLOBAL_APP_CONFIG.tokenName.toLowerCase();
-    //     let storagePath = '/info/';
-    //     let logoPath = storagePath + 'token/logo/' + currentPreset + '/';
-    //     let infoStorageURL = storagePath + 'token-info-storage-' + currentPreset + '.json';        
-    //     let getStorage = $resource(infoStorageURL, {query: {method: 'GET', isArray: true}});
-    //     let infoTemplate = {
-    //         website: undefined,
-    //         media: undefined,
-    //         documents: undefined,
-    //         description: undefined,
-    //         coingecko_id: undefined,
-    //         logoURL: undefined
-    //     }
-
-    //     let populateInfo = function(res, hash) {
-    //         let info = res.find(infoBlock => infoBlock.token_id === hash);                
-    //         if (info === undefined)
-    //             info = infoTemplate;
-    //         else
-    //             info.logoURL = info.logo !== undefined ? logoPath + info.logo : undefined;
-
-    //         return info;
-    //     }
-    //     return {
-    //         getStorage: getStorage,
-    //         getInfo: function(hash) {
-    //             let deferred = $q.defer();
-    //             getStorage.query({}, function(res) {
-    //                 let data = res;
-    //                 deferred.resolve(populateInfo(data, hash));
-    //             }, function(error) {                   
-    //                 deferred.reject(populateInfo([], hash));
-    //             });
-    //             return deferred.promise;
-    //         }
-    //     }
-    // });
-
     app.factory('customerInfoStorage', function($window, $rootScope, $http, GLOBAL_APP_CONFIG, $resource, $q) {
         let currentPreset = GLOBAL_APP_CONFIG.tokenName.toLowerCase();
         let storagePath = 'info';
@@ -1393,8 +1334,8 @@
         }
 
         let assignLogo = function(scope, entityName, logoURL) {
-            if (scope[entityName].customerInfo.logoURL !== undefined) {
-                scope[entityName].customerInfo.logoImg = undefined;                        
+            scope[entityName].customerInfo.logoImg = undefined;
+            if (scope[entityName].customerInfo.logoURL !== undefined) {                                        
                 $http({method: 'GET', url: scope[entityName].customerInfo.logoURL, responseType: 'blob'}).
                 then(function (logo) {                            
                     let file = logo.data;
@@ -1406,12 +1347,14 @@
                             scope.$apply();
                         };
                         reader.onerror = function() {
+                            scope[entityName].customerInfo.logoURL = undefined;
                             console.log(reader.error);
                         };
                     }
                 })
                 .catch(function(error) {
-                    console.log("Failed to load" + entityName + "'s logo. Error status: " + error.status + "(" + error.statusText +")");
+                    scope[entityName].customerInfo.logoURL = undefined;
+                    console.log("Failed to load " + entityName + "'s logo. Error status: " + error.status + "(" + error.statusText +")");
                 })                        
             }
         }
@@ -3158,30 +3101,7 @@
                             }
                         });               
                     }
-
                     customerInfoStorage.assignLogo($scope, 'token', $scope.token.customerInfo.logoURL);
-
-                    // if ($scope.token.customerInfo.logoURL !== undefined) {
-                    //     $scope.token.customerInfo.logoImg = undefined;                        
-                    //     $http({method: 'GET', url: $scope.token.customerInfo.logoURL, responseType: 'blob'}).
-                    //     then(function (logo) {                            
-                    //         let file = logo.data;
-                    //         if (file) {
-                    //             let reader  = new FileReader();
-                    //             reader.readAsDataURL(file);
-                    //             reader.onload = function() {
-                    //                 $scope.token.customerInfo.logoImg = reader.result;
-                    //                 $scope.$apply();
-                    //             };
-                    //             reader.onerror = function() {
-                    //                 console.log(reader.error);
-                    //             };
-                    //         }
-                    //     })
-                    //     .catch(function(error) {
-                    //         console.log("Failed to load token's logo. Error status: " + error.status + "(" + error.statusText +")");
-                    //     })                        
-                    // }
                 }                
             }, function(res) {
                 $scope.token.customerInfo = res;
