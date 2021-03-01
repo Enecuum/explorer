@@ -298,12 +298,21 @@ table.ordinary-table tr td {
     }
 
 
-.item-avatar-blank-wrapper {
+.item-avatar-blank-wrapper, .item-avatar-wrapper {
     width: 110px;
     height: 110px;
+}
+
+.item-avatar-blank-wrapper {
     background: #0066FF;
     border-radius: 50%; 
 }
+
+.item-avatar-wrapper {
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position: center;
+}    
 
 .item-avatar-blank-content {
     font-style: normal;
