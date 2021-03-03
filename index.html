@@ -875,7 +875,7 @@
                                                      <tr>
                                                         <th class="w-lg-65-px">{{'RANK' | translate}}</th>
                                                         <th class="w-lg-100-px">{{active === 1 ? 'STAKE_POWER' : 'ACTIVE_STAKE_SHARE' | translate}}</th>                                                     
-                                                        <th>{{'NAME' | translate}}</th>
+                                                        <th class="pl-lg-0">{{'NAME' | translate}}</th>
                                                         <th>POS id</th>
                                                         <th>{{'OWNER' | translate}}</th>
                                                         <th>{{'STAKE' | translate}}</th>
@@ -888,7 +888,18 @@
                                                     <tr ng-if="pos.active === active" ng-repeat="pos in posContracts">
                                                         <td class="w-lg-65-px"><span class="scope-col w-130-px">{{'RANK' | translate}} </span>{{pos.rank}}</td>
                                                         <td><span class="scope-col w-130-px">{{active === 1 ? 'STAKE_POWER' : 'ACTIVE_STAKE_SHARE' | translate}} </span>{{active === 1 ? pos.active_stake_power : pos.active_stake_share}}</td>
-                                                        <td class="d-flex d-lg-table-cell align-items-center"><span class="scope-col w-130-px">{{'NAME' | translate}} </span><a ng-href="#!/pos-contract/{{pos.pos_id}}" class="d-flex overflow-hidden">{{posNames[pos.pos_id]}}</a></td>
+                                                        <td class="d-flex d-lg-table-cell align-items-center pl-lg-0">
+                                                            <span class="scope-col w-130-px">{{'NAME' | translate}} </span>
+                                                            <a ng-href="#!/pos-contract/{{pos.pos_id}}" class="d-flex align-items-center text-wrap">
+                                                                <img ng-if="posLogo['pos_' + pos.pos_id].logo.logoImg !== undefined" ng-src="{{posLogo['pos_' + pos.pos_id].logo.logoImg}}" height="25" class="mr-1 flex-shrink-0 flex-grow-0">
+                                                                <div ng-if="posLogo['pos_' + pos.pos_id].logo.logoImg === undefined" class="item-avatar-blank-wrapper-small d-flex align-items-center justify-content-center mr-1 flex-shrink-0 flex-grow-0">
+                                                                    <span class="item-avatar-blank-content-small flex-shrink-0 flex-grow-0 font-italic">
+                                                                        {{posNames[pos.pos_id].charAt(0)}}
+                                                                    </span>                                                         
+                                                                </div>
+                                                                <span class="text-break">{{posNames[pos.pos_id]}}</span>
+                                                            </a>
+                                                        </td>
                                                         <td class="fit"><span class="scope-col w-130-px">POS id </span><a ng-href="#!/tx/{{pos.pos_id}}">{{pos.pos_id}}</a></td>
                                                         <td class="fit"><span class="scope-col w-130-px">{{'OWNER' | translate}} </span><a ng-href="#!/account/{{pos.owner}}">{{pos.owner}}</a></td>
                                                         <td><span class="scope-col w-130-px">{{'STAKE' | translate}} </span><span class="text-nowrap">{{pos.stake | US_COMMAS_BIGINT_DECIMALS : mainToken.decimals : 2}} {{mainToken.ticker}}</span></td>
@@ -3307,11 +3318,11 @@
 
         $scope.getHistory(0);
     });
-    app.controller('posContractsCtrl', function($scope, provider, $translate) {
+    app.controller('posContractsCtrl', function($scope, provider, $translate, customerInfoStorage) {
         $scope.toggleActivePOSList = function(active) {
             $scope.active = active;
         }
-
+        $scope.posLogo = {};
         $scope.activePOSAmount = $scope.inactivePOSAmount = 0;
 
        function getPOSContracts(){
@@ -3325,19 +3336,30 @@
                 provider.get_pos_list_all.get(function(posList) {
                     $scope.posContracts = posList.pos_contracts;
                     $scope.page_count = posList.page_count
-                    $scope.posContracts.forEach(function(posContract, i) {
-                        if (posContract.active === 1)
-                            $scope.activePOSAmount++;
-                        else if (posContract.active === 0)
-                            $scope.inactivePOSAmount++;
-                        
-                        posContract.fee = posContract.fee/1e2 + '%';                       
-                        posContract.stake_power = (posContract.stake_power*100).toFixed(2) + '%';
-                        posContract.active_stake_power = (posContract.active_stake_power*100).toFixed(2) + '%';
-                        posContract.active_stake_share = (posContract.active_stake_share*100).toFixed(2) + '%';
-                        posContract.roi = posContract.roi/1e2;
-                        posContract.uptime = (posContract.uptime*1e2).toFixed(2) + '%';
-                    });
+                    customerInfoStorage.getStorage('pos').query({}, function(allPOSCustomersInfo) { 
+                        $scope.posContracts.forEach(function(posContract, i) {
+                            if (posContract.active === 1)
+                                $scope.activePOSAmount++;
+                            else if (posContract.active === 0)
+                                $scope.inactivePOSAmount++;
+                            
+                            posContract.fee = posContract.fee/1e2 + '%';                       
+                            posContract.stake_power = (posContract.stake_power*100).toFixed(2) + '%';
+                            posContract.active_stake_power = (posContract.active_stake_power*100).toFixed(2) + '%';
+                            posContract.active_stake_share = (posContract.active_stake_share*100).toFixed(2) + '%';
+                            posContract.roi = posContract.roi/1e2;
+                            posContract.uptime = (posContract.uptime*1e2).toFixed(2) + '%';
+
+                            let customerPOSInfo = allPOSCustomersInfo.find(posInfoBlock =>posInfoBlock.pos_id === posContract.pos_id);
+                            if (customerPOSInfo !== undefined && customerPOSInfo.logo !== undefined) {
+                                if (!$scope.hasOwnProperty('pos_' + posContract.pos_id)) {
+                                    $scope['pos_' + posContract.pos_id] = {customerInfo : {logoImg : undefined, logoURL : customerInfoStorage.getLogoPath('pos') + '/' + customerPOSInfo.logo}};
+                                    customerInfoStorage.assignLogo($scope, 'pos_' + posContract.pos_id, customerPOSInfo.logo);
+                                    $scope.posLogo['pos_' + posContract.pos_id] = {logo :  $scope['pos_' + posContract.pos_id].customerInfo};
+                                }
+                            }
+                        });
+                    });    
                     $scope.isLoading = false;
                 });
             });
