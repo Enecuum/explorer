@@ -1316,6 +1316,10 @@
             }
         }
 
+        function getLogoPath(type) {
+            return storagePath + '/' + type + '/' + 'logo' + '/' + currentPreset;           
+        }
+
         let getStorage = function(type='token') {
             let infoStorageURL = getStorageURL(type);
             return $resource(infoStorageURL, {query: {method: 'GET', isArray: true}});
@@ -1326,7 +1330,7 @@
             if (info === undefined)
                 info = models[type];
             else if (info.logo !== undefined) {
-                let logoPath = storagePath + '/' + type + '/' + 'logo' + '/' + currentPreset;
+                let logoPath = getLogoPath(type);
                 info.logoURL = info.logo !== undefined ? (logoPath + '/' + info.logo) : undefined;
             }
 
@@ -1354,7 +1358,7 @@
                 })
                 .catch(function(error) {
                     scope[entityName].customerInfo.logoURL = undefined;
-                    console.log("Failed to load " + entityName + "'s logo. Error status: " + error.status + "(" + error.statusText +")");
+                    console.log("Failed to load " + entityName + "'s logo. Error status: " + error.status + "(" + error.statusText + ")");
                 })                        
             }
         }
@@ -1371,6 +1375,7 @@
                 });
                 return deferred.promise;
             },
+            getLogoPath: getLogoPath,
             assignLogo: assignLogo
         }
     });    
@@ -2949,6 +2954,7 @@
     });
     app.controller('tokensCtrl', function($scope, $http, provider, commonTools, $translate, customerInfoStorage, currencyExchange) {
         let allCustomersTokensInfo = undefined;
+        $scope.tokensLogo = {};
         $scope.tabsOrder = ['all', 'reissuable', 'non_reissuable', 'mineable'];
         $scope.tokensPages = {
             all : {
@@ -2994,9 +3000,8 @@
             provider.get_tickers_all.query(function(tickers_all) {
                 $scope.tickers = {};
                 tickers_all.forEach(function(ticker) {
-                    $scope.tickers[ticker.hash] = {ticker: ticker.ticker, caption: ticker.caption};
+                    $scope.tickers[ticker.hash] = {ticker: ticker.ticker, caption: ticker.caption, logo: undefined};
                 });
-
 
                 $scope.tokensPages[paramsObj.type].requestParams.page = paramsObj.page;
                 let requestParams = $scope.tokensPages[paramsObj.type].requestParams;
@@ -3011,15 +3016,24 @@
                         token.status = (token.in_slot === 1 ? 'Active' : 'Inactive').toUpperCase();
                         if (allCustomersTokensInfo !== undefined) {
                             let customerTokenInfo = allCustomersTokensInfo.find(tokenInfoBlock => tokenInfoBlock.token_id === token.token_hash);
-                            if (customerTokenInfo !== undefined  && customerTokenInfo.coingecko_id !== undefined) {
-                                $http({method: 'GET', url: 'https://api.coingecko.com/api/v3/simple/price?ids=' + customerTokenInfo.coingecko_id + '&vs_currencies=USD'}).
-                                then(function (response) {
-                                    let info = response.data[customerTokenInfo.coingecko_id];
-                                    if (response.data !== undefined && info !== undefined && info.usd !== undefined) {                                    
-                                        token.price = '$' + info.usd;
-                                        token.marketCapUSD = '$' + currencyExchange.bigIntConvertValueToCurrency(token.total_supply, info.usd, token.decimals, 2);
+                            if (customerTokenInfo !== undefined) {
+                                if (customerTokenInfo.coingecko_id !== undefined) {
+                                    $http({method: 'GET', url: 'https://api.coingecko.com/api/v3/simple/price?ids=' + customerTokenInfo.coingecko_id + '&vs_currencies=USD'}).
+                                    then(function (response) {
+                                        let info = response.data[customerTokenInfo.coingecko_id];
+                                        if (response.data !== undefined && info !== undefined && info.usd !== undefined) {                                    
+                                            token.price = '$' + info.usd;
+                                            token.marketCapUSD = '$' + currencyExchange.bigIntConvertValueToCurrency(token.total_supply, info.usd, token.decimals, 2);
+                                        }
+                                    });
+                                }
+                                if (customerTokenInfo.logo !== undefined) {
+                                    if (!$scope.hasOwnProperty('token_' + token.token_hash)) {
+                                        $scope['token_' + token.token_hash] = {customerInfo : {logoImg : undefined, logoURL : customerInfoStorage.getLogoPath('token') + '/' + customerTokenInfo.logo}};
+                                        customerInfoStorage.assignLogo($scope, 'token_' + token.token_hash, customerTokenInfo.logo);
+                                        $scope.tokensLogo['token_' + token.token_hash] = {logo :  $scope['token_' + token.token_hash].customerInfo};
                                     }
-                                });                                    
+                                }                                    
                             }
                         }
 
@@ -3032,13 +3046,14 @@
             $scope.tokensPages[paramsObj.type].page_num = paramsObj.page;
         };
 
-        customerInfoStorage.getStorage('token').query({}, function(allTokensCustomersInfo) {
+        customerInfoStorage.getStorage('token').query({}, function(allTokensCustomersInfo) {            
             allCustomersTokensInfo = allTokensCustomersInfo;
             $scope.tabsOrder.forEach(function(type) {
                 $scope.getPage({page: 0, type: type});
             });
         })
     });
+
     app.controller('tokenCtrl', function($scope, $rootScope, $routeParams, GLOBAL_APP_CONFIG, provider, customerInfoStorage, commonTools, $translate, $filter, roiCalc, Toast, $http, currencyExchange) {
         let currentPreset = GLOBAL_APP_CONFIG;
         $scope.additionalTokenData = {
