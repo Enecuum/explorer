@@ -788,7 +788,11 @@
                                                         <tbody style="font-size: 12px;" >
                                                         <tr ng-repeat="acc in accs.accounts ">
                                                             <td class="text-nowrap"><span ng-if="acc.banned"><i class="fas fa-skull-crossbones" style="font-size: 18px;"></i></span><span ng-if="!acc.banned">{{acc.rank}}</span></td>
-                                                            <td><a class="d-block fit responsive-hash" ng-href="#!/account/{{acc.id}}">{{acc.id}}</a></td>
+                                                            <td>
+                                                                <a class="d-block fit responsive-hash" ng-href="#!/account/{{acc.id}}">
+                                                                    {{acc.tag !== undefined ? acc.tag : acc.id}}
+                                                                </a>
+                                                            </td>
                                                             <td class="text-nowrap">{{acc.amount !== undefined ? acc.amount : "N/A" | US_COMMAS_BIGINT_DECIMALS : mainToken.decimals : mainToken.decimals}} {{mainToken.ticker}}</td>
                                                             <td class="text-nowrap" ng-if="mainToken.ticker === 'ENQ'">{{acc.valueUSD}}</td>
                                                             <td class="text-nowrap">{{acc.percentage}}</td>
@@ -875,7 +879,7 @@
                                                      <tr>
                                                         <th class="w-lg-65-px">{{'RANK' | translate}}</th>
                                                         <th class="w-lg-100-px">{{active === 1 ? 'STAKE_POWER' : 'ACTIVE_STAKE_SHARE' | translate}}</th>                                                     
-                                                        <th>{{'NAME' | translate}}</th>
+                                                        <th class="pl-lg-0">{{'NAME' | translate}}</th>
                                                         <th>POS id</th>
                                                         <th>{{'OWNER' | translate}}</th>
                                                         <th>{{'STAKE' | translate}}</th>
@@ -888,9 +892,20 @@
                                                     <tr ng-if="pos.active === active" ng-repeat="pos in posContracts">
                                                         <td class="w-lg-65-px"><span class="scope-col w-130-px">{{'RANK' | translate}} </span>{{pos.rank}}</td>
                                                         <td><span class="scope-col w-130-px">{{active === 1 ? 'STAKE_POWER' : 'ACTIVE_STAKE_SHARE' | translate}} </span>{{active === 1 ? pos.active_stake_power : pos.active_stake_share}}</td>
-                                                        <td class="d-flex d-lg-table-cell align-items-center"><span class="scope-col w-130-px">{{'NAME' | translate}} </span><a ng-href="#!/pos-contract/{{pos.pos_id}}" class="d-flex overflow-hidden">{{posNames[pos.pos_id]}}</a></td>
+                                                        <td class="d-flex d-lg-table-cell align-items-center pl-lg-0">
+                                                            <span class="scope-col w-130-px">{{'NAME' | translate}} </span>
+                                                            <a ng-href="#!/pos-contract/{{pos.pos_id}}" class="d-flex align-items-center text-wrap">
+                                                                <img ng-if="posLogo['pos_' + pos.pos_id].logo.logoImg !== undefined" ng-src="{{posLogo['pos_' + pos.pos_id].logo.logoImg}}" height="25" class="mr-1 flex-shrink-0 flex-grow-0">
+                                                                <div ng-if="posLogo['pos_' + pos.pos_id].logo.logoImg === undefined" class="item-avatar-blank-wrapper-small d-flex align-items-center justify-content-center mr-1 flex-shrink-0 flex-grow-0">
+                                                                    <span class="item-avatar-blank-content-small flex-shrink-0 flex-grow-0 font-italic">
+                                                                        {{posNames[pos.pos_id].charAt(0)}}
+                                                                    </span>                                                         
+                                                                </div>
+                                                                <span class="text-break">{{posNames[pos.pos_id]}}</span>
+                                                            </a>
+                                                        </td>
                                                         <td class="fit"><span class="scope-col w-130-px">POS id </span><a ng-href="#!/tx/{{pos.pos_id}}">{{pos.pos_id}}</a></td>
-                                                        <td class="fit"><span class="scope-col w-130-px">{{'OWNER' | translate}} </span><a ng-href="#!/account/{{pos.owner}}">{{pos.owner}}</a></td>
+                                                        <td class="fit"><span class="scope-col w-130-px">{{'OWNER' | translate}} </span><a ng-href="#!/account/{{pos.owner}}">{{pos.ownersTag !== undefined ? pos.ownersTag : pos.owner}}</a></td>
                                                         <td><span class="scope-col w-130-px">{{'STAKE' | translate}} </span><span class="text-nowrap">{{pos.stake | US_COMMAS_BIGINT_DECIMALS : mainToken.decimals : 2}} {{mainToken.ticker}}</span></td>
                                                         <td><span class="scope-col w-130-px">{{'PROVIDER_FEE' | translate}} </span>{{pos.fee}}</td>
                                                         <td><span class="scope-col w-130-px text-nowrap">{{'PERFORMANCE' | translate}} </span>{{pos.uptime}}</td>
@@ -1316,17 +1331,21 @@
             }
         }
 
+        function getLogoPath(type) {
+            return storagePath + '/' + type + '/' + 'logo' + '/' + currentPreset;           
+        }
+
         let getStorage = function(type='token') {
             let infoStorageURL = getStorageURL(type);
             return $resource(infoStorageURL, {query: {method: 'GET', isArray: true}});
         }
 
         let populateInfo = function(res, hash, type=undefined) {
-            let info = res.find(infoBlock => infoBlock[type + '_id'] === hash);                
+            let info = res.find(infoBlock => infoBlock[type + '_id'] === hash);             
             if (info === undefined)
                 info = models[type];
             else if (info.logo !== undefined) {
-                let logoPath = storagePath + '/' + type + '/' + 'logo' + '/' + currentPreset;
+                let logoPath = getLogoPath(type);
                 info.logoURL = info.logo !== undefined ? (logoPath + '/' + info.logo) : undefined;
             }
 
@@ -1354,7 +1373,7 @@
                 })
                 .catch(function(error) {
                     scope[entityName].customerInfo.logoURL = undefined;
-                    console.log("Failed to load " + entityName + "'s logo. Error status: " + error.status + "(" + error.statusText +")");
+                    console.log("Failed to load " + entityName + "'s logo. Error status: " + error.status + "(" + error.statusText + ")");
                 })                        
             }
         }
@@ -1371,6 +1390,7 @@
                 });
                 return deferred.promise;
             },
+            getLogoPath: getLogoPath,
             assignLogo: assignLogo
         }
     });    
@@ -2904,12 +2924,13 @@
 		$scope.page_num = Number($routeParams.page_num);
 		$scope.page = provider.page.get({n:$routeParams.page_num});
 	});
-    app.controller('topsCtrl', function(GLOBAL_APP_CONFIG, $rootScope, $scope, $filter, provider, commonTools) {
+    app.controller('topsCtrl', function(GLOBAL_APP_CONFIG, $rootScope, $scope, $filter, provider, commonTools, customerInfoStorage) {
         $scope.page_num = 0;
         let entitiesOnPage = 20;
         $scope.mainTokenPrice = null;
         let currentPreset = GLOBAL_APP_CONFIG;
         let bannedAccsArr = currentPreset.bannedAccs !== undefined ? currentPreset.bannedAccs : [];
+        let allCustomersAccountsInfo = undefined;
 
         $rootScope.$watch('mainToken', function(newValue, oldValue) {
             if (newValue !== undefined || oldValue !== undefined) {
@@ -2938,17 +2959,29 @@
                                     }
                                 });
                             }
+                            if (allCustomersAccountsInfo !== undefined) {
+                                let customerAccountInfo = allCustomersAccountsInfo.find(accountInfoBlock => accountInfoBlock.account_id === acc.id);
+                                if (customerAccountInfo !== undefined) {
+                                    if (customerAccountInfo.tag !== undefined) {
+                                        acc.tag = customerAccountInfo.tag;
+                                    }
+                                }
+                            }    
                         });
                         $scope.isLoading = false;
                     });
                     $scope.page_num = page;
                 };
-                $scope.getHistory(0);
+                customerInfoStorage.getStorage('account').query({}, function(allAccountsCustomersInfo) {            
+                    allCustomersAccountsInfo = allAccountsCustomersInfo;
+                    $scope.getHistory(0);
+                });
             }
         });
     });
     app.controller('tokensCtrl', function($scope, $http, provider, commonTools, $translate, customerInfoStorage, currencyExchange) {
         let allCustomersTokensInfo = undefined;
+        $scope.tokensLogo = {};
         $scope.tabsOrder = ['all', 'reissuable', 'non_reissuable', 'mineable'];
         $scope.tokensPages = {
             all : {
@@ -2994,9 +3027,8 @@
             provider.get_tickers_all.query(function(tickers_all) {
                 $scope.tickers = {};
                 tickers_all.forEach(function(ticker) {
-                    $scope.tickers[ticker.hash] = {ticker: ticker.ticker, caption: ticker.caption};
+                    $scope.tickers[ticker.hash] = {ticker: ticker.ticker, caption: ticker.caption, logo: undefined};
                 });
-
 
                 $scope.tokensPages[paramsObj.type].requestParams.page = paramsObj.page;
                 let requestParams = $scope.tokensPages[paramsObj.type].requestParams;
@@ -3011,15 +3043,24 @@
                         token.status = (token.in_slot === 1 ? 'Active' : 'Inactive').toUpperCase();
                         if (allCustomersTokensInfo !== undefined) {
                             let customerTokenInfo = allCustomersTokensInfo.find(tokenInfoBlock => tokenInfoBlock.token_id === token.token_hash);
-                            if (customerTokenInfo !== undefined  && customerTokenInfo.coingecko_id !== undefined) {
-                                $http({method: 'GET', url: 'https://api.coingecko.com/api/v3/simple/price?ids=' + customerTokenInfo.coingecko_id + '&vs_currencies=USD'}).
-                                then(function (response) {
-                                    let info = response.data[customerTokenInfo.coingecko_id];
-                                    if (response.data !== undefined && info !== undefined && info.usd !== undefined) {                                    
-                                        token.price = '$' + info.usd;
-                                        token.marketCapUSD = '$' + currencyExchange.bigIntConvertValueToCurrency(token.total_supply, info.usd, token.decimals, 2);
+                            if (customerTokenInfo !== undefined) {
+                                if (customerTokenInfo.coingecko_id !== undefined) {
+                                    $http({method: 'GET', url: 'https://api.coingecko.com/api/v3/simple/price?ids=' + customerTokenInfo.coingecko_id + '&vs_currencies=USD'}).
+                                    then(function (response) {
+                                        let info = response.data[customerTokenInfo.coingecko_id];
+                                        if (response.data !== undefined && info !== undefined && info.usd !== undefined) {                                    
+                                            token.price = '$' + info.usd;
+                                            token.marketCapUSD = '$' + currencyExchange.bigIntConvertValueToCurrency(token.total_supply, info.usd, token.decimals, 2);
+                                        }
+                                    });
+                                }
+                                if (customerTokenInfo.logo !== undefined) {
+                                    if (!$scope.hasOwnProperty('token_' + token.token_hash)) {
+                                        $scope['token_' + token.token_hash] = {customerInfo : {logoImg : undefined, logoURL : customerInfoStorage.getLogoPath('token') + '/' + customerTokenInfo.logo}};
+                                        customerInfoStorage.assignLogo($scope, 'token_' + token.token_hash, customerTokenInfo.logo);
+                                        $scope.tokensLogo['token_' + token.token_hash] = {logo :  $scope['token_' + token.token_hash].customerInfo};
                                     }
-                                });                                    
+                                }                                    
                             }
                         }
 
@@ -3032,13 +3073,14 @@
             $scope.tokensPages[paramsObj.type].page_num = paramsObj.page;
         };
 
-        customerInfoStorage.getStorage('token').query({}, function(allTokensCustomersInfo) {
+        customerInfoStorage.getStorage('token').query({}, function(allTokensCustomersInfo) {            
             allCustomersTokensInfo = allTokensCustomersInfo;
             $scope.tabsOrder.forEach(function(type) {
                 $scope.getPage({page: 0, type: type});
             });
         })
     });
+
     app.controller('tokenCtrl', function($scope, $rootScope, $routeParams, GLOBAL_APP_CONFIG, provider, customerInfoStorage, commonTools, $translate, $filter, roiCalc, Toast, $http, currencyExchange) {
         let currentPreset = GLOBAL_APP_CONFIG;
         $scope.additionalTokenData = {
@@ -3292,12 +3334,13 @@
 
         $scope.getHistory(0);
     });
-    app.controller('posContractsCtrl', function($scope, provider, $translate) {
+    app.controller('posContractsCtrl', function($scope, provider, $translate, customerInfoStorage) {
         $scope.toggleActivePOSList = function(active) {
             $scope.active = active;
         }
-
+        $scope.posLogo = {};
         $scope.activePOSAmount = $scope.inactivePOSAmount = 0;
+        let allCustomersAccountsInfo = undefined;
 
        function getPOSContracts(){
             $scope.isLoading = true;
@@ -3310,25 +3353,47 @@
                 provider.get_pos_list_all.get(function(posList) {
                     $scope.posContracts = posList.pos_contracts;
                     $scope.page_count = posList.page_count
-                    $scope.posContracts.forEach(function(posContract, i) {
-                        if (posContract.active === 1)
-                            $scope.activePOSAmount++;
-                        else if (posContract.active === 0)
-                            $scope.inactivePOSAmount++;
-                        
-                        posContract.fee = posContract.fee/1e2 + '%';                       
-                        posContract.stake_power = (posContract.stake_power*100).toFixed(2) + '%';
-                        posContract.active_stake_power = (posContract.active_stake_power*100).toFixed(2) + '%';
-                        posContract.active_stake_share = (posContract.active_stake_share*100).toFixed(2) + '%';
-                        posContract.roi = posContract.roi/1e2;
-                        posContract.uptime = (posContract.uptime*1e2).toFixed(2) + '%';
-                    });
+                    customerInfoStorage.getStorage('pos').query({}, function(allPOSCustomersInfo) { 
+                        $scope.posContracts.forEach(function(posContract, i) {
+                            if (posContract.active === 1)
+                                $scope.activePOSAmount++;
+                            else if (posContract.active === 0)
+                                $scope.inactivePOSAmount++;
+                            
+                            posContract.fee = posContract.fee/1e2 + '%';                       
+                            posContract.stake_power = (posContract.stake_power*100).toFixed(2) + '%';
+                            posContract.active_stake_power = (posContract.active_stake_power*100).toFixed(2) + '%';
+                            posContract.active_stake_share = (posContract.active_stake_share*100).toFixed(2) + '%';
+                            posContract.roi = posContract.roi/1e2;
+                            posContract.uptime = (posContract.uptime*1e2).toFixed(2) + '%';
+
+                            let customerPOSInfo = allPOSCustomersInfo.find(posInfoBlock =>posInfoBlock.pos_id === posContract.pos_id);
+                            if (customerPOSInfo !== undefined && customerPOSInfo.logo !== undefined) {
+                                if (!$scope.hasOwnProperty('pos_' + posContract.pos_id)) {
+                                    $scope['pos_' + posContract.pos_id] = {customerInfo : {logoImg : undefined, logoURL : customerInfoStorage.getLogoPath('pos') + '/' + customerPOSInfo.logo}};
+                                    customerInfoStorage.assignLogo($scope, 'pos_' + posContract.pos_id, customerPOSInfo.logo);
+                                    $scope.posLogo['pos_' + posContract.pos_id] = {logo :  $scope['pos_' + posContract.pos_id].customerInfo};
+                                }
+                            }
+                            if (allCustomersAccountsInfo !== undefined) {
+                                let customerAccountInfo = allCustomersAccountsInfo.find(accountInfoBlock => accountInfoBlock.account_id === posContract.owner);
+                                if (customerAccountInfo !== undefined) {
+                                    if (customerAccountInfo.tag !== undefined) {
+                                        posContract.ownersTag = customerAccountInfo.tag;
+                                    }
+                                }
+                            }                            
+                        });
+                    });    
                     $scope.isLoading = false;
                 });
             });
         };
         $scope.active = 1;
-        getPOSContracts();
+        customerInfoStorage.getStorage('account').query({}, function(allAccountsCustomersInfo) {            
+            allCustomersAccountsInfo = allAccountsCustomersInfo;
+            getPOSContracts();
+        });        
     });
 
     app.controller('posContractCtrl', function($scope, $routeParams, $rootScope, $filter, GLOBAL_APP_CONFIG, provider, customerInfoStorage, commonTools, apexRadialChart, langService) {
@@ -3579,9 +3644,12 @@
     }
 	app.controller('accountCtrl', function(GLOBAL_APP_CONFIG, $rootScope, $scope, $http, $routeParams, validator, dateTimeConverter, provider, commonTools, customerInfoStorage, apexRadialChart, currencyExchange) {
         let currentPreset = GLOBAL_APP_CONFIG;
-        let incorrectValue =  '---';        
+        let incorrectValue =  '---';
         $scope.account = {
             id : $routeParams.id,
+            customerInfo: {
+                tag: undefined
+            },            
             isAgent : false,
             referralRange : 1000,
             refcode : incorrectValue,
@@ -3696,7 +3764,8 @@
                 $scope.getAccRewards(0);
                 populatePOS();
                 populateTokenID();
-            }            
+                populateCustomerInfo();
+            }                        
         });
 
         $scope.getTxTypeLocaleString = commonTools.getTxTypeLocaleString;
@@ -3733,7 +3802,18 @@
                     else
                         $scope.account.balances.mainTokenDetails[balanceType].percentage = (0).toFixed(2);
                 });
-            });            
+            });          
+        }
+
+        function populateCustomerInfo() {            
+            customerInfoStorage.getInfo('account', $routeParams.id).then(function(customerInfo) {
+                $scope.account.customerInfo = customerInfo;
+                if ($scope.account.customerInfo.tag === undefined || $scope.account.customerInfo.tag.length == 0) {
+                    $scope.account.customerInfo.tag = '---';
+                }
+            }, function(res) {
+                $scope.account.customerInfo = res;
+            });  
         }
 
         function populateReferralsInfo() {            

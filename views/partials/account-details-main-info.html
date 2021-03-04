@@ -26,7 +26,7 @@
 		<div class="card">
 		    <div class="card-body" ng-if="!account.banned">
                 <div class="header-title mr-2 text-uppercase">{{'TAG' | translate}}</div>
-                <div class="text-muted">{{'COMING_SOON' | translate}}</div>
+                <div class="text-muted">{{account.customerInfo.tag}}</div>
 		    </div>
 		    <div class="card-body d-flex align-items-center justify-content-between" ng-if="account.banned">
 		    	<div>
