@@ -23,7 +23,7 @@
                     $ {{token.price !== undefined ? token.price : 0 | US_COMMAS_4}}
                 </td>
                 <td class="text-nowrap">
-                    $ {{token.usdValue  !== undefined ? token.usdValue : 0 | US_COMMAS_BIGINT_DECIMALS : token.tokenToUSDDecimals : 2}}
+                    $ {{token.usdValue  !== undefined ? token.usdValue : '0.00'}}
                 </td>
             </tr>
         </tbody>

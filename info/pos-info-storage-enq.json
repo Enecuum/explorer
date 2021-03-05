@@ -66,7 +66,12 @@
     },
     {
         "pos_id": "018f23b3fd60c28e12bd428296b98250394b44839d438b5022a9a20686ebd99d",
-        "logo": "trinitylab-logo-256x256.png"
+        "logo": "trinitylab-logo-256x256.png",
+        "webSite": "https://trinitylab.org",
+       	"media": {
+            "twitter": "https://twitter.com/TrinityLabdao",
+            "medium": "https://medium.com/@Trinitylab"
+      	}
     },
     {
         "pos_id": "769498f1056b10e0b8de10099b411e45e0357bdd3d8387ecaa25af5ead7b4970",
