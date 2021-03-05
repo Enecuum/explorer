@@ -1,6 +1,27 @@
 [
     {
+        "account_id":"02833f453fb8bf10cc5e8fd362d563851543559f3ea6e662ef114d8db8f72dda19",
+        "tag":"Enecuum Genesis"
+    },
+    {
+        "account_id":"026df0aa41967d8d47082c36b29a164aa1c90cdd07cb02d373daaba90b8eca5301",
+        "tag":"Reserve Fund Locked"
+    },
+    {
+        "account_id":"022e50c3cbbb926ce70d38a233a2015acad82424c16813a536c025baaa41db1c83",
+        "tag":"Enecuum PoW"
+    },
+    {
+        "account_id":"0270a88ea6f7c5ea2a2ec3878008d878a70fd5d4ca27d5866d0eec3594cab0b912",
+        "tag":"Team Reward Locked"
+    },
+    {
+        "account_id":"03fd7ed9000c1c3bd65fdfed52a1136c59c39f966d3a315ee54c6ea2a93eb930ee",
+        "tag":"PoS Challenge"
+    },
+    {
         "account_id":"some_account_id",
         "tag":"some_account_tag"
     }
 ]
+
