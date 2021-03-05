@@ -1,7 +1,7 @@
 [
     {
 		"pos_id": "some-staking-provider",
-		"webSite": "https://somePOSWebSite.com",
+		"website": "https://somePOSWebSite.com",
 		"media": {                            
                 "facebook": "https://www.facebook.com/some-staking-provider",
                 "twitter": "https://twitter.com/some-staking-provider",
@@ -28,7 +28,7 @@
 	},
 	{
 		"pos_id": "another-staking-provider",
-		"webSite": "https://anotherPOSWebSite.com",
+		"website": "https://anotherPOSWebSite.com",
         "media": {                            
                 "facebook": "https://www.facebook.com/another-staking-provider",
                 "twitter": "https://twitter.com/another-staking-provider",
