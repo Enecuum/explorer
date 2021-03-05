@@ -31,7 +31,7 @@
 		    						<i class="fas"ng-class="posContract.active === 1 ? 'fa-check' : 'fa-times'"></i> {{posContract.active === 1 ? 'ACTIVE' : 'INACTIVE' | translate}}
 	                            </span>
 	                        </div>
-		    				<a ng-if="posContract.customerInfo.webSite !== undefined" class="pr-2 fit d-block" id="posWebSite" ng-href="{{posContract.customerInfo.webSite}}" target="_blank">{{posContract.customerInfo.webSite}}</a>
+		    				<a ng-if="posContract.customerInfo.website !== undefined" class="pr-2 fit d-block" id="posWebSite" ng-href="{{posContract.customerInfo.website}}" target="_blank">{{posContract.customerInfo.website}}</a>
 			    		</div>
 			    	</div>
 	    			<div data-simplebar data-simplebar-lg data-simplebar-auto-hide="false" id="posDescriptionText" ng-if="posDescriptionText !== undefined" class="mt-2 mt-xl-0">
