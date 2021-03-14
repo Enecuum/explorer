@@ -64,6 +64,10 @@
         "pos_id": "b38bdd60ec73324ec7668236dd3f791dafbe8d1c8a939c124493ce4fbf11d801",
         "logo": "KCS-logo.png"
     },
+	    {
+        "pos_id": "b38bdd60ec73324ec7668236dd3f791dafbe8d1c8a939c124493ce4fbf11d801",
+        "logo": "KCS-logo.png"
+    },
     {
         "pos_id": "018f23b3fd60c28e12bd428296b98250394b44839d438b5022a9a20686ebd99d",
         "logo": "trinitylab-logo-256x256.png",
@@ -76,5 +80,9 @@
     {
         "pos_id": "769498f1056b10e0b8de10099b411e45e0357bdd3d8387ecaa25af5ead7b4970",
         "logo": "deer-hunter-logo-256x256.png"
-    }
+    },
+    {
+        "pos_id": "022cf57eb11e81c9909c3a154f1545eba10926a477c577b46ba9741637d367fb",
+        "logo": "PoS_Enq_EU-logo.png"
+    },
 ]
