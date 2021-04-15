@@ -20,6 +20,10 @@
         "tag":"PoS Challenge"
     },
     {
+        "account_id":"02abe27e83ce9b16a4783a2ad0db62328c9a725409aac5492474cf67a08e12c1f8",
+        "tag":"KuCoin"
+    },
+    {
         "account_id":"some_account_id",
         "tag":"some_account_tag"
     }
