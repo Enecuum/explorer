@@ -47,7 +47,11 @@
         "description": {
         },
         "coingecko_id": "nayuta-coin"             
-    },    
+    },   
+    {
+        "token_id":"dcc4c5b656f476930cb00de7ceaa6f3b7f819f9e0f84d63b5eeb1d8940de3ebb",
+        "logo": "BGF.jpg"    
+    },   
     {
         "token_id":"some-token-id",
         "website":"https://someTokenWebsite.com",
