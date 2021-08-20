@@ -334,5 +334,9 @@
     "REISSUABLE_PLURAL":"Нефиксированные",
     "MINEABLE_PLURAL":"Майнинговые",
     "ALL_PLURAL": "Все",    
-    "MINING_SLOT": "Майнинговый слот"
+    "MINING_SLOT": "Майнинговый слот",
+    "POOL_SWAP" : "Обмен",
+    "ASSET_IN" : "Из",
+    "ASSET_OUT" : "В",
+    "AMOUNT_IN" : "Количество"
 }

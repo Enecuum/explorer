@@ -355,5 +355,9 @@
     "REISSUABLE_PLURAL":"Reissuable",
     "MINEABLE_PLURAL":"Mineable",
     "ALL_PLURAL": "All",    
-    "MINING_SLOT": "Mining slot"
+    "MINING_SLOT": "Mining slot",
+    "POOL_SWAP" : "Swap",
+    "ASSET_IN" : "From",
+    "ASSET_OUT" : "To",
+    "AMOUNT_IN" : "Amount"
 }

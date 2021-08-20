@@ -1718,14 +1718,16 @@
             },
             getContractTypeTranslation : function(contractType, incorrectValue = '---') {
                 let contractTypes = {
-                    "create_token" :    "CREATE_TOKEN",
-                    "create_pos" :      "CREATE_POS_CONTRACT",
-                    "delegate" :        "DELEGATE",
-                    "undelegate" :      "UNDELEGATE",
-                    "transfer" :        "TRANSFER",
-                    "pos_reward" :      "CLAIM_REWARD",
-                    "mint" :            "MINT",
-                    "burn" :            "BURN"
+                    "create_token" : "CREATE_TOKEN",
+                    "create_pos"   : "CREATE_POS_CONTRACT",
+                    "delegate"     : "DELEGATE",
+                    "undelegate"   : "UNDELEGATE",
+                    "transfer"     : "TRANSFER",
+                    "pos_reward"   : "CLAIM_REWARD",
+                    "mint"         : "MINT",
+                    "burn"         : "BURN",
+                    "pool_swap"    : "POOL_SWAP"
+
                 };
                 if (contractTypes.hasOwnProperty(contractType)) {
                     return contractTypes[contractType];
@@ -1790,7 +1792,16 @@
             "pos_reward" :      "1100",
             "transfer" :        "1200",
             "mint" :            "1300",
-            "burn" :            "1400"
+            "burn" :            "1400",
+            "pool_create" :     "1500",
+            "pool_add_liquidity" :      "1600",
+            "pool_remove_liquidity" :   "1700",
+            "pool_swap" :               "1800",
+            "farm_create" :             "1900",
+            "farm_get_reward" :         "1a00",
+            "farm_increase_stake" :     "1b00",
+            "farm_close_stake" :        "1c00",
+            "farm_decrease_stake" :     "1d00"
         };
         return schema                
     });
@@ -4008,10 +4019,10 @@
             provider.account_transactions.get({id:$scope.account.id, page:page}, function(account_txs) {                                    
                 $scope.account.txs.records = account_txs.records;
                 if ($scope.account.txs.records !== undefined) {
-                    $scope.account.txs.records.forEach(function(record) {                               
+                    $scope.account.txs.records.forEach(function(record) {
                         record.time = dateTimeConverter.getTimestamp(record.time);
                         provider.token_info.query({hash:record.token_hash}, function(token_info) {
-                            record.token_decimals = token_info[0].decimals;
+                            record.token_decimals = token_info[0] !== undefined ? token_info[0].decimals : 0;
                         });
                     }); 
                     $scope.account.txs.page_count = account_txs.page_count;
@@ -4170,8 +4181,13 @@
                     },
                     pos_reward : {
                         paramsOrder: ["pos_id"],
-                        asToken: []                      
-                    }  
+                        asToken: []
+                    },
+                    pool_swap : {
+                        paramsOrder: ["asset_in", "amount_in", "asset_out"],
+                        asToken: ["amount_in"]                      
+                    },
+
             }
 
             $scope.dataFiledsList[txData.type].paramsOrder.forEach(function(param,index, array) {               
@@ -4220,6 +4236,20 @@
             } else if (txData.type === "create_pos") {
                 txData.parameters.fee = amountInUnits(txData.parameters.fee, 2, 2, '%');
             } //txData.type === "transfer" and txData.type === "pos_reward" processed at $scope.dataFiledsList[txData.type].paramsOrder.forEach...
+            else if (txData.type === "pool_swap") {
+                let token = {};
+                provider.token_info.query({hash:txData.parameters.asset_in}, function(token_info) {
+                    token.ticker = token_info[0].ticker;
+                    token.decimals = token_info[0].decimals;    
+                    $scope.dataFiledsList[txData.type].asToken.forEach(function(param) {
+                        txData.parameters[param] = amountInUnits(txData.parameters[param], token.decimals, token.decimals, token.ticker);
+                    });
+                    txData.parameters.asset_in = `${token.ticker} (${txData.parameters.asset_in})`;
+                });
+                provider.token_info.query({hash:txData.parameters.asset_out}, function(token_info) {
+                    txData.parameters.asset_out = `${token_info[0].ticker} (${txData.parameters.asset_out})`;
+                }); 
+            }
         }
     });
 
