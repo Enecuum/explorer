@@ -293,7 +293,6 @@
                         <div class="col-xl-6">
                             <div class="card">
                                 <div class="card-body">
-
                                     <a href="#!/page/0" class="btn btn-sm btn-link float-right">{{'VIEW_ALL' | translate}}
                                         
                                     </a>
@@ -4151,43 +4150,42 @@
 
         function prettifyTxData(txData) {
             $scope.dataFiledsList = {
-                    create_token : {
-                        paramsOrder: ["ticker", "name", "total_supply", "max_supply", "block_reward", "min_stake", "referrer_stake", "ref_share", "decimals", "fee_type", "fee_value", "fee_min"],
-                        asToken: ["total_supply", "max_supply", "block_reward", "min_stake", "referrer_stake"]
-                    },
-                    mint : {
-                        paramsOrder: ["amount"],
-                        asToken: ["amount"]
-                    },
-                    burn : {
-                        paramsOrder: ["amount"],
-                        asToken: ["amount"]
-                    },
-                    delegate : {
-                        paramsOrder: ["pos_id", "amount"],
-                        asToken: ["amount"]                      
-                    },
-                    undelegate : {
-                        paramsOrder: ["pos_id", "amount"],
-                        asToken: ["amount"]                      
-                    },
-                    create_pos : {
-                        paramsOrder: ["name", "fee"],
-                        asToken: []                      
-                    },
-                    transfer : {
-                        paramsOrder: ["undelegate_id"],
-                        asToken: []                      
-                    },
-                    pos_reward : {
-                        paramsOrder: ["pos_id"],
-                        asToken: []
-                    },
-                    pool_swap : {
-                        paramsOrder: ["asset_in", "amount_in", "asset_out"],
-                        asToken: ["amount_in"]                      
-                    },
-
+                create_token : {
+                    paramsOrder: ["ticker", "name", "total_supply", "max_supply", "block_reward", "min_stake", "referrer_stake", "ref_share", "decimals", "fee_type", "fee_value", "fee_min"],
+                    asToken: ["total_supply", "max_supply", "block_reward", "min_stake", "referrer_stake"]
+                },
+                mint : {
+                    paramsOrder: ["amount"],
+                    asToken: ["amount"]
+                },
+                burn : {
+                    paramsOrder: ["amount"],
+                    asToken: ["amount"]
+                },
+                delegate : {
+                    paramsOrder: ["pos_id", "amount"],
+                    asToken: ["amount"]                      
+                },
+                undelegate : {
+                    paramsOrder: ["pos_id", "amount"],
+                    asToken: ["amount"]                      
+                },
+                create_pos : {
+                    paramsOrder: ["name", "fee"],
+                    asToken: []                      
+                },
+                transfer : {
+                    paramsOrder: ["undelegate_id"],
+                    asToken: []                      
+                },
+                pos_reward : {
+                    paramsOrder: ["pos_id"],
+                    asToken: []
+                },
+                pool_swap : {
+                    paramsOrder: ["asset_in", "amount_in", "asset_out"],
+                    asToken: ["amount_in"]                      
+                }
             }
 
             $scope.dataFiledsList[txData.type].paramsOrder.forEach(function(param,index, array) {               
@@ -4235,7 +4233,7 @@
                 }, true);
             } else if (txData.type === "create_pos") {
                 txData.parameters.fee = amountInUnits(txData.parameters.fee, 2, 2, '%');
-            } //txData.type === "transfer" and txData.type === "pos_reward" processed at $scope.dataFiledsList[txData.type].paramsOrder.forEach...
+            }
             else if (txData.type === "pool_swap") {
                 let token = {};
                 provider.token_info.query({hash:txData.parameters.asset_in}, function(token_info) {
@@ -4244,12 +4242,13 @@
                     $scope.dataFiledsList[txData.type].asToken.forEach(function(param) {
                         txData.parameters[param] = amountInUnits(txData.parameters[param], token.decimals, token.decimals, token.ticker);
                     });
-                    txData.parameters.asset_in = `${token.ticker} (${txData.parameters.asset_in})`;
+                    txData.parameters.asset_in_ticker = token.ticker;
                 });
                 provider.token_info.query({hash:txData.parameters.asset_out}, function(token_info) {
-                    txData.parameters.asset_out = `${token_info[0].ticker} (${txData.parameters.asset_out})`;
-                }); 
-            }
+                    txData.parameters.asset_out_ticker = token_info[0].ticker;
+                });
+                $scope.txContractsTemplate = 'tx-swap-contract.html';
+            } //txData.type === "transfer" and txData.type === "pos_reward" processed at $scope.dataFiledsList[txData.type].paramsOrder.forEach...
         }
     });
 
