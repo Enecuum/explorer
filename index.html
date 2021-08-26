@@ -1506,7 +1506,278 @@
         return {
             getPOA_ROIs : getPOA_ROIs
         };                
-    });    
+    });
+
+    app.factory('contractFormatter', function ($translate, $filter, provider, contractSchemes, commonTools) {        
+
+        function getTxDataFormatter(contractScheme) {            
+            let formatters = {
+                create_token : function(txData, contractScheme) {
+                    contractScheme.paramsOrder.splice(2, 0, "token_type");                 
+                    txData.parameters.decimals = parseInt(txData.parameters.decimals);
+                    txData.parameters.token_type = commonTools.getTokenType(txData.parameters);
+                    let res = commonTools.getTokenFees(txData.parameters);
+                    txData.parameters.fee_type = $translate.instant(res.fee_type);
+                    txData.parameters.fee_value = res.fee_value;
+                    txData.parameters.fee_min = res.fee_min;
+                    txData.parameters.ref_share = amountInUnits(txData.parameters.ref_share, 2, 2, '%');
+                    contractScheme.asToken.forEach(function(param) {                   
+                        txData.parameters[param] = amountInUnits(txData.parameters[param], txData.parameters.decimals, txData.parameters.decimals, txData.parameters.ticker);
+                    });                    
+                },
+                create_pos : function(txData) {
+                    txData.parameters.fee = amountInUnits(txData.parameters.fee, 2, 2, '%');
+                },
+                delegateUndelegate : function(txData, contractScheme) {
+                    $scope.$watch('tx.token', function(newValue, oldValue) {
+                        if (newValue.ticker !== undefined && newValue.decimals !== null ) {
+                            contractScheme.asToken.forEach(function(param) {                 
+                                txData.parameters[param] = amountInUnits(txData.parameters[param], newValue.decimals, newValue.decimals, newValue.ticker);
+                            });                        
+                        }                    
+                    }, true);                    
+                },
+                mintBurn : function(txData, contractScheme) {
+                    let assetsList = {
+                        amount : 'token_hash' //Prop name - parameter in some token ('amount' as usually). Prop value - parameter in data, which is hash of this token (token_hash in this case).
+                    }
+                    populateListOfAmounts(txData, contractScheme, assetsList);                    
+                },
+                pool_create : function(txData, contractScheme) {
+                    let assetsList = {
+                        amount_1 : 'asset_1',
+                        amount_2 : 'asset_2'
+                    }
+                    populateListOfAmounts(txData, contractScheme, assetsList);                    
+                },
+                pool_add_liquidity : function(txData, contractScheme) {
+                    let assetsList = {
+                        amount_1 : 'asset_1',
+                        amount_2 : 'asset_2'
+                    }
+                    populateListOfAmounts(txData, contractScheme, assetsList);                    
+                },
+                pool_remove_liquidity : function(txData, contractScheme) {
+                    let assetsList = {
+                        amount : 'lt'
+                    }
+                    populateListOfAmounts(txData, contractScheme, assetsList);                   
+                },               
+                pool_swap : function(txData, contractScheme) {
+                    let assetsList = {
+                        amount_in : 'asset_in'
+                    }
+                    populateListOfAmounts(txData, contractScheme, assetsList);
+                    provider.token_info.query({hash:txData.parameters.asset_out}, function(token_info) {
+                        txData.parameters.asset_out_ticker = token_info[0].ticker;
+                    });                   
+                },
+                farm_create : function(txData, contractScheme) {
+                    let assetsList = {
+                        block_reward : 'reward_token',
+                        emission     : 'stake_token'
+                    }
+                    populateListOfAmounts(txData, contractScheme, assetsList);
+                },
+                farm_increase_stake : function(txData, contractScheme) {
+
+
+                },
+                farm_decrease_stake : function(txData, contractScheme) {
+                    
+
+                },
+                default : function(txData) {
+                    console.log(`default formatter for '${txData.type}' contract`);
+                }
+            }
+
+            return formatters.hasOwnProperty(contractScheme.formatAs) ? formatters[contractScheme.formatAs] : formatters.default
+        }
+
+        function populateListOfAmounts(txData, contractScheme, assetsList) {
+            contractScheme.asToken.forEach(function(param) {           
+                let token = {};
+                provider.token_info.query({hash:txData.parameters[assetsList[param]]}, function(token_info) {
+                    token.ticker = txData.parameters[`${assetsList[param]}_token_ticker`] = token_info[0].ticker;
+                    token.decimals = txData.parameters[`${assetsList[param]}_token_decimals`] = token_info[0].decimals;    
+                    txData.parameters[param] = amountInUnits(txData.parameters[param], token.decimals, token.decimals, token.ticker);
+                });
+            });
+        }
+
+        function filterIndefinedParams(txData, contractScheme) {
+            contractScheme.paramsOrder.forEach(function(param,index, array) {               
+                if (txData.parameters[param] === undefined || txData.parameters[param] === null) {
+                    array[index] = 'skip';
+                    txData.parameters[param] = '---';
+                    let tmpIndex = contractScheme.asToken.indexOf(param);
+                    if (tmpIndex !== -1)
+                        contractScheme.asToken.splice(tmpIndex,1);
+                }
+            });            
+        }
+
+        function amountInUnits(amount, decimals, toFixed, units) {
+            let result = null;
+            if (amount !== undefined && decimals !== undefined && toFixed !== undefined && units !== undefined) {
+                let unitsStr = (typeof amount === 'bigint' || !isNaN(amount) ? units : '');
+                result = $filter('US_COMMAS_BIGINT_DECIMALS')(amount, decimals, toFixed) +' '+ unitsStr;
+            }
+            return result;
+        }
+
+        function formatData(txData) {
+            
+            let contractScheme = contractSchemes.getScheme(txData.type);
+            filterIndefinedParams(txData, contractScheme);
+            let formatDataByScheme = getTxDataFormatter(contractScheme);
+            formatDataByScheme(txData, contractScheme);
+        }
+
+        return {
+            formatData : formatData
+        }
+    });
+
+    app.factory('contractSchemes', function () {
+        let contractsList = {
+            create_token : {
+                paramsOrder : ["ticker", "name", "total_supply", "max_supply", "block_reward", "min_stake", "referrer_stake", "ref_share", "decimals", "fee_type", "fee_value", "fee_min"],
+                asToken     : ["total_supply", "max_supply", "block_reward", "min_stake", "referrer_stake"],
+                formatAs    : 'create_token',
+                template    : 'tx-create-token-contract.html',
+                eindexer    : []
+            },
+            create_pos : {
+                paramsOrder : ["name", "fee"],
+                asToken     : [],
+                formatAs    : 'create_pos',
+                template    : 'default',
+                eindexer    : []
+            },
+            delegate : {
+                paramsOrder : ["pos_id", "amount"],
+                asToken     : ["amount"],
+                formatAs    : 'delegateUndelegate',
+                template    : 'default',
+                eindexer    : []
+            },
+            undelegate : {
+                paramsOrder : ["pos_id", "amount"],
+                asToken     : ["amount"],
+                formatAs    : 'delegateUndelegate',
+                template    : 'default',
+                eindexer    : []
+            },
+            transfer : {
+                paramsOrder : ["undelegate_id"],
+                asToken     : [],
+                formatAs    : 'default',
+                template    : 'default',
+                eindexer    : []
+            },
+            pos_reward : {
+                paramsOrder : ["pos_id"],
+                asToken     : [],
+                formatAs    : 'default',
+                template    : 'default',
+                eindexer    : []
+            },
+            mint : {
+                paramsOrder : ["amount"],
+                asToken     : ["amount"],
+                formatAs    : 'mintBurn',
+                template    : 'default',
+                eindexer    : []
+            },
+            burn : {
+                paramsOrder : ["amount"],
+                asToken     : ["amount"],
+                formatAs    : 'mintBurn',
+                template    : 'default',
+                eindexer    : []
+            },
+            pool_create : {
+                paramsOrder : ["asset_1", "amount_1", "asset_2", "amount_2"],
+                asToken     : ["amount_1", "amount_2"],
+                formatAs    : 'pool_create',
+                template    : 'default',
+                eindexer    : ["ipcreatelt"]
+            },
+            pool_add_liquidity : {
+                paramsOrder : ["asset_1", "amount_1", "asset_2", "amount_2"],
+                asToken     : ["amount_1", "amount_2"],
+                formatAs    : 'pool_add_liquidity',
+                template    : 'default',
+                eindexer    : ['iliqaddlt']
+            },
+            pool_remove_liquidity : {
+                paramsOrder : ["lt", "amount"],
+                asToken     : ["amount"],
+                formatAs    : 'pool_remove_liquidity',
+                template    : 'default',
+                eindexer    : ['iliqrmv1', 'iliqrmv2']
+            },
+            pool_swap : {
+                paramsOrder : ["asset_in", "amount_in", "asset_out"],
+                asToken     : ["amount_in"],
+                formatAs    : 'pool_swap',
+                template    : 'tx-swap-contract.html',
+                eindexer    : ['iswapout']
+            },
+            farm_create : {
+                paramsOrder : ["stake_token", "reward_token", "block_reward", "emission"],
+                asToken     : ["block_reward", "emission"],
+                formatAs    : 'farm_create',
+                template    : 'default',
+                eindexer    : []
+            },
+            farm_get_reward : {//////////////////////////////////////////////////////////////////////////////
+                paramsOrder : ["farm_id"],
+                asToken     : [],
+                formatAs    : 'default',
+                template    : 'default',
+                eindexer    : ['ifrew']
+            },
+            farm_increase_stake : {
+                paramsOrder : ["farm_id", "amount"],
+                asToken     : ["amount"],
+                formatAs    : 'farm_increase_stake',
+                template    : 'default',
+                eindexer    : []
+            },
+            farm_close_stake : {
+                paramsOrder : ["farm_id"],
+                asToken     : [],
+                formatAs    : 'default',
+                template    : 'default',
+                eindexer    : ['ifcloserew']
+            },
+            farm_decrease_stake : {
+                paramsOrder : ["farm_id", "amount"],
+                asToken     : ["amount"],
+                formatAs    : 'default',//'farm_decrease_stake',
+                template    : 'default',
+                eindexer    : ['ifdecrew']
+            },
+            unknown_contract : {
+                paramsOrder : [],
+                asToken     : [],
+                formatAs    : 'default',
+                template    : 'default',
+                eindexer    : []
+            }
+        }
+
+        function getScheme(contractName) {
+            return contractsList.hasOwnProperty(contractName) ? contractsList[contractName] : contractsList['unknown_contract'];            
+        }
+
+        return {
+            getScheme : getScheme
+        };                
+    });         
 
     let commasFormatter10Decimals = new Intl.NumberFormat("en-us", {
         useGrouping: 'true',
@@ -1717,16 +1988,24 @@
             },
             getContractTypeTranslation : function(contractType, incorrectValue = '---') {
                 let contractTypes = {
-                    "create_token" : "CREATE_TOKEN",
-                    "create_pos"   : "CREATE_POS_CONTRACT",
-                    "delegate"     : "DELEGATE",
-                    "undelegate"   : "UNDELEGATE",
-                    "transfer"     : "TRANSFER",
-                    "pos_reward"   : "CLAIM_REWARD",
-                    "mint"         : "MINT",
-                    "burn"         : "BURN",
-                    "pool_swap"    : "POOL_SWAP"
-
+                    "create_token"          : "CREATE_TOKEN",
+                    "create_pos"            : "CREATE_POS_CONTRACT",
+                    "delegate"              : "DELEGATE",
+                    "undelegate"            : "UNDELEGATE",
+                    "transfer"              : "TRANSFER",
+                    "pos_reward"            : "CLAIM_REWARD",
+                    "mint"                  : "MINT",
+                    "burn"                  : "BURN",
+                    "pool_create"           : "POOL_CREATE",
+                    "pool_add_liquidity"    : "POOL_ADD_LIQUIDITY",
+                    "pool_remove_liquidity" : "POOL_REMOVE_LIQUIDITY",
+                    "pool_swap"             : "POOL_SWAP",
+                    "farm_create"           : "FARM_CREATE",
+                    "farm_get_reward"       : "FARM_GET_REWARD",
+                    "farm_increase_stake"   : "FARM_INCREASE_STAKE",
+                    "farm_close_stake"      : "FARM_CLOSE_STAKE",
+                    "farm_decrease_stake"   : "FARM_DECREASE_STAKE",
+                    "unknown_contract"      : "UNKNOWN_CONTRACT"
                 };
                 if (contractTypes.hasOwnProperty(contractType)) {
                     return contractTypes[contractType];
@@ -4112,7 +4391,7 @@
         }  
 	});
 
-	app.controller('transactionCtrl', function($scope, $routeParams, $translate, $filter, provider, schema, commonTools, txParser) {
+	app.controller('transactionCtrl', function($scope, $routeParams, $translate, $filter, provider, schema, commonTools, txParser, contractSchemes, contractFormatter) {
         $scope.showParams = false;
         let defaultValue = '---';
         $scope.txDataInit = defaultValue;
@@ -4131,124 +4410,99 @@
                             $scope.showContractParams = true;
                             $scope.txDataInit = txParser.parse(tx.data, txSchema, contract_pricelist);
                             $scope.txData = txParser.parse(tx.data, txSchema, contract_pricelist);
+                            $scope.contractScheme = contractSchemes.getScheme($scope.txData.type);
+                            getEIndexData($scope.txData, $scope.contractScheme);
                             prettifyTxData($scope.txData);
+                            console.log($scope.txData)
                         } 
                     });
                 });                
             }
         });
 
-        function amountInUnits(amount, decimals, toFixed, units) {
-            let result = null;
-            if (amount !== undefined && decimals !== undefined && toFixed !== undefined && units !== undefined) {
-                let unitsStr = (typeof amount === 'bigint' || !isNaN(amount) ? units : '');
-                result = $filter('US_COMMAS_BIGINT_DECIMALS')(amount, decimals, toFixed) +' '+ unitsStr;
-            }
-            return result;
+        // function amountInUnits(amount, decimals, toFixed, units) {
+        //     let result = null;
+        //     if (amount !== undefined && decimals !== undefined && toFixed !== undefined && units !== undefined) {
+        //         let unitsStr = (typeof amount === 'bigint' || !isNaN(amount) ? units : '');
+        //         result = $filter('US_COMMAS_BIGINT_DECIMALS')(amount, decimals, toFixed) +' '+ unitsStr;
+        //     }
+        //     return result;
+        // }
+        function getEIndexData(data, contractScheme) {
+
         }
 
-
         function prettifyTxData(txData) {
-            $scope.dataFiledsList = {
-                create_token : {
-                    paramsOrder: ["ticker", "name", "total_supply", "max_supply", "block_reward", "min_stake", "referrer_stake", "ref_share", "decimals", "fee_type", "fee_value", "fee_min"],
-                    asToken: ["total_supply", "max_supply", "block_reward", "min_stake", "referrer_stake"]
-                },
-                mint : {
-                    paramsOrder: ["amount"],
-                    asToken: ["amount"]
-                },
-                burn : {
-                    paramsOrder: ["amount"],
-                    asToken: ["amount"]
-                },
-                delegate : {
-                    paramsOrder: ["pos_id", "amount"],
-                    asToken: ["amount"]                      
-                },
-                undelegate : {
-                    paramsOrder: ["pos_id", "amount"],
-                    asToken: ["amount"]                      
-                },
-                create_pos : {
-                    paramsOrder: ["name", "fee"],
-                    asToken: []                      
-                },
-                transfer : {
-                    paramsOrder: ["undelegate_id"],
-                    asToken: []                      
-                },
-                pos_reward : {
-                    paramsOrder: ["pos_id"],
-                    asToken: []
-                },
-                pool_swap : {
-                    paramsOrder: ["asset_in", "amount_in", "asset_out"],
-                    asToken: ["amount_in"]                      
-                }
-            }
+            
+            $scope.txContractsTemplate = $scope.contractScheme.template;
+            contractFormatter.formatData($scope.txData);
 
-            $scope.dataFiledsList[txData.type].paramsOrder.forEach(function(param,index, array) {               
-                if (txData.parameters[param] === undefined || txData.parameters[param] === null) {
-                    array[index] = 'skip';
-                    txData.parameters[param] = defaultValue;
-                    let tmpIndex = $scope.dataFiledsList[txData.type].asToken.indexOf(param);
-                    if (tmpIndex !== -1)
-                        $scope.dataFiledsList[txData.type].asToken.splice(tmpIndex,1);
-                }
-            });
+            $scope.txContractsTemplate = $scope.contractScheme.template !== 'default' ? $scope.contractScheme.template : 'tx-default-contract.html';
 
-            $scope.txContractsTemplate = 'tx-default-contract.html';
+            //$scope.contractScheme = getDisplayScheme(txData.type);
 
-            if (txData.type === "create_token") {
-                $scope.dataFiledsList[txData.type].paramsOrder.splice(2,0,"token_type");                 
-                txData.parameters.decimals = parseInt(txData.parameters.decimals);
-                txData.parameters.token_type = commonTools.getTokenType(txData.parameters);
-                let res = commonTools.getTokenFees(txData.parameters);
-                txData.parameters.fee_type = $translate.instant(res.fee_type);
-                txData.parameters.fee_value = res.fee_value;
-                txData.parameters.fee_min = res.fee_min;
-                txData.parameters.ref_share = amountInUnits(txData.parameters.ref_share, 2, 2, '%');                
-                $scope.dataFiledsList[txData.type].asToken.forEach(function(param) {                   
-                    txData.parameters[param] = amountInUnits(txData.parameters[param], txData.parameters.decimals, txData.parameters.decimals, txData.parameters.ticker);
-                });
+            // $scope.contractScheme.paramsOrder.forEach(function(param,index, array) {               
+            //     if (txData.parameters[param] === undefined || txData.parameters[param] === null) {
+            //         array[index] = 'skip';
+            //         txData.parameters[param] = defaultValue;
+            //         let tmpIndex = $scope.contractScheme.asToken.indexOf(param);
+            //         if (tmpIndex !== -1)
+            //             $scope.contractScheme.asToken.splice(tmpIndex,1);
+            //     }
+            // });
 
-                $scope.txContractsTemplate = 'tx-create-token-contract.html';
-            } else if (txData.type === "mint" || txData.type === "burn") {
-                let token = {};
-                provider.token_info.query({hash:txData.parameters.token_hash}, function(token_info) {
-                    token.ticker = token_info[0].ticker;
-                    token.decimals =  token_info[0].decimals;    
-                    $scope.dataFiledsList[txData.type].asToken.forEach(function(param) {
-                        txData.parameters[param] = amountInUnits(txData.parameters[param], token.decimals, token.decimals, token.ticker);
-                    });
-                });                
-            } else if (txData.type === "delegate" || txData.type === "undelegate") {
-                $scope.$watch('tx.token', function(newValue, oldValue) {
-                    if (newValue.ticker !== undefined && newValue.decimals !== null ) {
-                        $scope.dataFiledsList[txData.type].asToken.forEach(function(param) {                 
-                            txData.parameters[param] = amountInUnits(txData.parameters[param], newValue.decimals, newValue.decimals, newValue.ticker);
-                        });                        
-                    }                    
-                }, true);
-            } else if (txData.type === "create_pos") {
-                txData.parameters.fee = amountInUnits(txData.parameters.fee, 2, 2, '%');
-            }
-            else if (txData.type === "pool_swap") {
-                let token = {};
-                provider.token_info.query({hash:txData.parameters.asset_in}, function(token_info) {
-                    token.ticker = token_info[0].ticker;
-                    token.decimals = token_info[0].decimals;    
-                    $scope.dataFiledsList[txData.type].asToken.forEach(function(param) {
-                        txData.parameters[param] = amountInUnits(txData.parameters[param], token.decimals, token.decimals, token.ticker);
-                    });
-                    txData.parameters.asset_in_ticker = token.ticker;
-                });
-                provider.token_info.query({hash:txData.parameters.asset_out}, function(token_info) {
-                    txData.parameters.asset_out_ticker = token_info[0].ticker;
-                });
-                $scope.txContractsTemplate = 'tx-swap-contract.html';
-            } //txData.type === "transfer" and txData.type === "pos_reward" processed at $scope.dataFiledsList[txData.type].paramsOrder.forEach...
+
+
+            // //$scope.txContractsTemplate = 'tx-default-contract.html';
+
+            //  if (txData.type === "create_token") {
+            // //     $scope.dataFiledsList[txData.type].paramsOrder.splice(2,0,"token_type");                 
+            // //     txData.parameters.decimals = parseInt(txData.parameters.decimals);
+            // //     txData.parameters.token_type = commonTools.getTokenType(txData.parameters);
+            // //     let res = commonTools.getTokenFees(txData.parameters);
+            // //     txData.parameters.fee_type = $translate.instant(res.fee_type);
+            // //     txData.parameters.fee_value = res.fee_value;
+            // //     txData.parameters.fee_min = res.fee_min;
+            // //     txData.parameters.ref_share = amountInUnits(txData.parameters.ref_share, 2, 2, '%');                
+            // //     $scope.dataFiledsList[txData.type].asToken.forEach(function(param) {                   
+            // //         txData.parameters[param] = amountInUnits(txData.parameters[param], txData.parameters.decimals, txData.parameters.decimals, txData.parameters.ticker);
+            // //     });
+
+            //     $scope.txContractsTemplate = 'tx-create-token-contract.html';
+            // } else if (txData.type === "mint" || txData.type === "burn") {
+            //     // let token = {};
+            //     // provider.token_info.query({hash:txData.parameters.token_hash}, function(token_info) {
+            //     //     token.ticker = token_info[0].ticker;
+            //     //     token.decimals =  token_info[0].decimals;    
+            //     //     $scope.dataFiledsList[txData.type].asToken.forEach(function(param) {
+            //     //         txData.parameters[param] = amountInUnits(txData.parameters[param], token.decimals, token.decimals, token.ticker);
+            //     //     });
+            //     // });                
+            // } else if (txData.type === "delegate" || txData.type === "undelegate") {
+            //     // $scope.$watch('tx.token', function(newValue, oldValue) {
+            //     //     if (newValue.ticker !== undefined && newValue.decimals !== null ) {
+            //     //         $scope.dataFiledsList[txData.type].asToken.forEach(function(param) {                 
+            //     //             txData.parameters[param] = amountInUnits(txData.parameters[param], newValue.decimals, newValue.decimals, newValue.ticker);
+            //     //         });                        
+            //     //     }                    
+            //     // }, true);
+            // } else if (txData.type === "create_pos") {
+            //     // txData.parameters.fee = amountInUnits(txData.parameters.fee, 2, 2, '%');
+            // } else if (txData.type === "pool_swap") {
+            //     // let token = {};
+            //     // provider.token_info.query({hash:txData.parameters.asset_in}, function(token_info) {
+            //     //     token.ticker = token_info[0].ticker;
+            //     //     token.decimals = token_info[0].decimals;    
+            //     //     $scope.dataFiledsList[txData.type].asToken.forEach(function(param) {
+            //     //         txData.parameters[param] = amountInUnits(txData.parameters[param], token.decimals, token.decimals, token.ticker);
+            //     //     });
+            //     //     txData.parameters.asset_in_ticker = token.ticker;
+            //     // });
+            //     // provider.token_info.query({hash:txData.parameters.asset_out}, function(token_info) {
+            //     //     txData.parameters.asset_out_ticker = token_info[0].ticker;
+            //     // });
+            //     $scope.txContractsTemplate = 'tx-swap-contract.html';
+            // } //txData.type === "transfer" and txData.type === "pos_reward" processed at $scope.dataFiledsList[txData.type].paramsOrder.forEach...
         }
     });
 
