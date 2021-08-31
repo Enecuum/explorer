@@ -508,6 +508,7 @@
                                             </div>
                                         </td> 
                                     </tr>
+                                    <tr ng-include="'views/partials/contracts-tx/' + txEIndexDataTemplate"></tr>
                                     <tr ng-if="showContractParams">
                                         <td>{{'PARAMS' | translate}}</td>
                                         <td class="overflow-hidden">
@@ -1548,20 +1549,29 @@
                         amount_1 : 'asset_1',
                         amount_2 : 'asset_2'
                     }
-                    populateListOfAmounts(txData, contractScheme, assetsList);                    
+                    populateListOfAmounts(txData, contractScheme, assetsList);
+                    populatePoolToken(txData);                    
+                },
+                farmGetRewardCloseStake : function() {
+                    provider.get_dex_farms.query({farms: txData.parameters.farm_id}, function(farmDataArr) {
+                        let farmData = farmDataArr[0];
+                        populateFarmsTokensData(txData, farmData);                                 
+                    });
                 },
                 pool_add_liquidity : function(txData, contractScheme) {
                     let assetsList = {
                         amount_1 : 'asset_1',
                         amount_2 : 'asset_2'
                     }
-                    populateListOfAmounts(txData, contractScheme, assetsList);                    
+                    populateListOfAmounts(txData, contractScheme, assetsList);
+                    populatePoolToken(txData);                    
                 },
                 pool_remove_liquidity : function(txData, contractScheme) {
                     let assetsList = {
                         amount : 'lt'
                     }
-                    populateListOfAmounts(txData, contractScheme, assetsList);                   
+                    populateListOfAmounts(txData, contractScheme, assetsList);
+                    populateAssets(txData);
                 },               
                 pool_swap : function(txData, contractScheme) {
                     let assetsList = {
@@ -1579,13 +1589,12 @@
                     }
                     populateListOfAmounts(txData, contractScheme, assetsList);
                 },
-                farm_increase_stake : function(txData, contractScheme) {
-
-
-                },
-                farm_decrease_stake : function(txData, contractScheme) {
-                    
-
+                increaseDecreaseStake : function(txData) {
+                    provider.get_dex_farms.query({farms: txData.parameters.farm_id}, function(farmDataArr) {
+                        let farmData = farmDataArr[0];
+                        populateFarmsTokensData(txData, farmData);
+                        txData.parameters.amount = amountInUnits(txData.parameters.amount, farmData.stake_token_decimals, farmData.stake_token_decimals, farmData.stake_token_name);         
+                    });
                 },
                 default : function(txData) {
                     console.log(`default formatter for '${txData.type}' contract`);
@@ -1593,6 +1602,61 @@
             }
 
             return formatters.hasOwnProperty(contractScheme.formatAs) ? formatters[contractScheme.formatAs] : formatters.default
+        }
+
+        function populateFarmsTokensData(txData, farmData) {
+            txData.parameters.stake_token = {
+                ticker : farmData.stake_token_name,
+                decimals : farmData.stake_token_decimals,
+                hash : farmData.stake_token_hash
+            };
+            txData.parameters.reward_token = {
+                ticker : farmData.reward_token_name,
+                decimals : farmData.reward_token_decimals,
+                hash : farmData.reward_token_hash
+            };
+        }
+
+        function populateAssets(txData) {
+            let lt = txData.parameters.lt; 
+            provider.get_dex_pools.query(function(dexPooolsArr) {
+                let poolByLt = dexPooolsArr.find(elem => elem.token_hash === lt);
+                if (poolByLt !== undefined) {
+                    txData.parameters.poolAssets = {
+                        asset_1 : {
+                            hash : poolByLt.asset_1
+                        },
+                        asset_2 : {
+                            hash : poolByLt.asset_2
+                        }
+                    }
+
+                    Object.keys(txData.parameters.poolAssets).forEach(function(elem) {
+                        if (elem === 'asset_1' || elem === 'asset_2') {
+                            provider.token_info.query({hash:txData.parameters.poolAssets[elem].hash}, function(token_info) {
+                                txData.parameters.poolAssets[elem].decimals = token_info[0].decimals;
+                                txData.parameters.poolAssets[elem].ticker = token_info[0].ticker;
+                            });
+                        }
+                    });                    
+                }
+            });            
+        }
+
+        function populatePoolToken(txData) {
+            let pairId = `${txData.parameters.asset_1}${txData.parameters.asset_1}`;
+            provider.get_dex_pools.query(function(dexPooolsArr) {
+                let poolByPair = dexPooolsArr.find(elem => elem.pair_id === pairId);
+                if (poolByPair !== undefined) {
+                    txData.parameters.poolToken = {
+                        hash : poolByPair.token_hash
+                    }
+                    provider.token_info.query({hash:txData.parameters[assetsList[param]]}, function(token_info) {
+                        txData.parameters.poolToken.decimals = token_info[0].decimals;
+                        txData.parameters.poolToken.ticker = token_info[0].ticker;
+                    });                    
+                }
+            });
         }
 
         function populateListOfAmounts(txData, contractScheme, assetsList) {
@@ -1606,7 +1670,7 @@
             });
         }
 
-        function filterIndefinedParams(txData, contractScheme) {
+        function filterUndefinedParams(txData, contractScheme) {
             contractScheme.paramsOrder.forEach(function(param,index, array) {               
                 if (txData.parameters[param] === undefined || txData.parameters[param] === null) {
                     array[index] = 'skip';
@@ -1627,10 +1691,9 @@
             return result;
         }
 
-        function formatData(txData) {
-            
+        function formatData(txData) {            
             let contractScheme = contractSchemes.getScheme(txData.type);
-            filterIndefinedParams(txData, contractScheme);
+            filterUndefinedParams(txData, contractScheme);
             let formatDataByScheme = getTxDataFormatter(contractScheme);
             formatDataByScheme(txData, contractScheme);
         }
@@ -1646,7 +1709,7 @@
                 paramsOrder : ["ticker", "name", "total_supply", "max_supply", "block_reward", "min_stake", "referrer_stake", "ref_share", "decimals", "fee_type", "fee_value", "fee_min"],
                 asToken     : ["total_supply", "max_supply", "block_reward", "min_stake", "referrer_stake"],
                 formatAs    : 'create_token',
-                template    : 'tx-create-token-contract.html',
+                template    : 'tx-create-token-contract',
                 eindexer    : []
             },
             create_pos : {
@@ -1703,7 +1766,8 @@
                 asToken     : ["amount_1", "amount_2"],
                 formatAs    : 'pool_create',
                 template    : 'default',
-                eindexer    : ["ipcreatelt"]
+                eindexer    : ["ipcreatelt"],
+                eindexerTemlate : 'tx-pool-create-contract-eindexer' 
             },
             pool_add_liquidity : {
                 paramsOrder : ["asset_1", "amount_1", "asset_2", "amount_2"],
@@ -1723,7 +1787,7 @@
                 paramsOrder : ["asset_in", "amount_in", "asset_out"],
                 asToken     : ["amount_in"],
                 formatAs    : 'pool_swap',
-                template    : 'tx-swap-contract.html',
+                template    : 'tx-swap-contract',
                 eindexer    : ['iswapout']
             },
             farm_create : {
@@ -1733,31 +1797,31 @@
                 template    : 'default',
                 eindexer    : []
             },
-            farm_get_reward : {//////////////////////////////////////////////////////////////////////////////
+            farm_get_reward : {
                 paramsOrder : ["farm_id"],
                 asToken     : [],
-                formatAs    : 'default',
+                formatAs    : 'farmGetRewardCloseStake',
                 template    : 'default',
                 eindexer    : ['ifrew']
             },
             farm_increase_stake : {
                 paramsOrder : ["farm_id", "amount"],
                 asToken     : ["amount"],
-                formatAs    : 'farm_increase_stake',
+                formatAs    : 'increaseDecreaseStake',
                 template    : 'default',
                 eindexer    : []
             },
             farm_close_stake : {
                 paramsOrder : ["farm_id"],
                 asToken     : [],
-                formatAs    : 'default',
+                formatAs    : 'farmGetRewardCloseStake',
                 template    : 'default',
                 eindexer    : ['ifcloserew']
             },
             farm_decrease_stake : {
                 paramsOrder : ["farm_id", "amount"],
                 asToken     : ["amount"],
-                formatAs    : 'default',//'farm_decrease_stake',
+                formatAs    : 'increaseDecreaseStake',
                 template    : 'default',
                 eindexer    : ['ifdecrew']
             },
@@ -2013,18 +2077,21 @@
                     return incorrectValue;
             },        
             getTokenType: function(token) {
-                let minEable = token.minable;
                 let tokenType = '---';
-                if (minEable === 1 && token.reissuable === 0)
-                    tokenType = 'Mineable';
-                else if (minEable === 0 && token.reissuable === 0)
-                    tokenType = "Non-reissuable";
-                else if (minEable === 0 && token.reissuable === 1) 
-                    tokenType = "Reissuable";
-                else if (minEable === undefined) {
-                    tokenType = token.reissuable === 0 ? "Non-reissuable" : token.reissuable === 1 ? "Reissuable" : tokenType;
-                } else if (token.reissuable === undefined) {
-                    tokenType = minEable === 1 ? "Mineable" :  tokenType;
+                if (token !== undefined) {
+                    let minEable = token.minable;
+                    
+                    if (minEable === 1 && token.reissuable === 0)
+                        tokenType = 'Mineable';
+                    else if (minEable === 0 && token.reissuable === 0)
+                        tokenType = "Non-reissuable";
+                    else if (minEable === 0 && token.reissuable === 1) 
+                        tokenType = "Reissuable";
+                    else if (minEable === undefined) {
+                        tokenType = token.reissuable === 0 ? "Non-reissuable" : token.reissuable === 1 ? "Reissuable" : tokenType;
+                    } else if (token.reissuable === undefined) {
+                        tokenType = minEable === 1 ? "Mineable" :  tokenType;
+                    }                    
                 }
 
                 return tokenType;
@@ -2223,7 +2290,10 @@
             get_pos_active_total_stake : $resource('/api/v1/get_pos_active_total_stake'),
             account_transactions : $resource('api/v1/account_transactions?id=:id&page=:page', {id:'@id', page:'@page'}),
             account_rewards : $resource('api/v1/account_rewards?id=:id&page=:page', {id:'@id', page:'@page'}),
-            contract_pricelist : $resource('/api/v1/contract_pricelist')
+            contract_pricelist : $resource('/api/v1/contract_pricelist'),
+            eindex_by_hash : $resource('api/v1/eindex_by_hash?hash=:hash', {hash:'@hash'}),
+            get_dex_farms : $resource('api/v1/get_dex_farms?farmer_id=:farmer_id&farms=:farms', {farmer_id:'@farmer_id', page:'@farms'}, {query: {method: 'GET', isArray: true}}),
+            get_dex_pools : $resource('api/v1/get_dex_pools', {query: {method: 'GET', isArray: true}})
 		};
 	});
 
@@ -2271,7 +2341,6 @@
     	//TODO: search should be performed by client
 	    $scope.on_search = function () {
             console.log('search ', $scope.search_value);
-
 		    $http({method: 'GET', url: `api/v1/search?value=`+$scope.search_value}).
 		    then(function (response) {
 		    	if (response.data.type === 'kblock'){
@@ -2284,7 +2353,9 @@
 				    $location.path(`/tx/${response.data.link}`);
 			    } else if (response.data.type === 'account'){
 				    $location.path(`/account/${response.data.link}`);
-			    }
+			    }  else if (response.data.type === 'token'){
+                    $location.path(`/token/${response.data.link}`);
+                }
 		    });
 	    };
         $scope.ls = langService;
@@ -3386,7 +3457,9 @@
         $scope.showMiningFeatures = false;
         $scope.currencyExchange = currencyExchange;
         provider.token_info.query({hash:$routeParams.hash}, function(token_info) {
-            $scope.token = token_info[0];
+            $scope.token = token_info[0] !== undefined ? token_info[0] : {};
+            if ($scope.token === undefined)
+                console.log('No such token');
             $scope.token.type = commonTools.getTokenType($scope.token);
             $scope.tokenTypeBadgeClass = getTokenTypeBadgeClass($scope.token.type);
             $scope.tokenDescriptionText = undefined;
@@ -3565,11 +3638,18 @@
             });
 
             $scope.blocksToBeMined = $scope.token.block_reward > 0 ? Math.floor(($scope.token.max_supply - $scope.token.total_supply)/$scope.token.block_reward) : '---';
+            if ($scope.token.hasOwnProperty('owner') && $scope.token.hasOwnProperty('hash')) {
+                commonTools.genQR('#qrTokenOwnerCode', $scope.token.owner);
+                commonTools.genQR('#qrTokenIDCode', $scope.token.hash);                
+            }
 
-            commonTools.genQR('#qrTokenOwnerCode', $scope.token.owner);
-            commonTools.genQR('#qrTokenIDCode', $scope.token.hash);
             provider.get_tickers_all.query(function(tickers_all) {
                 let ticker = tickers_all.find(function(ticker) {return (ticker.hash === $scope.token.hash) ? true : false;});
+                if (ticker === undefined)
+                    ticker = {
+                        ticker  : '',
+                        caption : ''
+                    }
                 $scope.token.ticker = ticker.ticker;
                 $scope.token.caption = ticker.caption;
                 let feesObject = commonTools.getTokenFees($scope.token);
@@ -4395,6 +4475,7 @@
         $scope.showParams = false;
         let defaultValue = '---';
         $scope.txDataInit = defaultValue;
+        $scope.txEIndexData = {};
         provider.transaction.get({hash:$routeParams.hash}, function(tx) {            
             if (tx.hash !== undefined) {
                 $scope.tx = tx;
@@ -4411,98 +4492,33 @@
                             $scope.txDataInit = txParser.parse(tx.data, txSchema, contract_pricelist);
                             $scope.txData = txParser.parse(tx.data, txSchema, contract_pricelist);
                             $scope.contractScheme = contractSchemes.getScheme($scope.txData.type);
-                            getEIndexData($scope.txData, $scope.contractScheme);
                             prettifyTxData($scope.txData);
-                            console.log($scope.txData)
+                            if ($scope.tx.status !== 2 && $scope.contractScheme.eindexer.length > 0) {
+                                getEIndexData($scope.txData, $scope.contractScheme);
+                            }
+                                                      
                         } 
                     });
                 });                
             }
         });
 
-        // function amountInUnits(amount, decimals, toFixed, units) {
-        //     let result = null;
-        //     if (amount !== undefined && decimals !== undefined && toFixed !== undefined && units !== undefined) {
-        //         let unitsStr = (typeof amount === 'bigint' || !isNaN(amount) ? units : '');
-        //         result = $filter('US_COMMAS_BIGINT_DECIMALS')(amount, decimals, toFixed) +' '+ unitsStr;
-        //     }
-        //     return result;
-        // }
         function getEIndexData(data, contractScheme) {
-
+            provider.eindex_by_hash.query({hash:$scope.tx.hash}, function(eindexPropsArr) {
+                contractScheme.eindexer.forEach(function(eindexProp) {
+                    let eindexDataByProp = eindexPropsArr.find(element => element.hasOwnProperty('rectype') && element.rectype === eindexProp);
+                    if (eindexDataByProp !== undefined) {
+                        $scope.txEIndexData[eindexProp] = eindexDataByProp.value;                       
+                    }
+                });                
+                $scope.txEIndexDataTemplate = `${$scope.contractScheme.eindexerTemlate}.html`;
+            });
         }
 
-        function prettifyTxData(txData) {
-            
-            $scope.txContractsTemplate = $scope.contractScheme.template;
+        function prettifyTxData(txData) {            
+            $scope.txContractsTemplate = $scope.contractScheme.template;            
+            $scope.txContractsTemplate = $scope.contractScheme.template !== 'default' ? `${$scope.contractScheme.template}.html` : 'tx-default-contract.html';
             contractFormatter.formatData($scope.txData);
-
-            $scope.txContractsTemplate = $scope.contractScheme.template !== 'default' ? $scope.contractScheme.template : 'tx-default-contract.html';
-
-            //$scope.contractScheme = getDisplayScheme(txData.type);
-
-            // $scope.contractScheme.paramsOrder.forEach(function(param,index, array) {               
-            //     if (txData.parameters[param] === undefined || txData.parameters[param] === null) {
-            //         array[index] = 'skip';
-            //         txData.parameters[param] = defaultValue;
-            //         let tmpIndex = $scope.contractScheme.asToken.indexOf(param);
-            //         if (tmpIndex !== -1)
-            //             $scope.contractScheme.asToken.splice(tmpIndex,1);
-            //     }
-            // });
-
-
-
-            // //$scope.txContractsTemplate = 'tx-default-contract.html';
-
-            //  if (txData.type === "create_token") {
-            // //     $scope.dataFiledsList[txData.type].paramsOrder.splice(2,0,"token_type");                 
-            // //     txData.parameters.decimals = parseInt(txData.parameters.decimals);
-            // //     txData.parameters.token_type = commonTools.getTokenType(txData.parameters);
-            // //     let res = commonTools.getTokenFees(txData.parameters);
-            // //     txData.parameters.fee_type = $translate.instant(res.fee_type);
-            // //     txData.parameters.fee_value = res.fee_value;
-            // //     txData.parameters.fee_min = res.fee_min;
-            // //     txData.parameters.ref_share = amountInUnits(txData.parameters.ref_share, 2, 2, '%');                
-            // //     $scope.dataFiledsList[txData.type].asToken.forEach(function(param) {                   
-            // //         txData.parameters[param] = amountInUnits(txData.parameters[param], txData.parameters.decimals, txData.parameters.decimals, txData.parameters.ticker);
-            // //     });
-
-            //     $scope.txContractsTemplate = 'tx-create-token-contract.html';
-            // } else if (txData.type === "mint" || txData.type === "burn") {
-            //     // let token = {};
-            //     // provider.token_info.query({hash:txData.parameters.token_hash}, function(token_info) {
-            //     //     token.ticker = token_info[0].ticker;
-            //     //     token.decimals =  token_info[0].decimals;    
-            //     //     $scope.dataFiledsList[txData.type].asToken.forEach(function(param) {
-            //     //         txData.parameters[param] = amountInUnits(txData.parameters[param], token.decimals, token.decimals, token.ticker);
-            //     //     });
-            //     // });                
-            // } else if (txData.type === "delegate" || txData.type === "undelegate") {
-            //     // $scope.$watch('tx.token', function(newValue, oldValue) {
-            //     //     if (newValue.ticker !== undefined && newValue.decimals !== null ) {
-            //     //         $scope.dataFiledsList[txData.type].asToken.forEach(function(param) {                 
-            //     //             txData.parameters[param] = amountInUnits(txData.parameters[param], newValue.decimals, newValue.decimals, newValue.ticker);
-            //     //         });                        
-            //     //     }                    
-            //     // }, true);
-            // } else if (txData.type === "create_pos") {
-            //     // txData.parameters.fee = amountInUnits(txData.parameters.fee, 2, 2, '%');
-            // } else if (txData.type === "pool_swap") {
-            //     // let token = {};
-            //     // provider.token_info.query({hash:txData.parameters.asset_in}, function(token_info) {
-            //     //     token.ticker = token_info[0].ticker;
-            //     //     token.decimals = token_info[0].decimals;    
-            //     //     $scope.dataFiledsList[txData.type].asToken.forEach(function(param) {
-            //     //         txData.parameters[param] = amountInUnits(txData.parameters[param], token.decimals, token.decimals, token.ticker);
-            //     //     });
-            //     //     txData.parameters.asset_in_ticker = token.ticker;
-            //     // });
-            //     // provider.token_info.query({hash:txData.parameters.asset_out}, function(token_info) {
-            //     //     txData.parameters.asset_out_ticker = token_info[0].ticker;
-            //     // });
-            //     $scope.txContractsTemplate = 'tx-swap-contract.html';
-            // } //txData.type === "transfer" and txData.type === "pos_reward" processed at $scope.dataFiledsList[txData.type].paramsOrder.forEach...
         }
     });
 
