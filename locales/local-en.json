@@ -359,5 +359,21 @@
     "POOL_SWAP" : "Swap",
     "ASSET_IN" : "From",
     "ASSET_OUT" : "To",
-    "AMOUNT_IN" : "Amount"
+    "AMOUNT_IN" : "Amount",
+    "POOL_CREATE" : "Create pool",
+    "ASSET_1" : "Asset 1",
+    "ASSET_2" : "Asset 2",
+    "AMOUNT_1" : "Amount 1",
+    "AMOUNT_2" : "Amount 2",
+    "LP_TOKENS_RECEIVED" : "LP tokens received",
+    "TOKENS_RECEIVED" : "Tokens received",
+    "POOL_ADD_LIQUIDITY" : "Add liquidity",
+    "POOL_REMOVE_LIQUIDITY" : "Remove liquidity",
+    "FARM_CREATE" : "Create farm",
+    "FARM_DECREASE_STAKE" : "Decrease stake",
+    "FARM_ID" : "Farm ID",
+    "STAKE_TOKEN" : "Stake token",
+    "REWARD_TOKEN" : "Reward token",
+    "EMISSION" : "Emission",
+    "ADDITIONAL_DATA" : "Additional data"
 }

@@ -1,0 +1,11 @@
+<table class="table table-sm tx-data-table no-border mb-0" ng-init="rewardToken=txData.parameters.reward_token">
+    <tbody>
+        <tr>
+            <th class="pr-md-3">{{'REWARD' | translate}}</th>
+            <td class="fit">
+                {{txEIndexData[contractScheme.eindexer[0]] | US_COMMAS_BIGINT_DECIMALS : rewardToken.decimals : rewardToken.decimals}}
+                <a ng-href="/#!/token/{{rewardToken.hash}}" target="_blank">{{rewardToken.ticker}}</a>        	
+            </td>
+        </tr>
+    </tbody>    
+</table>

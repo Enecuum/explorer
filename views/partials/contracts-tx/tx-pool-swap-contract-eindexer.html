@@ -1,0 +1,13 @@
+<table class="table table-sm tx-data-table no-border mb-0" ng-init="assetsInfo=txData.parameters">
+    <tbody>
+        <tr>
+            <th class="pr-md-3">{{'TOKENS_RECEIVED' | translate}}</th>
+            <td class="fit">
+            	<span classs="mr-2">
+                    {{txEIndexData.iswapout | US_COMMAS_BIGINT_DECIMALS : assetsInfo.asset_out_decimals : assetsInfo.asset_out_decimals}}
+                    <a ng-href="/#!/token/{{assetsInfo.asset_out}}" target="_blank">{{assetsInfo.asset_out_ticker}}</a>
+                </span>     	
+            </td>
+        </tr>
+    </tbody>
+</table>

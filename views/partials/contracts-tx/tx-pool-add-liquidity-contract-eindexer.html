@@ -3,8 +3,8 @@
         <tr>
             <th class="pr-md-3">{{'LP_TOKENS_RECEIVED' | translate}}</th>
             <td class="fit">
-            	<span>
-                    {{txEIndexData.ipcreatelt | US_COMMAS_BIGINT_DECIMALS : assetsInfo.decimals : assetsInfo.decimals}}
+            	<span classs="mr-2">
+                    {{txEIndexData.iliqaddlt | US_COMMAS_BIGINT_DECIMALS : assetsInfo.decimals : assetsInfo.decimals}}
                     <a ng-href="/#!/token/{{assetsInfo.hash}}" target="_blank">{{assetsInfo.ticker}}</a>
                 </span>     	
             </td>

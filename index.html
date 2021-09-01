@@ -499,7 +499,7 @@
                                     <tr>
                                         <td>{{'FEE_VALUE' | translate}}</td>
                                         <td>{{tx.fee | US_COMMAS_BIGINT_DECIMALS : tx.token.decimals : tx.token.decimals}} {{tx.token.ticker}}</td>
-                                    </tr>
+                                    </tr>                                   
                                     <tr>
                                         <td>{{'DATA' | translate}}</td>
                                         <td>
@@ -508,7 +508,6 @@
                                             </div>
                                         </td> 
                                     </tr>
-                                    <tr ng-include="'views/partials/contracts-tx/' + txEIndexDataTemplate"></tr>
                                     <tr ng-if="showContractParams">
                                         <td>{{'PARAMS' | translate}}</td>
                                         <td class="overflow-hidden">
@@ -553,6 +552,12 @@
                                             </div>
                                         </td>
                                     </tr>
+                                    <tr ng-if="txEIndexDataTemplate !== undefined">
+                                        <td>Additional data</td>
+                                        <td>
+                                            <div ng-include="'views/partials/contracts-tx/' + txEIndexDataTemplate"></div>
+                                        </td>                                        
+                                    </tr>                                     
                                     <tr>
                                         <td>{{'STATUS' | translate}}</td>
                                         <td>{{tx.status | TX_STATUS | translate}}</td>
@@ -1530,13 +1535,9 @@
                     txData.parameters.fee = amountInUnits(txData.parameters.fee, 2, 2, '%');
                 },
                 delegateUndelegate : function(txData, contractScheme) {
-                    $scope.$watch('tx.token', function(newValue, oldValue) {
-                        if (newValue.ticker !== undefined && newValue.decimals !== null ) {
-                            contractScheme.asToken.forEach(function(param) {                 
-                                txData.parameters[param] = amountInUnits(txData.parameters[param], newValue.decimals, newValue.decimals, newValue.ticker);
-                            });                        
-                        }                    
-                    }, true);                    
+                    contractScheme.asToken.forEach(function(param) {                 
+                        txData.parameters[param] = amountInUnits(txData.parameters[param], txData.txToken.decimals, txData.txToken.decimals, txData.txToken.ticker);
+                    });
                 },
                 mintBurn : function(txData, contractScheme) {
                     let assetsList = {
@@ -1552,7 +1553,7 @@
                     populateListOfAmounts(txData, contractScheme, assetsList);
                     populatePoolToken(txData);                    
                 },
-                farmGetRewardCloseStake : function() {
+                farmGetRewardCloseStake : function(txData) {
                     provider.get_dex_farms.query({farms: txData.parameters.farm_id}, function(farmDataArr) {
                         let farmData = farmDataArr[0];
                         populateFarmsTokensData(txData, farmData);                                 
@@ -1580,6 +1581,7 @@
                     populateListOfAmounts(txData, contractScheme, assetsList);
                     provider.token_info.query({hash:txData.parameters.asset_out}, function(token_info) {
                         txData.parameters.asset_out_ticker = token_info[0].ticker;
+                        txData.parameters.asset_out_decimals = token_info[0].decimals;
                     });                   
                 },
                 farm_create : function(txData, contractScheme) {
@@ -1638,23 +1640,23 @@
                                 txData.parameters.poolAssets[elem].ticker = token_info[0].ticker;
                             });
                         }
-                    });                    
+                    });
                 }
             });            
         }
 
         function populatePoolToken(txData) {
-            let pairId = `${txData.parameters.asset_1}${txData.parameters.asset_1}`;
+            let pairId = `${txData.parameters.asset_1}${txData.parameters.asset_2}`;
             provider.get_dex_pools.query(function(dexPooolsArr) {
                 let poolByPair = dexPooolsArr.find(elem => elem.pair_id === pairId);
                 if (poolByPair !== undefined) {
                     txData.parameters.poolToken = {
                         hash : poolByPair.token_hash
                     }
-                    provider.token_info.query({hash:txData.parameters[assetsList[param]]}, function(token_info) {
+                    provider.token_info.query({hash:poolByPair.token_hash}, function(token_info) {
                         txData.parameters.poolToken.decimals = token_info[0].decimals;
                         txData.parameters.poolToken.ticker = token_info[0].ticker;
-                    });                    
+                    });                  
                 }
             });
         }
@@ -1663,9 +1665,11 @@
             contractScheme.asToken.forEach(function(param) {           
                 let token = {};
                 provider.token_info.query({hash:txData.parameters[assetsList[param]]}, function(token_info) {
-                    token.ticker = txData.parameters[`${assetsList[param]}_token_ticker`] = token_info[0].ticker;
-                    token.decimals = txData.parameters[`${assetsList[param]}_token_decimals`] = token_info[0].decimals;    
-                    txData.parameters[param] = amountInUnits(txData.parameters[param], token.decimals, token.decimals, token.ticker);
+                    if (token_info[0] !== undefined) {
+                        token.ticker = txData.parameters[`${assetsList[param]}_ticker`] = token_info[0].ticker;
+                        token.decimals = txData.parameters[`${assetsList[param]}_decimals`] = token_info[0].decimals;    
+                        txData.parameters[param] = amountInUnits(txData.parameters[param], token.decimals, token.decimals, token.ticker);                        
+                    }
                 });
             });
         }
@@ -1774,21 +1778,24 @@
                 asToken     : ["amount_1", "amount_2"],
                 formatAs    : 'pool_add_liquidity',
                 template    : 'default',
-                eindexer    : ['iliqaddlt']
+                eindexer    : ['iliqaddlt'],
+                eindexerTemlate : 'tx-pool-add-liquidity-contract-eindexer' 
             },
             pool_remove_liquidity : {
                 paramsOrder : ["lt", "amount"],
                 asToken     : ["amount"],
                 formatAs    : 'pool_remove_liquidity',
                 template    : 'default',
-                eindexer    : ['iliqrmv1', 'iliqrmv2']
+                eindexer    : ['iliqrmv1', 'iliqrmv2'],
+                eindexerTemlate : 'tx-pool-remove-liquidity-contract-eindexer' 
             },
             pool_swap : {
                 paramsOrder : ["asset_in", "amount_in", "asset_out"],
                 asToken     : ["amount_in"],
                 formatAs    : 'pool_swap',
                 template    : 'tx-swap-contract',
-                eindexer    : ['iswapout']
+                eindexer    : ['iswapout'],
+                eindexerTemlate : 'tx-pool-swap-contract-eindexer'
             },
             farm_create : {
                 paramsOrder : ["stake_token", "reward_token", "block_reward", "emission"],
@@ -1802,7 +1809,8 @@
                 asToken     : [],
                 formatAs    : 'farmGetRewardCloseStake',
                 template    : 'default',
-                eindexer    : ['ifrew']
+                eindexer    : ['ifrew'],
+                eindexerTemlate : 'tx-farm-get-reward-contract-eindexer'
             },
             farm_increase_stake : {
                 paramsOrder : ["farm_id", "amount"],
@@ -1816,14 +1824,16 @@
                 asToken     : [],
                 formatAs    : 'farmGetRewardCloseStake',
                 template    : 'default',
-                eindexer    : ['ifcloserew']
+                eindexer    : ['ifcloserew'],
+                eindexerTemlate : 'tx-farm-get-reward-contract-eindexer'
             },
             farm_decrease_stake : {
                 paramsOrder : ["farm_id", "amount"],
                 asToken     : ["amount"],
                 formatAs    : 'increaseDecreaseStake',
                 template    : 'default',
-                eindexer    : ['ifdecrew']
+                eindexer    : ['ifdecrew'],
+                eindexerTemlate : 'tx-farm-get-reward-contract-eindexer'
             },
             unknown_contract : {
                 paramsOrder : [],
@@ -4486,17 +4496,29 @@
                     provider.contract_pricelist.get(function(contract_pricelist) {
                         let txSchema = schema;
 
-                        if (txParser.isContract(tx.data, txSchema, contract_pricelist)) {
+                        if (txParser.isContract(tx.data, txSchema, contract_pricelist)) {                            
                             $scope.getContactType = commonTools.getContractTypeTranslation;                    
                             $scope.showContractParams = true;
                             $scope.txDataInit = txParser.parse(tx.data, txSchema, contract_pricelist);
                             $scope.txData = txParser.parse(tx.data, txSchema, contract_pricelist);
                             $scope.contractScheme = contractSchemes.getScheme($scope.txData.type);
-                            prettifyTxData($scope.txData);
+                            if ($scope.txData.type === 'delegate' || $scope.txData.type === 'undelegate') {
+                                $scope.$watch('tx.token', function(newValue, oldValue) {
+                                    if (newValue.ticker !== undefined && newValue.decimals !== null ) {
+                                        $scope.txData.txToken = {
+                                            hash     : $scope.tx.token_hash,
+                                            ticker   : newValue.ticker,
+                                            decimals : newValue.decimals
+                                        }
+                                        prettifyTxData($scope.txData);                       
+                                    }                    
+                                }, true);                                
+                            } else 
+                                prettifyTxData($scope.txData);
+
                             if ($scope.tx.status !== 2 && $scope.contractScheme.eindexer.length > 0) {
                                 getEIndexData($scope.txData, $scope.contractScheme);
-                            }
-                                                      
+                            }                                                      
                         } 
                     });
                 });                
