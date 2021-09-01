@@ -349,8 +349,10 @@
     "POOL_ADD_LIQUIDITY" : "Добавить ликвидность",
     "POOL_REMOVE_LIQUIDITY" : "Удалить ликвидность",
     "FARM_CREATE" : "Создать ферму",
-    "FARM_DECREASE_STAKE" : "Уменьшить стейк",
+    "FARM_DECREASE_STAKE" : "Уменьшить стейк на ферме",
     "FARM_ID" : "Id фермы",
     "EMISSION" : "Эмиссия",
-    "ADDITIONAL_DATA" : "Дополнительно"
+    "ADDITIONAL_DATA" : "Дополнительно",
+    "FARM_GET_REWARD" : "Получить награду с фермы",
+    "FARM_INCREASE_STAKE" : "Увеличить стейк на ферме"
 }
