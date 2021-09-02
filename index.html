@@ -470,13 +470,17 @@
                             </nav>
 
                             <div class="mb-3 mx-md-2" ng-if="showContractParams">
-                                <div class="h4 text-uppercase">{{'TX' | translate}}</div>
-                                <div class="h4 d-flex align-items-center">
-                                    <div class="mr-2 h5 font-weight-normal">{{'TYPE' | translate}}</div>
-                                    <div class="text-uppercase badge badge-secondary-lighten badge-pill py-1">{{getContactType(txDataInit.type) | translate}}</div>
+                                <div class="h4 text-uppercase">{{'TX' | translate}}<span class="text-uppercase badge badge-pill py-1 ml-2" ng-class="statusBadge(tx.status | TX_STATUS)">{{tx.status | TX_STATUS | translate}}</span></div>
+                                <div class="d-flex align-items-center">
+                                    <div class="h4 d-flex align-items-center mr-3">
+                                        <div class="mr-2 h5 font-weight-normal">{{'TYPE' | translate}}</div>
+                                        <div class="text-uppercase badge badge-secondary-lighten badge-pill py-1">{{getContactType(txDataInit.type) | translate}}</div>
+                                    </div>
+<!--                                     <div class="h4 d-flex align-items-center">
+                                        <div class="mr-2 h5 font-weight-normal">{{'STATUS' | translate}}</div>
+                                        <span class="text-uppercase badge badge-pill py-1" ng-class="statusBadge(tx.status | TX_STATUS)">{{tx.status | TX_STATUS | translate}}</span>
+                                    </div> -->                                    
                                 </div>
-
-                                
                             </div>
                             <table class="table table-centered">
                                 <tbody id="singleTxInfo">
@@ -557,10 +561,6 @@
                                         <td>
                                             <div ng-include="'views/partials/contracts-tx/' + txEIndexDataTemplate"></div>
                                         </td>                                        
-                                    </tr>                                     
-                                    <tr>
-                                        <td>{{'STATUS' | translate}}</td>
-                                        <td>{{tx.status | TX_STATUS | translate}}</td>
                                     </tr>
                                     <tr>
                                         <td>{{'M_BLOCK_HASH' | translate}}</td>
@@ -1591,7 +1591,7 @@
                 farm_create : function(txData, contractScheme) {
                     let assetsList = {
                         block_reward : 'reward_token',
-                        emission     : 'stake_token'
+                        emission     : 'reward_token'
                     }
                     populateListOfAmounts(txData, contractScheme, assetsList);
                 },
@@ -2021,6 +2021,16 @@
             };
         } 
         return {
+            getTxStatusBadge : function(status) {
+                switch(status){
+                    case 'STATUS_SUCCESS' : return 'badge-success-lighten';
+                    case 'STATUS_PENDING' : return 'badge-primary-lighten';
+                    case 'STATUS_CONFIRMED' : return 'badge-info-lighten';
+                    case 'STATUS_REJECTED' : return 'badge-danger-lighten';
+                    case 'STATUS_DUPLICATE' : return 'badge-danger-lighten';
+                    default : return 'badge-primary-lighten';
+                }
+            },
             getPersentageString: function(value, limit=0.01) {
                 let percentage = 0;
                 if (value !== 0) {
@@ -4436,16 +4446,7 @@
             $scope.account.rewards.page_num = page;
         };
 
-        $scope.statusBadge = function(status) {
-            switch(status){
-                case 'STATUS_SUCCESS' : return 'badge-success-lighten';
-                case 'STATUS_PENDING' : return 'badge-primary-lighten';
-                case 'STATUS_CONFIRMED' : return 'badge-info-lighten';
-                case 'STATUS_REJECTED' : return 'badge-danger-lighten';
-                case 'STATUS_DUPLICATE' : return 'badge-danger-lighten';
-                default : return 'badge-primary-lighten';
-            }
-        }
+        $scope.statusBadge = commonTools.getTxStatusBadge;
 
         function populatePOS() { //Both account.pos (stakingproviders tab) and account.posID (pos id tab)
             provider.get_pos_names.query(function(pos_names) {
@@ -4507,6 +4508,7 @@
         let defaultValue = '---';
         $scope.txDataInit = defaultValue;
         $scope.txEIndexData = {};
+        $scope.statusBadge = commonTools.getTxStatusBadge;
         provider.transaction.get({hash:$routeParams.hash}, function(tx) {            
             if (tx.hash !== undefined) {
                 $scope.tx = tx;

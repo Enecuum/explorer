@@ -93,7 +93,7 @@
     "K_BLOCK":"K-block",
     "S_BLOCK":"S-block",
     "MICROBLOCK":"Microblock",
-    "HASH":"hash",
+    "HASH":"Hash",
     "M_BLOCK_HASH":"Microblock hash",
     "K_BLOCK_HASH":"K-block hash",
     "S_BLOCK_HASH":"Statblock hash",
