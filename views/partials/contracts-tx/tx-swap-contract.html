@@ -2,10 +2,14 @@
     <tbody>
         <tr ng-repeat="param in contractScheme.paramsOrder track by $index" ng-if="param !== 'skip'">
             <th class="pr-md-3">{{param.toUpperCase() | translate}}</th>
-            <td class="fit" ng-if="param === 'asset_in' || param === 'asset_out'">
+            <td class="fit" ng-if="param === 'asset_in'">
             	<a ng-href="#!/token/{{data[param]}}" target="_blank">{{data[param]}}</a>
-            	<span classs="mr-2">({{txData.parameters[param + '_ticker']}})</span>            	
+            	<span classs="mr-2">({{txData.parameters['amount_in_token_ticker']}})</span>            	
             </td>
+            <td class="fit" ng-if="param === 'asset_out'">
+                <a ng-href="#!/token/{{data[param]}}" target="_blank">{{data[param]}}</a>
+                <span classs="mr-2">({{txData.parameters['asset_out_token_ticker']}})</span>              
+            </td>            
             <td class="fit" ng-if="param !== 'asset_in' && param !== 'asset_out'">{{data[param]}}</td>
         </tr>
     </tbody>    

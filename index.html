@@ -553,7 +553,7 @@
                                         </td>
                                     </tr>
                                     <tr ng-if="txEIndexDataTemplate !== undefined">
-                                        <td>Additional data</td>
+                                        <td>{{'ADDITIONAL_DATA' | translate}}</td>
                                         <td>
                                             <div ng-include="'views/partials/contracts-tx/' + txEIndexDataTemplate"></div>
                                         </td>                                        
@@ -1535,8 +1535,12 @@
                     txData.parameters.fee = amountInUnits(txData.parameters.fee, 2, 2, '%');
                 },
                 delegateUndelegate : function(txData, contractScheme) {
-                    contractScheme.asToken.forEach(function(param) {                 
-                        txData.parameters[param] = amountInUnits(txData.parameters[param], txData.txToken.decimals, txData.txToken.decimals, txData.txToken.ticker);
+                    contractScheme.asToken.forEach(function(param) {                
+                        txData.parameters[param] = amountInUnits(txData.parameters[param], txData.txToken.decimals, txData.txToken.decimals);
+                        txData.parameters[`${param}_token_ticker`] = txData.txToken.ticker;
+                        txData.parameters[`${param}_token_decimals`] = txData.txToken.decimals;
+                        txData.parameters[`${param}_token_hash`] = txData.txToken.hash;
+                        txData.parameters.amount_token_link = `#!/token/${txData.txToken.hash}`;                                                
                     });
                 },
                 mintBurn : function(txData, contractScheme) {
@@ -1580,8 +1584,8 @@
                     }
                     populateListOfAmounts(txData, contractScheme, assetsList);
                     provider.token_info.query({hash:txData.parameters.asset_out}, function(token_info) {
-                        txData.parameters.asset_out_ticker = token_info[0].ticker;
-                        txData.parameters.asset_out_decimals = token_info[0].decimals;
+                        txData.parameters.asset_out_token_ticker = token_info[0].ticker;
+                        txData.parameters.asset_out_token_decimals = token_info[0].decimals;
                     });                   
                 },
                 farm_create : function(txData, contractScheme) {
@@ -1593,13 +1597,23 @@
                 },
                 increaseDecreaseStake : function(txData) {
                     provider.get_dex_farms.query({farms: txData.parameters.farm_id}, function(farmDataArr) {
-                        let farmData = farmDataArr[0];
-                        populateFarmsTokensData(txData, farmData);
-                        txData.parameters.amount = amountInUnits(txData.parameters.amount, farmData.stake_token_decimals, farmData.stake_token_decimals, farmData.stake_token_name);         
+                        let farmData = farmDataArr[0]; 
+                        if (farmData !== undefined) {
+                            populateFarmsTokensData(txData, farmData);
+                            txData.parameters.amount = amountInUnits(txData.parameters.amount, farmData.stake_token_decimals, farmData.stake_token_decimals);
+                            txData.parameters.amount_token_ticker = farmData.stake_token_name;
+                            txData.parameters.amount_token_link = `#!/token/${farmData.stake_token_hash}`;                           
+                        }         
                     });
                 },
-                default : function(txData) {
-                    console.log(`default formatter for '${txData.type}' contract`);
+                default : function(txData, contractScheme) {
+                    if (!contractScheme.hasOwnProperty(txData.type)) {
+                        contractScheme.paramsOrder = [];
+                        for (key in txData.parameters) {
+                            contractScheme.paramsOrder.push(key);
+                        }
+                        console.log(`Default formatter for '${txData.type}' contract`);                        
+                    }                   
                 }
             }
 
@@ -1666,9 +1680,11 @@
                 let token = {};
                 provider.token_info.query({hash:txData.parameters[assetsList[param]]}, function(token_info) {
                     if (token_info[0] !== undefined) {
-                        token.ticker = txData.parameters[`${assetsList[param]}_ticker`] = token_info[0].ticker;
-                        token.decimals = txData.parameters[`${assetsList[param]}_decimals`] = token_info[0].decimals;    
-                        txData.parameters[param] = amountInUnits(txData.parameters[param], token.decimals, token.decimals, token.ticker);                        
+                        token.ticker = txData.parameters[`${param}_token_ticker`] = token_info[0].ticker;
+                        token.decimals = txData.parameters[`${param}_token_decimals`] = token_info[0].decimals;
+                        txData.parameters[`${param}_token_hash`] = txData.parameters[assetsList[param]];
+                        txData.parameters[`${param}_token_link`] = `#!/token/${txData.parameters[assetsList[param]]}`;
+                        txData.parameters[param] = amountInUnits(txData.parameters[param], token.decimals, token.decimals);                        
                     }
                 });
             });
@@ -1686,11 +1702,16 @@
             });            
         }
 
-        function amountInUnits(amount, decimals, toFixed, units) {
+        function amountInUnits(amount, decimals, toFixed, units=false) {
             let result = null;
+            let addon = '';
             if (amount !== undefined && decimals !== undefined && toFixed !== undefined && units !== undefined) {
-                let unitsStr = (typeof amount === 'bigint' || !isNaN(amount) ? units : '');
-                result = $filter('US_COMMAS_BIGINT_DECIMALS')(amount, decimals, toFixed) +' '+ unitsStr;
+                if (units !== false) {
+                    let unitsStr = (typeof amount === 'bigint' || !isNaN(amount) ? units : '');
+                    addon = ' ' + unitsStr;
+                }
+                
+                result = $filter('US_COMMAS_BIGINT_DECIMALS')(amount, decimals, toFixed) + addon;
             }
             return result;
         }
