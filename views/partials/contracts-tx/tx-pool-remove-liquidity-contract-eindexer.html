@@ -1,0 +1,13 @@
+<table class="table table-sm tx-data-table no-border mb-0" ng-init="assetsInfo=txData.parameters.poolAssets">
+    <tbody>
+        <tr ng-repeat="param in contractScheme.eindexer track by $index">
+            <th class="pr-md-3" rowspan="2" ng-if="$index === 0">{{'TOKENS_RECEIVED' | translate}}</th>
+            <td class="fit">
+            	<span classs="mr-2">
+                    {{txEIndexData[param] | US_COMMAS_BIGINT_DECIMALS : assetsInfo['asset_'+($index*1+1)].decimals : assetsInfo['asset_'+($index*1+1)].decimals}}
+                    <a ng-href="/#!/token/{{assetsInfo['asset_'+($index*1+1)].hash}}" target="_blank">{{assetsInfo['asset_'+($index*1+1)].ticker}}</a>
+                </span>     	
+            </td>
+        </tr>
+    </tbody>
+</table>

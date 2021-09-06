@@ -1,0 +1,13 @@
+<table class="table table-sm tx-data-table no-border mb-0" ng-init="assetsInfo=txData.parameters.poolToken">
+    <tbody>
+        <tr>
+            <th class="pr-md-3">{{'LP_TOKENS_RECEIVED' | translate}}</th>
+            <td class="fit">
+            	<span classs="mr-2">
+                    {{txEIndexData.iliqaddlt | US_COMMAS_BIGINT_DECIMALS : assetsInfo.decimals : assetsInfo.decimals}}
+                    <a ng-href="/#!/token/{{assetsInfo.hash}}" target="_blank">{{assetsInfo.ticker}}</a>
+                </span>     	
+            </td>
+        </tr>
+    </tbody>
+</table>
