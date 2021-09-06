@@ -4,6 +4,10 @@
         "tag":"Enecuum Genesis"
     },
     {
+        "account_id":"03165142a92f3ff0d18567b78cc33a208145c32d1f71f51750a657dbc580118ecd",
+        "tag":"Enecuum Network Treasury"
+    },
+    {
         "account_id":"026df0aa41967d8d47082c36b29a164aa1c90cdd07cb02d373daaba90b8eca5301",
         "tag":"Reserve Fund Locked"
     },
