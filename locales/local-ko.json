@@ -158,7 +158,7 @@
     "POS_DELEGATOR_CALC": "POS 위임자 계산기",
     "POS_DETAILS": "스테이킹 제공자 세부 정보",
     "POS_ID": "PoS ID",
-    "POS_ROI_DESCR_P1": "스테이킹에 대한 ROI 계산은 마지막 100 블록을 기반으로 합니다.",
+    "POS_ROI_DESCR_P1": "스테이킹에 대한 ROI 계산은 마지막 5760 블록을 기반으로 합니다.",
     "POS_ROI_DESCR_P2": "비활성 POS 계약의 경우 실제 값이 없는 평균 POS 성과가 사용됩니다.",
     "POS_STAKE_ERR_MSG": "{{min}}에서 {{max}}까지의 정수 입력",
     "POS_STAKE_TOTAL": "POS 합계에 대한 코인 스테이크",

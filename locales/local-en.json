@@ -268,7 +268,7 @@
     "AVG_NETWORK_PERFORMANCE": "Avg. POS performance",
     "POS_DELEGATOR_CALC": "POS delegator calculator",
     "CHOOSE_POS": "Choose POS",
-    "POS_ROI_DESCR_P1": "ROI calculation for staking is based on last 100 blocks.",
+    "POS_ROI_DESCR_P1": "ROI calculation for staking is based on last 5760 blocks.",
     "POS_ROI_DESCR_P2": "For inactive POS contracts average POS performance is used lacking actual values.",
     "POS_STAKE_ERR_MSG": "Input integer from {{min}} to {{max}}",
     "NETWORK_HASHRATE": "Network hashrate",

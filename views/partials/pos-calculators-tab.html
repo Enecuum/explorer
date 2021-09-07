@@ -44,38 +44,30 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-body">
-                    <h4 class="header-title mb-3">{{'POS_DELEGATOR_CALC' | translate}}</h4>
-                    <div class="row">
-                        <div class="col-12">
-                            <div class="form-row align-items-md-start">
-                                <div class="col-md-5 form-group mb-3" style="padding-top: 1px;">
-                                    <label for="roi_stake">{{'ROI_STAKE' | translate: translationData}}</label>
-                                    <input type="text" id="roi_pos_stake" class="form-control" ng-model="posCalc.inputData.stake">
-                                    <small ng-if="!posStakeIsValid" class="errMsg">{{'POS_STAKE_ERR_MSG' | translate : posStakeParams}}</small>
-                                </div>
-                                <div class="col-md-5 form-group mb-3" style="padding-top: 1px;">
-                                    <label for="posInput">{{'CHOOSE_POS' | translate}}</label>
-                                    <ui-select ng-model="posCalc.inputData.posContract">
-                                        <ui-select-match>
-                                            <span ng-bind="$select.selected.name"></span>
-                                        </ui-select-match>
-                                        <ui-select-choices group-by="'activeAlias'" repeat="pos in (posList | filter: $select.search) track by pos.pos_id" class="border-bottom" data-simplebar data-simplebar-auto-hide="false">
-                                            <span ng-bind="pos.name" class="font-weight-bolder"></span>
-                                            <div  class="mt-1">
-                                                <small>{{(pos.active === 1 ? 'STAKE_POWER' : 'ACTIVE_STAKE_SHARE') | translate}}</small>
-                                                <span class="mr-1 font-weight-bolder">{{(pos.active === 1 ? pos.active_stake_power*100 : pos.active_stake_share*100) | US_COMMAS_2}}%</span>
-                                                <small>{{'FEE_VALUE' | translate}}</small>
-                                                <span class="font-weight-bolder">{{pos.fee/10000*100}}%</span>
-                                            </div>
-                                        </ui-select-choices>
-                                    </ui-select>
-                                </div>
-                                <div class="col-6 col-md-2 mt-md-3 mb-2 mb-md-0 text-center mx-auto">
-                                    <button type="button" class="btn btn-primary w-100 px-1 mt-1" ng-click="posCalc.calculate()">{{'CALCULATE' | translate}}</button>
-                                </div>
+                    <h4 class="header-title">{{'POS_DELEGATOR_CALC' | translate}}</h4>
+                    <div>
+                        <div class="row pt-2">
+                            <div class="col-12">
+                                <ul class="nav nav-pills bg-nav-pills nav-justified">
+                                    <li class="nav-item">
+                                        <a href="javascript;" data-target="#posCalcForDelegatorTab" data-toggle="tab" aria-expanded="true" class="nav-link rounded-0 collapsed active" ng-click="setPOSCalcType('delegator')">
+                                            <span class="d-block">Delegator</span>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="javascript;" data-target="#posCalcForValidatorTab" data-toggle="tab" aria-expanded="false" class="nav-link rounded-0" ng-click="setPOSCalcType('validator')">
+                                            <span class="d-block">Validator</span>
+                                        </a>
+                                    </li>
+                                </ul>
                             </div>
                         </div>
+                        <div class="tab-content justify-content-center mt-3">
+                            <div class="tab-pane show active justify-content-center" id="posCalcForDelegatorTab" ng-include="'views/partials/pos-calculator-delegator-tab.html'"></div>  
+                            <div class="tab-pane fade" id="posCalcForValidatorTab" ng-include="'views/partials/pos-calculator-validator-tab.html'"></div>                                                      
+                        </div>                        
                     </div>
+
                     <div class="row">
                         <div class="col-12 text-center">
                             <hr>
@@ -90,7 +82,7 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-10 offset-1 col-sm-6 offset-sm-0 col-md-6 col-lg-6 col-xl-3" ng-class="showPOSCalcResult ? 'd-block' : 'd-none'" ng-repeat="rec in posROIData">
+        <div class="col-10 offset-1 col-sm-6 offset-sm-0 col-md-6 col-lg-6 col-xl-3" ng-class="showPOSCalcResult[posCalcType] ? 'd-block' : 'd-none'" ng-repeat="rec in posROIData[posCalcType]">
             <div class="card">
                 <div class="card-body text-center">
                     <div class="roi-cards-period-label-wrapper">
