@@ -896,10 +896,10 @@
                                                             <span class="scope-col w-130-px">{{'NAME' | translate}} </span>
                                                             <a ng-href="#!/pos-contract/{{pos.pos_id}}" class="d-flex align-items-center text-wrap">
                                                                 <img ng-if="posLogo['pos_' + pos.pos_id].logo.logoImg !== undefined" ng-src="{{posLogo['pos_' + pos.pos_id].logo.logoImg}}" height="25" class="mr-1 flex-shrink-0 flex-grow-0">
-                                                                <div ng-if="posLogo['pos_' + pos.pos_id].logo.logoImg === undefined" class="item-avatar-blank-wrapper-small d-flex align-items-center justify-content-center mr-1 flex-shrink-0 flex-grow-0">
-                                                                    <span class="item-avatar-blank-content-small flex-shrink-0 flex-grow-0 font-italic">
+                                                                <div ng-if="posLogo['pos_' + pos.pos_id].logo.logoImg === undefined" class="item-avatar-blank-wrapper-small d-flex align-items-center justify-content-center mr-1 flex-shrink-0 flex-grow-0 item-avatar-blank-content-small" style="line-height: 100%;">
+                                                                    
                                                                         {{posNames[pos.pos_id].charAt(0)}}
-                                                                    </span>                                                         
+                                                                                                                            
                                                                 </div>
                                                                 <span class="text-break">{{posNames[pos.pos_id]}}</span>
                                                             </a>
