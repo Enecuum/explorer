@@ -114,7 +114,7 @@
                                                 <div class="dropdown-divider d-none d-lg-block"></div>
                                                 <a href="https://faucet-bit.enecuum.com" class="dropdown-item" target="_blank">{{'GET_COINS' | translate}}</a>  
                                                 <div class="dropdown-divider d-none d-lg-block"></div>
-                                                <a href="https://app.enecuum.com/enq-bitRelease-v.0.14.4+848.apk" class="dropdown-item">{{'DOWNLOAD_APP' | translate}}</a>
+                                                <a href="https://app.enecuum.com/enq-bitRelease-v.0.12.2.apk" class="dropdown-item">{{'DOWNLOAD_APP' | translate}}</a>
                                             </div>
                                         </div>
                                     </li>
@@ -468,13 +468,13 @@
                                     <li class="breadcrumb-item text-truncate short-hash active" aria-current="page">{{'TX' | translate}}</li>
                                 </ol>
                             </nav>
-                            <div class="h4 text-uppercase mx-md-2" ng-class="showContractParams === true ? 'mb-1' : 'mb-4'">{{'TX' | translate}}<span class="text-uppercase badge badge-pill py-1 ml-2" ng-class="statusBadge(tx.status | TX_STATUS)">{{tx.status | TX_STATUS | translate}}</span></div>
+                           <div class="h4 text-uppercase mx-md-2" ng-class="showContractParams === true ? 'mb-1' : 'mb-4'">{{'TX' | translate}}<span class="text-uppercase badge badge-pill py-1 ml-2" ng-class="statusBadge(tx.status | TX_STATUS)">{{tx.status | TX_STATUS | translate}}</span></div>
                             <div class="mb-3 mx-md-2" ng-if="showContractParams">                                
                                 <div class="d-flex align-items-center">
                                     <div class="h4 d-flex align-items-center mr-3">
                                         <div class="mr-2 h5 font-weight-normal">{{'TYPE' | translate}}</div>
                                         <div class="text-uppercase badge badge-secondary-lighten badge-pill py-1">{{getContactType(txDataInit.type) | translate}}</div>
-                                    </div>                                  
+                                    </div>                               
                                 </div>
                             </div>
                             <table class="table table-centered">
@@ -2785,7 +2785,7 @@
                             ],
                             posFee : [
                                 {min : $scope.clientPOSData.сonstraints.validator.posFee.min, max : 10, step : 1},
-                                {min : 10, max : 25, step : 5},
+                                {min : 10, max : 30, step : 5},
                                 {min : 25, max : $scope.clientPOSData.сonstraints.validator.posFee.max, step : 10}
                             ]
                         }
@@ -2797,8 +2797,8 @@
                             let validNumber = (isNaN($scope.clientPOSData.validatorInput[param])) ? false : true;
                             if (validNumber) {
                                 value = Number($scope.clientPOSData.validatorInput[param]);
-                                intervals[param].forEach(function(interval) {                                                                        
-                                    if (value >= interval.min && value <= interval.max) {
+                                intervals[param].forEach(function(interval, i, intervals) {                                                                        
+                                    if (value >= interval.min && value <= interval.max && !inInterval) {
                                         inInterval = true;
                                         let multiplier;
                                         let step = interval.step;
@@ -2807,18 +2807,23 @@
                                         else if (direction === 'increase')
                                             multiplier = 1;
                                         step *= multiplier;
-                                        value += step;                                        
-                                        if (value <= $scope.clientPOSData.сonstraints.validator[param].min)
+                                        value += step;
+
+                                        if (value < interval.min)
+                                            value = interval.min + (intervals[i-1] !== undefined ? intervals[i-1].step * multiplier : 0);
+                                        else if (value > interval.max)
+                                            value = interval.max+ (intervals[i+1] !== undefined ? intervals[i+1].step * multiplier : 0);
+
+                                        if (value < $scope.clientPOSData.сonstraints.validator[param].min)
                                             value = $scope.clientPOSData.сonstraints.validator[param].min;
-                                        else if (value >= $scope.clientPOSData.сonstraints.validator[param].max)
-                                            value = $scope.clientPOSData.сonstraints.validator[param].max;
-                                         
+                                        else if (value > $scope.clientPOSData.сonstraints.validator[param].max)
+                                            value = $scope.clientPOSData.сonstraints.validator[param].max;                                         
                                     }
                                 });
                                 if (!inInterval) {
                                     if (value < $scope.clientPOSData.сonstraints.validator[param].min)
                                         value = $scope.clientPOSData.сonstraints.validator[param].min;
-                                    else if (value >= $scope.clientPOSData.сonstraints.validator[param].max)
+                                    else if (value > $scope.clientPOSData.сonstraints.validator[param].max)
                                         value = $scope.clientPOSData.сonstraints.validator[param].max;                                        
                                 }
                             } else {
