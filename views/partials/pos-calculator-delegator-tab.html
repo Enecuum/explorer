@@ -1,14 +1,14 @@
 <div class="row">
     <div class="col-12">
         <div class="form-row align-items-md-start">
-            <div class="col-md-5 form-group mb-3" style="padding-top: 1px;">
-                <label for="roi_stake">{{'ROI_STAKE' | translate: translationData}}</label>
-                <input type="text" id="roi_pos_stake" class="form-control" ng-model="clientPOSData.delegatorInput.stake">
-                <small ng-if="!posStakeIsValid" class="errMsg">{{'POS_STAKE_ERR_MSG' | translate : posStakeParams}}</small>
+            <div class="col-md-5 form-group mb-3" style="padding-top: 1px;" id="delegatorStakeInputWrapper">
+                <label for="roiDelegatorStakeInput">{{'ROI_STAKE' | translate: translationData}}</label>
+                <input type="text" id="roiDelegatorStakeInput" class="form-control" ng-model="clientPOSData.delegatorInput.stake">
+                <small ng-show="!showPOSCalcResult.delegator" class="errMsg"></small>
             </div>
             <div class="col-md-5 form-group mb-3" style="padding-top: 1px;">
-                <label for="posInput">{{'CHOOSE_POS' | translate}}</label>
-                <ui-select ng-model="clientPOSData.delegatorInput.posContract">
+                <label for="roiDelegatorPOSInput">{{'CHOOSE_POS' | translate}}</label>
+                <ui-select ng-model="clientPOSData.delegatorInput.posContract" id="roiDelegatorPOSInput">
                     <ui-select-match>
                         <span ng-bind="$select.selected.name"></span>
                     </ui-select-match>

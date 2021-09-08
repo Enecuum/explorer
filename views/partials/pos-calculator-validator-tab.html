@@ -1,39 +1,39 @@
-<div class="row">
+<div class="row" id=>
     <div class="col-12">
         <div class="form-row align-items-md-start">
-            <div class="col-12 col-md-6 col-lg-3 form-group mb-3" style="padding-top: 1px;">
-                <label for="roi_stake">{{'ROI_STAKE' | translate: translationData}}</label>
-                <input type="text" id="roi_pos_stake" class="form-control" ng-model="clientPOSData.validatorInput.stake">
-                <small ng-if="!posStakeIsValid" class="errMsg">{{'POS_STAKE_ERR_MSG' | translate : posStakeParams}}</small>
+            <div id="validatorStakeInputWrapper" class="col-12 col-md-6 col-xl-4 form-group mb-3" style="padding-top: 1px;">
+                <label for="roiValidatorStakeInput" class="text-nowrap">{{'ROI_STAKE' | translate: translationData}}</label>
+                <input type="text" id="roiValidatorStakeInput" class="form-control" ng-model="clientPOSData.validatorInput.stake">
+                <small ng-show="!showPOSCalcResult.validator" class="errMsg"></small>
             </div>
-            <div class="col-12 col-md-6 col-lg-3 form-group mb-3" style="padding-top: 1px;">
-                <label for="roi_stake">{{'FEE' | translate: translationData}},%</label>
-								<div class="input-group bootstrap-touchspin bootstrap-touchspin-injected">
-									<span class="input-group-btn input-group-prepend">
-										<button class="btn btn-primary bootstrap-touchspin-down" type="button" ng-click="$parent.downStake()" ng-class="roiCalcState" ng-disabled="roiCalcState == 'disabled'">-</button>
-									</span>
-									<input class="form-control" ng-model="clientPOSData.validatorInput.posFee">
-									<span class="input-group-btn input-group-append">
-										<button class="btn btn-primary bootstrap-touchspin-up" type="button" ng-click="$parent.upStake()" ng-class="roiCalcState" ng-disabled="roiCalcState == 'disabled'">+</button>
-									</span>
-								</div>
-                <small ng-if="!posStakeIsValid" class="errMsg">{{'POS_STAKE_ERR_MSG' | translate : posStakeParams}}</small>
+            <div id="validatorFeeInputWrapper" class="col-12 col-md-6 col-xl-3 form-group mb-3" style="padding-top: 1px;">
+                <label for="roiValidatorFeeInput">{{'FEE' | translate: translationData}},%</label>
+				<div class="input-group bootstrap-touchspin bootstrap-touchspin-injected">
+					<span class="input-group-btn input-group-prepend">
+						<button class="btn btn-primary bootstrap-touchspin-down" type="button" ng-click="modifyByStep('posFee', 'decrease')">-</button>
+					</span>
+					<input class="form-control" ng-model="clientPOSData.validatorInput.posFee" id="roiValidatorFeeInput">
+					<span class="input-group-btn input-group-append">
+						<button class="btn btn-primary bootstrap-touchspin-up" type="button" ng-click="modifyByStep('posFee', 'increase')">+</button>
+					</span>
+				</div>
+                <small ng-show="!showPOSCalcResult.validator" class="errMsg"></small>
             </div>
-            <div class="col-12 col-md-6 col-lg-3 form-group mb-3" style="padding-top: 1px;">
-                <label for="roi_stake">{{'PERFORMANCE' | translate: translationData}},%</label>
-                								<div class="input-group bootstrap-touchspin bootstrap-touchspin-injected">
-									<span class="input-group-btn input-group-prepend">
-										<button class="btn btn-primary bootstrap-touchspin-down" type="button" ng-click="$parent.downStake()" ng-class="roiCalcState" ng-disabled="roiCalcState == 'disabled'">-</button>
-									</span>
-									<input class="form-control" ng-model="clientPOSData.validatorInput.uptime">
-									<span class="input-group-btn input-group-append">
-										<button class="btn btn-primary bootstrap-touchspin-up" type="button" ng-click="$parent.upStake()" ng-class="roiCalcState" ng-disabled="roiCalcState == 'disabled'">+</button>
-									</span>
-								</div>
-                <small ng-if="!posStakeIsValid" class="errMsg">{{'POS_STAKE_ERR_MSG' | translate : posStakeParams}}</small>
+            <div id="validatorUptimeInputWrapper" class="col-12 col-md-6 col-xl-3 form-group mb-3" style="padding-top: 1px;">
+                <label for="roiValidatorUptimeInput">{{'PERFORMANCE' | translate: translationData}},%</label>
+				<div class="input-group bootstrap-touchspin bootstrap-touchspin-injected">
+					<span class="input-group-btn input-group-prepend">
+						<button class="btn btn-primary bootstrap-touchspin-down" type="button" ng-click="modifyByStep('uptime', 'decrease')">-</button>
+					</span>
+					<input class="form-control" ng-model="clientPOSData.validatorInput.uptime" id="roiValidatorUptimeInput">
+					<span class="input-group-btn input-group-append">
+						<button class="btn btn-primary bootstrap-touchspin-up" type="button" ng-click="modifyByStep('uptime', 'increase')">+</button>
+					</span>
+				</div>
+                <small ng-show="!showPOSCalcResult.validator" class="errMsg"></small>
             </div>            
-            <div class="col-12 col-md-6 col-lg-3 mt-md-3 mb-2 mb-md-0 text-center mx-auto">
-                <button type="button" class="btn btn-primary w-100 px-1 mt-1" ng-click="processPOSData('validator')">{{'CALCULATE' | translate}}</button>
+            <div class="col-12 col-md-6 col-xl-2 mt-md-3 mb-2 mb-md-0 text-center mx-auto px-1">
+                <button type="button" class="btn btn-primary w-100 mt-1" ng-click="processPOSData('validator')">{{'CALCULATE' | translate}}</button>
             </div>
         </div>
     </div>

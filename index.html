@@ -2752,34 +2752,92 @@
                                     min: 1,
                                     max: Math.trunc(($scope.stats.csup - $scope.allPOSTotalStake)/$rootScope.mainTokenFactor)                                    
                                 },
-                                fee : {
+                                posFee : {
                                     decimalPlaces : 2
                                 }
                             },
                             validator : {
-                                fee : {
+                                posFee : {
                                     min : 0,
                                     max : 100
                                 },
                                 uptime : {
                                     min : 0,
-                                    max : 100
+                                    max : 100,
+                                    decimalPlaces : 2
                                 }
                             }
                         },
                         delegatorInput : {
                             posContract : $scope.posList[0],
-                            stake       : 1                            
+                            stake       : 25000                            
                         },
                         validatorInput : {
-                            stake  : 1,
-                            posFee : 0.01,
-                            uptime : 100                                
+                            stake  : 25000,
+                            posFee : 5,
+                            uptime : 95                                
                         },
                         validationRules : getValidationRules
                     }
 
+                    $scope.modifyByStep = function(param, direction) {
+                        let directions = ['decrease', 'increase'];
+                        let intervals = {
+                            uptime : [
+                                {min : $scope.clientPOSData.сonstraints.validator.uptime.min, max : 90, step : 10},
+                                {min : 90, max : 95, step : 5},
+                                {min : 95, max : $scope.clientPOSData.сonstraints.validator.uptime.max, step : 1}
+                            ],
+                            posFee : [
+                                {min : $scope.clientPOSData.сonstraints.validator.posFee.min, max : 10, step : 1},
+                                {min : 10, max : 25, step : 5},
+                                {min : 25, max : $scope.clientPOSData.сonstraints.validator.posFee.max, step : 10}
+                            ]
+                        }
 
+                        if (intervals.hasOwnProperty(param) && directions.includes(direction)) {
+                            let value = 0;                            
+                            let validateData = {};
+                            let inInterval = false;
+                            let validNumber = (isNaN($scope.clientPOSData.validatorInput[param])) ? false : true;
+                            if (validNumber) {
+                                value = Number($scope.clientPOSData.validatorInput[param]);
+                                intervals[param].forEach(function(interval) {                                                                        
+                                    if (value >= interval.min && value <= interval.max) {
+                                        inInterval = true;
+                                        let multiplier;
+                                        let step = interval.step;
+                                        if (direction === 'decrease')
+                                            multiplier = -1;
+                                        else if (direction === 'increase')
+                                            multiplier = 1;
+                                        step *= multiplier;
+                                        value += step;                                        
+                                        if (value <= $scope.clientPOSData.сonstraints.validator[param].min)
+                                            value = $scope.clientPOSData.сonstraints.validator[param].min;
+                                        else if (value >= $scope.clientPOSData.сonstraints.validator[param].max)
+                                            value = $scope.clientPOSData.сonstraints.validator[param].max;
+                                         
+                                    }
+                                });
+                                if (!inInterval) {
+                                    if (value < $scope.clientPOSData.сonstraints.validator[param].min)
+                                        value = $scope.clientPOSData.сonstraints.validator[param].min;
+                                    else if (value >= $scope.clientPOSData.сonstraints.validator[param].max)
+                                        value = $scope.clientPOSData.сonstraints.validator[param].max;                                        
+                                }
+                            } else {
+                                if (direction === 'decrease')
+                                    value = $scope.clientPOSData.сonstraints.validator[param].min;
+                                else if (direction === 'increase')
+                                    value = $scope.clientPOSData.сonstraints.validator[param].max;
+                            }
+                            $scope.clientPOSData.validatorInput[param] = Number(value.toFixed(2));
+                        }        
+                        
+                        let paramAlias = (param === 'posFee') ? 'Fee' : 'Uptime';
+                        $(`#validator${paramAlias}InputWrapper .errMsg`).hide();
+                    }
 
                     $scope.posROIData = {
                         delegator : [],
@@ -2890,7 +2948,8 @@
                                                 }
                                             }
                                     },                                
-                                ]
+                                ],
+                                errMsgSelector: `#${type}StakeInputWrapper .errMsg`
                             },
                             posFee : {
                                 requireToCheck: type === 'validator' ? true : false,
@@ -2909,28 +2968,29 @@
                                     },
                                     {
                                         method: 'matchToFixed',
-                                        args: {value: $scope.clientPOSData[`${type}Input`].posFee, n: $scope.clientPOSData.сonstraints.common.fee.decimalPlaces},
+                                        args: {value: $scope.clientPOSData[`${type}Input`].posFee, n: $scope.clientPOSData.сonstraints.common.posFee.decimalPlaces},
                                         desiredResult: true,
                                         errMsg: {
                                                     msg: 'MAX_DECIMALS',
                                                     params: {
-                                                        decimals: $scope.clientPOSData.сonstraints.common.fee.decimalPlaces
+                                                        decimals: $scope.clientPOSData.сonstraints.common.posFee.decimalPlaces
                                                     }
                                                 }
                                     },
                                     {
                                     method: 'inIntervalBothClosed',
-                                    args: {value: Number($scope.clientPOSData[`${type}Input`].posFee), min: Number($scope.clientPOSData.сonstraints.validator.fee.min), max: Number($scope.clientPOSData.сonstraints.validator.fee.max)},
+                                    args: {value: Number($scope.clientPOSData[`${type}Input`].posFee), min: Number($scope.clientPOSData.сonstraints.validator.posFee.min), max: Number($scope.clientPOSData.сonstraints.validator.posFee.max)},
                                     desiredResult: true,
                                     errMsg: {
                                                 msg: 'NOT_IN_RANGE',
                                                 params: {
-                                                    min: $scope.clientPOSData.сonstraints.validator.fee.min,
-                                                    max: $scope.clientPOSData.сonstraints.validator.fee.max
+                                                    min: $scope.clientPOSData.сonstraints.validator.posFee.min,
+                                                    max: $scope.clientPOSData.сonstraints.validator.posFee.max
                                                 }
                                             }
                                     }                                
-                                ]
+                                ],
+                                errMsgSelector: `#${type}FeeInputWrapper .errMsg`
                             },
                             uptime : {
                                 requireToCheck: type === 'validator' ? true : false,
@@ -2948,6 +3008,17 @@
                                         errMsg: 'INVALID_SYMBOLS_IN_DIGITAL_VALUE'                                
                                     },
                                     {
+                                        method: 'matchToFixed',
+                                        args: {value: $scope.clientPOSData.validatorInput.uptime, n: $scope.clientPOSData.сonstraints.validator.uptime.decimalPlaces},
+                                        desiredResult: true,
+                                        errMsg: {
+                                                    msg: 'MAX_DECIMALS',
+                                                    params: {
+                                                        decimals: $scope.clientPOSData.сonstraints.validator.uptime.decimalPlaces
+                                                    }
+                                                }
+                                    },
+                                    {
                                     method: 'inIntervalBothClosed',
                                     args: {value: Number($scope.clientPOSData.validatorInput.uptime), min: Number($scope.clientPOSData.сonstraints.validator.uptime.min), max: Number($scope.clientPOSData.сonstraints.validator.uptime.max)},
                                     desiredResult: true,
@@ -2959,7 +3030,8 @@
                                                 }
                                             }
                                     }                                
-                                ]
+                                ],
+                                errMsgSelector: `#${type}UptimeInputWrapper .errMsg`
                             }                            
                         }
                         return validationRules;
