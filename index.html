@@ -2796,12 +2796,12 @@
                                 let posId = $scope.clientPOSData.delegatorInput.posContract.pos_id;
                                 pos = $scope.posList.find(pos => pos.pos_id === posId);
                                 pos.inputStake = $scope.clientPOSData.delegatorInput.stake;
-                                pos.typeCoefficient = pos.fee;
+                                pos.typeCoefficient = (1e4 - pos.fee ) / 1e4;
                             } else if (type === 'validator') {
                                 pos.inputStake = $scope.clientPOSData.validatorInput.stake;
-                                pos.fee = $scope.clientPOSData.validatorInput.posFee * 100;
+                                pos.fee = $scope.clientPOSData.validatorInput.posFee;
                                 pos.uptime = $scope.clientPOSData.validatorInput.uptime / 100;
-                                pos.typeCoefficient = (1e4 - pos.fee) / 1e4;
+                                pos.typeCoefficient = pos.fee / 1e2;
                             }
 
                             let posFee = pos.fee;
