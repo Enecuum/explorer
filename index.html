@@ -114,7 +114,7 @@
                                                 <div class="dropdown-divider d-none d-lg-block"></div>
                                                 <a href="https://faucet-bit.enecuum.com" class="dropdown-item" target="_blank">{{'GET_COINS' | translate}}</a>  
                                                 <div class="dropdown-divider d-none d-lg-block"></div>
-                                                <a href="https://app.enecuum.com/enq-bitRelease-v.0.12.2.apk" class="dropdown-item">{{'DOWNLOAD_APP' | translate}}</a>
+                                                <a href="https://app.enecuum.com/enq-bitRelease-v.0.14.4+848.apk" class="dropdown-item">{{'DOWNLOAD_APP' | translate}}</a>
                                             </div>
                                         </div>
                                     </li>
@@ -468,18 +468,13 @@
                                     <li class="breadcrumb-item text-truncate short-hash active" aria-current="page">{{'TX' | translate}}</li>
                                 </ol>
                             </nav>
-
-                            <div class="mb-3 mx-md-2" ng-if="showContractParams">
-                                <div class="h4 text-uppercase">{{'TX' | translate}}<span class="text-uppercase badge badge-pill py-1 ml-2" ng-class="statusBadge(tx.status | TX_STATUS)">{{tx.status | TX_STATUS | translate}}</span></div>
+                            <div class="h4 text-uppercase mx-md-2" ng-class="showContractParams === true ? 'mb-1' : 'mb-4'">{{'TX' | translate}}<span class="text-uppercase badge badge-pill py-1 ml-2" ng-class="statusBadge(tx.status | TX_STATUS)">{{tx.status | TX_STATUS | translate}}</span></div>
+                            <div class="mb-3 mx-md-2" ng-if="showContractParams">                                
                                 <div class="d-flex align-items-center">
                                     <div class="h4 d-flex align-items-center mr-3">
                                         <div class="mr-2 h5 font-weight-normal">{{'TYPE' | translate}}</div>
                                         <div class="text-uppercase badge badge-secondary-lighten badge-pill py-1">{{getContactType(txDataInit.type) | translate}}</div>
-                                    </div>
-<!--                                     <div class="h4 d-flex align-items-center">
-                                        <div class="mr-2 h5 font-weight-normal">{{'STATUS' | translate}}</div>
-                                        <span class="text-uppercase badge badge-pill py-1" ng-class="statusBadge(tx.status | TX_STATUS)">{{tx.status | TX_STATUS | translate}}</span>
-                                    </div> -->                                    
+                                    </div>                                  
                                 </div>
                             </div>
                             <table class="table table-centered">
