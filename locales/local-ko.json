@@ -155,7 +155,7 @@
     "PKEY_LABEL": "퍼블릭 키",
     "POS_CONTRACT": "POS 계약",
     "POS_CONTRACTS": "POS 계약",
-    "POS_DELEGATOR_CALC": "POS 위임자 계산기",
+    "POS_CALC": "POS 계산기",
     "POS_DETAILS": "스테이킹 제공자 세부 정보",
     "POS_ID": "PoS ID",
     "POS_ROI_DESCR_P1": "스테이킹에 대한 ROI 계산은 마지막 5760 블록을 기반으로 합니다.",
