@@ -2786,41 +2786,51 @@
                             posFee : [
                                 {min : $scope.clientPOSData.сonstraints.validator.posFee.min, max : 10, step : 1},
                                 {min : 10, max : 30, step : 5},
-                                {min : 25, max : $scope.clientPOSData.сonstraints.validator.posFee.max, step : 10}
+                                {min : 30, max : $scope.clientPOSData.сonstraints.validator.posFee.max, step : 10}
                             ]
                         }
 
                         if (intervals.hasOwnProperty(param) && directions.includes(direction)) {
                             let value = 0;                            
                             let validateData = {};
-                            let inInterval = false;
                             let validNumber = (isNaN($scope.clientPOSData.validatorInput[param])) ? false : true;
                             if (validNumber) {
                                 value = Number($scope.clientPOSData.validatorInput[param]);
-                                intervals[param].forEach(function(interval, i, intervals) {                                                                        
-                                    if (value >= interval.min && value <= interval.max && !inInterval) {
-                                        inInterval = true;
-                                        let multiplier;
-                                        let step = interval.step;
-                                        if (direction === 'decrease')
-                                            multiplier = -1;
-                                        else if (direction === 'increase')
-                                            multiplier = 1;
-                                        step *= multiplier;
-                                        value += step;
+                                let multiplier;
+                                let intervalIndex;
 
-                                        if (value < interval.min)
-                                            value = interval.min + (intervals[i-1] !== undefined ? intervals[i-1].step * multiplier : 0);
-                                        else if (value > interval.max)
-                                            value = interval.max+ (intervals[i+1] !== undefined ? intervals[i+1].step * multiplier : 0);
-
-                                        if (value < $scope.clientPOSData.сonstraints.validator[param].min)
-                                            value = $scope.clientPOSData.сonstraints.validator[param].min;
-                                        else if (value > $scope.clientPOSData.сonstraints.validator[param].max)
-                                            value = $scope.clientPOSData.сonstraints.validator[param].max;                                         
+                                if (direction === 'decrease') {
+                                    multiplier = -1;
+                                    for (let i=intervals[param].length-1 ; i >= 0; i--) {
+                                        if ((value <= intervals[param][i].max)) 
+                                            intervalIndex = i;
                                     }
-                                });
-                                if (!inInterval) {
+                                } else if (direction === 'increase') {
+                                    multiplier = 1;
+                                    for (let i = 0; i < intervals[param].length; i++ ) {
+                                        if (value >= intervals[param][i].min) {
+                                            intervalIndex = i;
+                                        }
+                                    }
+                                }
+
+                                if (intervalIndex !== undefined) {
+                                    let step = intervals[param][intervalIndex].step;
+
+                                    step *= multiplier;
+                                    let newValue = value + step;
+
+                                    if (newValue < $scope.clientPOSData.сonstraints.validator[param].min)
+                                        value = $scope.clientPOSData.сonstraints.validator[param].min;
+                                    else if (newValue > $scope.clientPOSData.сonstraints.validator[param].max)
+                                        value = $scope.clientPOSData.сonstraints.validator[param].max;
+                                    else if (newValue > intervals[param][intervalIndex].max)
+                                        value = intervals[param][intervalIndex].max
+                                    else if (newValue < intervals[param][intervalIndex].min)
+                                        value = intervals[param][intervalIndex].min
+                                    else 
+                                        value = newValue;
+                                } else  {
                                     if (value < $scope.clientPOSData.сonstraints.validator[param].min)
                                         value = $scope.clientPOSData.сonstraints.validator[param].min;
                                     else if (value > $scope.clientPOSData.сonstraints.validator[param].max)
