@@ -379,5 +379,7 @@
     "FARM_GET_REWARD" : "Get reward from farm",
     "FARM_INCREASE_STAKE" : "Increase stake on farm",
     "MAX_DECIMALS":"The number of decimal places must not exceed {{decimals}}",
-    "POS_TOTAL_STAKE": "POS total stake"
+    "POS_TOTAL_STAKE": "POS total stake",
+    "TRX_PER_DAY": "Transactions per day",
+    "INTEGER_REQUIRED":"Integer required"
 }

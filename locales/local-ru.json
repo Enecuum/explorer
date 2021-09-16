@@ -356,5 +356,7 @@
     "FARM_GET_REWARD" : "Получить награду с фермы",
     "FARM_INCREASE_STAKE" : "Увеличить стейк на ферме",
     "MAX_DECIMALS": "Число знаков после запятой не должно превышать {{decimals}}",
-    "POS_TOTAL_STAKE": "Суммарный стейк POS"
+    "POS_TOTAL_STAKE": "Суммарный стейк POS",
+    "TRX_PER_DAY": "Количество транзакций в день", 
+    "INTEGER_REQUIRED": "Значение должно быть целым числом"
 }

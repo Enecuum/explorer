@@ -2697,6 +2697,8 @@
             }
         };
 
+        ////////////////////////////////// PoS Calc
+
         $scope.showPOSCalcResult = {
             delegator : false,
             validator : false
@@ -2749,6 +2751,16 @@
                                 },
                                 posFee : {
                                     decimalPlaces : 2
+                                },
+                                txsPerDay : {
+                                    min : 0,
+                                    max : 1000000,
+                                    decimalPlaces : 0
+                                },
+                                priceUSD : {
+                                    min : 0,
+                                    max : 1000000,
+                                    decimalPlaces : 5
                                 }
                             },
                             validator : {
@@ -2770,7 +2782,10 @@
                         validatorInput : {
                             stake  : 25000,
                             posFee : 5,
-                            uptime : 95                                
+                            uptime : 95,
+                            txsPerDay  : 1,
+                            delegatedByOwner : 25000,
+                            priceUSD : $rootScope.mainToken.ticker === 'ENQ' ? Number($scope.stats.cg_usd).toFixed(5) : '- - -'
                         },
                         validationRules : getValidationRules
                     }
@@ -2857,31 +2872,49 @@
                     $scope.processPOSData = function(type) {
                         let validationRules = getValidationRules(type);
                         let dataValid = dataValidator.batchValidate($scope.clientPOSData[`${type}Input`], validationRules);
+                        let dailyRewardInPercent = 0;
+                        let posDailyReward = 0;
+                        let price = $scope.stats.cg_usd;
                         if (dataValid) {
                             $scope.clientPOSData[`${type}Input`].stake *= 1;
-                            let pos = {};
+                            let pos = {};                            
                             if (type === 'delegator') {
                                 let posId = $scope.clientPOSData.delegatorInput.posContract.pos_id;
                                 pos = $scope.posList.find(pos => pos.pos_id === posId);
-                                pos.inputStake = $scope.clientPOSData.delegatorInput.stake;
-                                pos.typeCoefficient = (1e4 - pos.fee ) / 1e4;
+                                let inputStake = $scope.clientPOSData.delegatorInput.stake;
+                                let calculatedEffectiveStake = inputStake * pos.uptime;
+                                let calculatedEffectiveTotalStake = $scope.effective_total_stake / $rootScope.mainTokenFactor + calculatedEffectiveStake;
+                                let calculatedPower = calculatedEffectiveStake / calculatedEffectiveTotalStake;
+                                let calculatedRoi = ($scope.daily_pos_reward / $rootScope.mainTokenFactor) * calculatedPower / calculatedEffectiveStake * calculatedEffectiveStake / inputStake * 100 * (1e4 - pos.fee ) / 1e4;
+                                dailyRewardInPercent = calculatedRoi;
+                                posDailyReward = dailyRewardInPercent * inputStake / 100;                                
                             } else if (type === 'validator') {
-                                pos.inputStake = $scope.clientPOSData.validatorInput.stake;
-                                pos.fee = $scope.clientPOSData.validatorInput.posFee;
-                                pos.uptime = $scope.clientPOSData.validatorInput.uptime / 100;
-                                pos.typeCoefficient = pos.fee / 1e2;
+                                price = Number($scope.clientPOSData.validatorInput.priceUSD);
+                                let mainTokenTxFee = $rootScope.mainToken.fee_value / $rootScope.mainTokenFactor;
+                                let posFeeShare = 0.96;
+                                let inputTotalStake = Number($scope.clientPOSData.validatorInput.stake);
+                                let inputDelegatedByOwner = Number($scope.clientPOSData.validatorInput.delegatedByOwner);
+                                let posFee = Number($scope.clientPOSData.validatorInput.posFee);
+                                let uptime = Number($scope.clientPOSData.validatorInput.uptime) / 100;
+                                pos.uptime = uptime;
+                                let calculatedEffectiveStake = inputTotalStake * uptime;//common formula
+                                let effectiveDelegatedStake = inputDelegatedByOwner * uptime;
+                                let calculatedEffectiveTotalStake = $scope.effective_total_stake / $rootScope.mainTokenFactor + calculatedEffectiveStake;//common formula
+                                let calculatedPower = calculatedEffectiveStake / calculatedEffectiveTotalStake;//common formula
+                                let total_pos_tx_fee_rew = Number($scope.clientPOSData.validatorInput.txsPerDay)  * mainTokenTxFee * posFeeShare * calculatedEffectiveStake / calculatedEffectiveTotalStake;
+                                let txFee = (total_pos_tx_fee_rew * posFee / 100) + (total_pos_tx_fee_rew * (1 - posFee / 100) * effectiveDelegatedStake / calculatedEffectiveStake);
+                                let fee = $scope.daily_pos_reward  / $rootScope.mainTokenFactor * calculatedPower * posFee / 100;
+                                let selfDelegateRew = $scope.daily_pos_reward / $rootScope.mainTokenFactor * effectiveDelegatedStake / calculatedEffectiveTotalStake * (100 - posFee / 100);
+                                posDailyReward  = txFee + fee + selfDelegateRew;
+                                dailyRewardInPercent = posDailyReward / inputDelegatedByOwner * 100;
                             }
 
-                            let posFee = pos.fee;
-                            let calculatedEffectiveStake = pos.inputStake * pos.uptime;
-                            let calculatedEffectiveTotalStake = $scope.effective_total_stake / $rootScope.mainTokenFactor + calculatedEffectiveStake;
-                            let calculatedPower = calculatedEffectiveStake / calculatedEffectiveTotalStake;
-                            let calculatedRoi = ($scope.daily_pos_reward / $rootScope.mainTokenFactor) * calculatedPower / calculatedEffectiveStake * calculatedEffectiveStake / pos.inputStake * 100 * pos.typeCoefficient;
-                            let dailyRewardInPercent = calculatedRoi;
-                            let posDailyReward = dailyRewardInPercent * pos.inputStake / 100;
+                            if (!(pos.uptime > 0)) {
+                                posDailyReward = 0;
+                                dailyRewardInPercent = 0;
+                            }
 
-                            populatePOSROI(type, posDailyReward, dailyRewardInPercent);                            
-
+                            populatePOSROI(type, posDailyReward, dailyRewardInPercent, price);
                             $scope.showPOSCalcResult[type] = true;
                         } else {
                             $scope.showPOSCalcResult[type] = false;
@@ -2895,30 +2928,30 @@
                         }
                     });
 
-                    function populatePOSROI(type, posDailyReward, dailyRewardInPercent) {
+                    function populatePOSROI(type, posDailyReward, dailyRewardInPercent, price = $scope.stats.cg_usd) {
                         $scope.posROIData[type] = [
                             {
                                 period: "ROI_DAILY",
                                 value: commas(posDailyReward.toFixed(2)) +' '+ $scope.currentPreset.tokenName,
-                                usd: commas((posDailyReward * $scope.stats.cg_usd).toFixed(2)) + ' USD',
+                                usd: commas((posDailyReward * price).toFixed(2)) + ' USD',
                                 roi: "+ " + commas((dailyRewardInPercent).toFixed(2)) + " %"
                             },
                             {
                                 period: "ROI_WEEKLY",
                                 value: commas((posDailyReward * 7).toFixed(2)) +' '+ $scope.currentPreset.tokenName,
-                                usd: commas((posDailyReward * 7 * $scope.stats.cg_usd).toFixed(2)) + ' USD',
+                                usd: commas((posDailyReward * 7 * price).toFixed(2)) + ' USD',
                                 roi: "+ " + commas((dailyRewardInPercent * 7).toFixed(2)) + " %"
                             },
                             {
                                 period: "ROI_MONTHLY",
                                 value:  commas((posDailyReward * 30).toFixed(2)) +' '+ $scope.currentPreset.tokenName,
-                                usd: commas((posDailyReward * 30 * $scope.stats.cg_usd).toFixed(2)) + ' USD',
+                                usd: commas((posDailyReward * 30 * price).toFixed(2)) + ' USD',
                                 roi: "+ " + commas((dailyRewardInPercent * 30).toFixed(2)) + " %"
                             },
                             {
                                 period: "ROI_ANNUALLY",
                                 value:  commas((posDailyReward * 365).toFixed(2)) +' '+ $scope.currentPreset.tokenName,
-                                usd: commas((posDailyReward * 365 * $scope.stats.cg_usd).toFixed(2)) + ' USD',
+                                usd: commas((posDailyReward * 365 * price).toFixed(2)) + ' USD',
                                 roi: "+ " + commas((dailyRewardInPercent * 365).toFixed(2)) + " %"
                             }                                        
                         ];                        
@@ -2933,12 +2966,6 @@
                                         args: {data: $scope.clientPOSData[`${type}Input`].stake},
                                         desiredResult: true,
                                         errMsg: 'REQUIRED'
-                                    },
-                                    {
-                                        method: 'execTheRegExp',
-                                        args: {str: $scope.clientPOSData[`${type}Input`].stake, regExpObj: /^([0-9]*){1}$/},
-                                        desiredResult: true,
-                                        errMsg: 'INVALID_SYMBOLS_IN_DIGITAL_VALUE'                                
                                     },
                                     {
                                         method: 'isInteger',
@@ -2961,6 +2988,36 @@
                                 ],
                                 errMsgSelector: `#${type}StakeInputWrapper .errMsg`
                             },
+                            delegatedByOwner : {
+                                requireToCheck: type === 'validator' ? true : false,
+                                checks : [                                    
+                                    {
+                                        method: 'isSet',
+                                        args: {data: $scope.clientPOSData[`${type}Input`].delegatedByOwner},
+                                        desiredResult: true,
+                                        errMsg: 'REQUIRED'
+                                    },
+                                    {
+                                        method: 'isInteger',
+                                        args: {value: Number($scope.clientPOSData[`${type}Input`].delegatedByOwner)},
+                                        desiredResult: true,
+                                        errMsg: 'INTEGER_REQUIRED'
+                                    },
+                                    {
+                                    method: 'inIntervalBothClosed',
+                                    args: {value: Number($scope.clientPOSData[`${type}Input`].delegatedByOwner), min: Number($scope.clientPOSData.сonstraints.common.stake.min), max: Number($scope.clientPOSData.сonstraints.common.stake.max)},
+                                    desiredResult: true,
+                                    errMsg: {
+                                                msg: 'NOT_IN_RANGE',
+                                                params: {
+                                                    min: $scope.clientPOSData.сonstraints.common.stake.min,
+                                                    max: $scope.clientPOSData.сonstraints.common.stake.max
+                                                }
+                                            }
+                                    },                                
+                                ],
+                                errMsgSelector: `#${type}DelegatedByOwnerInputWrapper .errMsg`
+                            },                            
                             posFee : {
                                 requireToCheck: type === 'validator' ? true : false,
                                 checks : [
@@ -3001,6 +3058,77 @@
                                     }                                
                                 ],
                                 errMsgSelector: `#${type}FeeInputWrapper .errMsg`
+                            },                            
+                            txsPerDay : {
+                                requireToCheck: type === 'validator' ? true : false,
+                                checks : [
+                                    {
+                                        method: 'isSet',
+                                        args: {data: $scope.clientPOSData[`${type}Input`].txsPerDay},
+                                        desiredResult: true,
+                                        errMsg: 'REQUIRED'
+                                    },
+                                    {
+                                        method: 'isInteger',
+                                        args: {value: Number($scope.clientPOSData[`${type}Input`].txsPerDay)},
+                                        desiredResult: true,
+                                        errMsg: 'INTEGER_REQUIRED'
+                                    },
+                                    {
+                                    method: 'inIntervalBothClosed',
+                                    args: {value: Number($scope.clientPOSData[`${type}Input`].txsPerDay), min: Number($scope.clientPOSData.сonstraints.common.txsPerDay.min), max: Number($scope.clientPOSData.сonstraints.common.txsPerDay.max)},
+                                    desiredResult: true,
+                                    errMsg: {
+                                                msg: 'NOT_IN_RANGE',
+                                                params: {
+                                                    min: $scope.clientPOSData.сonstraints.common.txsPerDay.min,
+                                                    max: $scope.clientPOSData.сonstraints.common.txsPerDay.max
+                                                }
+                                            }
+                                    }                                
+                                ],
+                                errMsgSelector: `#${type}TXsPerDayInputWrapper .errMsg`
+                            },                            
+                            priceUSD : {
+                                requireToCheck: type === 'validator' && $rootScope.mainToken.ticker === 'ENQ' ? true : false,
+                                checks : [
+                                    {
+                                        method: 'isSet',
+                                        args: {data: $scope.clientPOSData[`${type}Input`].priceUSD},
+                                        desiredResult: true,
+                                        errMsg: 'REQUIRED'
+                                    },
+                                    {
+                                        method: 'execTheRegExp',
+                                        args: {str: $scope.clientPOSData[`${type}Input`].priceUSD, regExpObj: /^([0-9]*\.?([0-9]*)){1}$/},
+                                        desiredResult: true,
+                                        errMsg: 'INVALID_SYMBOLS_IN_DIGITAL_VALUE'                                
+                                    },
+                                    {
+                                        method: 'matchToFixed',
+                                        args: {value: $scope.clientPOSData[`${type}Input`].priceUSD, n: $scope.clientPOSData.сonstraints.common.priceUSD.decimalPlaces},
+                                        desiredResult: true,
+                                        errMsg: {
+                                                    msg: 'MAX_DECIMALS',
+                                                    params: {
+                                                        decimals: $scope.clientPOSData.сonstraints.common.priceUSD.decimalPlaces
+                                                    }
+                                                }
+                                    },
+                                    {
+                                    method: 'inIntervalBothClosed',
+                                    args: {value: Number($scope.clientPOSData[`${type}Input`].priceUSD), min: Number($scope.clientPOSData.сonstraints.common.priceUSD.min), max: Number($scope.clientPOSData.сonstraints.common.priceUSD.max)},
+                                    desiredResult: true,
+                                    errMsg: {
+                                                msg: 'NOT_IN_RANGE',
+                                                params: {
+                                                    min: $scope.clientPOSData.сonstraints.common.priceUSD.min,
+                                                    max: $scope.clientPOSData.сonstraints.common.priceUSD.max
+                                                }
+                                            }
+                                    }                                
+                                ],
+                                errMsgSelector: `#${type}PriceUSDInputWrapper .errMsg`
                             },
                             uptime : {
                                 requireToCheck: type === 'validator' ? true : false,
