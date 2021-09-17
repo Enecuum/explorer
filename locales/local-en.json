@@ -381,5 +381,7 @@
     "MAX_DECIMALS":"The number of decimal places must not exceed {{decimals}}",
     "POS_TOTAL_STAKE": "POS total stake",
     "TRX_PER_DAY": "Transactions per day",
-    "INTEGER_REQUIRED":"Integer required"
+    "INTEGER_REQUIRED":"Integer required",
+    "ADVANCED_MODE" : "Advanced mode",
+    "NEED_TO_SWITCH_ADVANCED_MODE": "You need to switch to advanced mode"
 }
