@@ -360,5 +360,13 @@
     "TRX_PER_DAY": "Количество транзакций в день", 
     "INTEGER_REQUIRED": "Значение должно быть целым числом",
     "ADVANCED_MODE" : "Расширенный режим",
-    "NEED_TO_SWITCH_ADVANCED_MODE": "Требуется включить расширенный режим"
+    "NEED_TO_SWITCH_ADVANCED_MODE": "Требуется включить расширенный режим",
+    "DROP_FARMS" : "Drop Farms",
+    "ACTIVE_PLURAL" : "Активные",
+    "PAUSED_PLURAL" : "На паузе",
+    "FINISHED_PLURAL" : "Работа завершена",
+    "STAKE_EARN" : "Стейк-Доход",
+    "EARNED" : "Доход",
+    "LIQUIDITY" : "Ликвидность",
+    "BLOCKS_LEFT" : "Осталось блоков"
 }

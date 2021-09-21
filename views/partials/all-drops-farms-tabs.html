@@ -1,0 +1,60 @@
+<div class="row pt-3">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body p-2 p-sm-3">   
+                <div class="row">
+                    <div class="col-12">
+                        <div class="h4 mb-3 pl-2 pl-sm-0">{{"DROP_FARMS" | translate}}</div>
+                    </div>  
+                </div>
+                <div class="row justify-content-between align-items-center">
+                    <div class="col-12 mb-3 mb-lg-0" style="flex-grow: 3;">
+                        <ul class="nav nav-tabs nav-bordered mb-3 nav-filters">
+                            <li class="nav-item" ng-repeat="type in tabsOrder">
+                                <a href="javascript;" data-target="#{{type}}DropFarmsTab" data-toggle="tab" aria-expanded="false" data-toggle="tab" class="nav-link h-100 d-flex align-items-center px-1 px-lg-3" ng-class="type === 'active' ? 'active' : ''">
+                                    <span>{{type.toUpperCase() + '_PLURAL' | translate}} ({{dropFarms[type].length + 1}})</span>
+                                </a>
+                            </li>                                                                                                             
+                        </ul>
+                    </div>
+                </div>
+                <div class="tab-content px-2">
+                    <div class="tab-pane" id="{{type + 'DropFarmsTab'}}" ng-class="type === 'active' ? 'active show' : ''" ng-repeat="type in tabsOrder">
+                        <div class="row justify-content-md-center">                                                 
+                            <div class="col-12  px-0 pt-3 pb-0 mb-3 px-lg-2" data-simplebar data-simplebar-lg data-simplebar-auto-hide="false">
+                                <table class="table table-centered table-hover animate-show-hide table-highlighted-head" style="table-layout: auto;" >
+                                    <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>{{'STAKE_EARN' | translate}}</th>  
+                                        <th ng-if="type === 'active'">{{'BLOCKS_LEFT' | translate}}</th>
+                                        <th>{{'TOTAL_STAKE' | translate}}</th>
+                                        <th>{{'APY' | translate}}</th>
+                                        <th>{{'LIQUIDITY' | translate}}</th>
+                                        <th>{{'BLOCK_REWARD' | translate}}</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody style="font-size: 12px;" >
+                                        <tr ng-repeat="dropFarm in dropFarms[type] track by $index">
+                                            <td>{{$index + 1}}</td>
+                                            <td>
+                                                <a ng-href="#!/token/{{dropFarm.stake_token_hash}}" target="_blank">{{dropFarm.stake_token_name}}</a>
+                                                -
+                                                <a ng-href="#!/token/{{dropFarm.reward_token_hash}}" target="_blank">{{dropFarm.reward_token_name}}</a>
+                                            </td>
+                                            <td ng-if="type === 'active'">{{dropFarm.blocks_left | US_COMMAS_INT}}</td>
+                                            <td>{{dropFarm.total_stake | US_COMMAS_BIGINT_DECIMALS : dropFarm.stake_token_decimals : dropFarm.stake_token_decimals}} {{dropFarm.stake_token_name}}</td>
+                                            <td>{{dropFarm.apy !== null ? dropFarm.apy : '---' | US_COMMAS_BIGINT_DECIMALS : 2 : 2}}%</td>
+                                            <td>${{dropFarm.liquidity !== null ? dropFarm.liquidity.toLocaleString('en-us') : '---'}}</td>
+                                            <td>{{dropFarm.block_reward | US_COMMAS_BIGINT_DECIMALS : dropFarm.stake_token_decimals : dropFarm.stake_token_decimals}} {{dropFarm.stake_token_name}}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>                  
+                        </div>
+                    </div>
+                </div> 
+            </div> <!-- end card-body-->
+        </div> <!-- end card-->   
+    </div>
+</div>

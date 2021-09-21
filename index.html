@@ -89,6 +89,7 @@
                                             <a href="#!/tops" class="dropdown-item">{{'ACCOUNTS' | translate}}</a>
                                             <a href="#!/tokens" class="dropdown-item">{{'TOKENS' | translate}}</a>
                                             <a href="#!/pos-contracts" class="dropdown-item">{{'STAKING_PROVIDERS' | translate}}</a>
+                                            <a href="#!/drop-farms" class="dropdown-item">{{'DROP_FARMS' | translate}}</a>
                                         </div>
                                     </li>
                                     <li class="nav-item dropdown" ng-if="menuItemsVisibility.showWallet">
@@ -978,6 +979,9 @@
                     <div class="row pt-3">
                         <div class="col-12" ng-include="'views/partials/custom-token-roi-calc.html'"></div> 
                     </div>                       
+                </script>
+                <script type="text/ng-template" id="dropFarms">
+                    <div class="col-12" ng-include="'views/partials/all-drops-farms-tabs.html'"></div>
                 </script>    
             </div>
 
@@ -1155,6 +1159,9 @@
         }).when('/token-roi', {
             controller: 'tokenROICtrl',
             templateUrl: 'tokenROI'
+        }).when('/drop-farms', {
+            controller: 'dropFarmsCtrl',
+            templateUrl: 'dropFarms'
         })
         .otherwise({
             templateUrl: 'home',
@@ -2326,8 +2333,9 @@
             account_rewards : $resource('api/v1/account_rewards?id=:id&page=:page', {id:'@id', page:'@page'}),
             contract_pricelist : $resource('/api/v1/contract_pricelist'),
             eindex_by_hash : $resource('api/v1/eindex_by_hash?hash=:hash', {hash:'@hash'}),
-            get_dex_farms : $resource('api/v1/get_dex_farms?farmer_id=:farmer_id&farms=:farms', {farmer_id:'@farmer_id', page:'@farms'}, {query: {method: 'GET', isArray: true}}),
-            get_dex_pools : $resource('api/v1/get_dex_pools', {query: {method: 'GET', isArray: true}})
+            get_dex_farms : $resource('api/v1/get_dex_farms?farmer_id=:farmer_id&farms=:farms', {farmer_id:'@farmer_id', farms:'@farms'}, {query: {method: 'GET', isArray: true}}),
+            get_dex_pools : $resource('api/v1/get_dex_pools', {query: {method: 'GET', isArray: true}}),
+            get_dex_farms_all : $resource('api/v1/get_dex_farms', {query: {method: 'GET', isArray: true}})
 		};
 	});
 
@@ -4978,6 +4986,26 @@
             $scope.txContractsTemplate = $scope.contractScheme.template !== 'default' ? `${$scope.contractScheme.template}.html` : 'tx-default-contract.html';
             contractFormatter.formatData($scope.txData);
         }
+    });
+
+    app.controller('dropFarmsCtrl', function($scope, $routeParams, $translate, $filter, provider) {
+        $scope.tabsOrder = ['active', 'paused', 'finished'];
+        $scope.dropFarms = {
+            active   : [],
+            finished : [],
+            paused   : []
+        }
+
+        provider.get_dex_farms_all.query({farms: []}, function (dexFarms) {
+            dexFarms.forEach(function(dexFarm) {
+                if (dexFarm.blocks_left > 0)
+                    $scope.dropFarms.active.push(dexFarm);
+                else if (dexFarm.blocks_left === null)
+                    $scope.dropFarms.paused.push(dexFarm);
+                else if (dexFarm.blocks_left <= 0)
+                    $scope.dropFarms.finished.push(dexFarm);
+            });
+        });
     });
 
 	app.run(function($rootScope, $http, $location, $cookies, langService, provider, GLOBAL_APP_CONFIG) {      

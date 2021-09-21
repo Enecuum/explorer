@@ -383,5 +383,14 @@
     "TRX_PER_DAY": "Transactions per day",
     "INTEGER_REQUIRED":"Integer required",
     "ADVANCED_MODE" : "Advanced mode",
-    "NEED_TO_SWITCH_ADVANCED_MODE": "You need to switch to advanced mode"
+    "NEED_TO_SWITCH_ADVANCED_MODE": "You need to switch to advanced mode",
+    "DROP_FARMS" : "Drop Farms",
+    "ACTIVE_PLURAL" : "Active",
+    "PAUSED_PLURAL" : "Paused",
+    "FINISHED_PLURAL" : "Finished",
+    "STAKE_EARN" : "Stake-Earn",
+    "EARNED" : "Earned",
+    "APY" : "APY",
+    "LIQUIDITY" : "Liquidity",
+    "BLOCKS_LEFT" : "Blocks left"
 }
