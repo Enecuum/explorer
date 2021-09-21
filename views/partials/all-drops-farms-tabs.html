@@ -26,27 +26,27 @@
                                     <thead>
                                     <tr>
                                         <th>#</th>
-                                        <th>{{'STAKE_EARN' | translate}}</th>  
-                                        <th ng-if="type === 'active'">{{'BLOCKS_LEFT' | translate}}</th>
-                                        <th>{{'TOTAL_STAKE' | translate}}</th>
+                                        <th class="text-nowrap">{{'STAKE_EARN' | translate}}</th>  
+                                        <th class="text-nowrap" ng-if="type === 'active'">{{'BLOCKS_LEFT' | translate}}</th>
+                                        <th class="text-nowrap">{{'TOTAL_STAKE' | translate}}</th>
                                         <th>{{'APY' | translate}}</th>
                                         <th>{{'LIQUIDITY' | translate}}</th>
-                                        <th>{{'BLOCK_REWARD' | translate}}</th>
+                                        <th class="text-nowrap">{{'BLOCK_REWARD' | translate}}</th>
                                     </tr>
                                     </thead>
                                     <tbody style="font-size: 12px;" >
                                         <tr ng-repeat="dropFarm in dropFarms[type] track by $index">
                                             <td>{{$index + 1}}</td>
-                                            <td>
+                                            <td class="text-nowrap">
                                                 <a ng-href="#!/token/{{dropFarm.stake_token_hash}}" target="_blank">{{dropFarm.stake_token_name}}</a>
                                                 -
                                                 <a ng-href="#!/token/{{dropFarm.reward_token_hash}}" target="_blank">{{dropFarm.reward_token_name}}</a>
                                             </td>
                                             <td ng-if="type === 'active'">{{dropFarm.blocks_left | US_COMMAS_INT}}</td>
-                                            <td>{{dropFarm.total_stake | US_COMMAS_BIGINT_DECIMALS : dropFarm.stake_token_decimals : dropFarm.stake_token_decimals}} {{dropFarm.stake_token_name}}</td>
-                                            <td>{{dropFarm.apy !== null ? dropFarm.apy : '---' | US_COMMAS_BIGINT_DECIMALS : 2 : 2}}%</td>
-                                            <td>${{dropFarm.liquidity !== null ? dropFarm.liquidity.toLocaleString('en-us') : '---'}}</td>
-                                            <td>{{dropFarm.block_reward | US_COMMAS_BIGINT_DECIMALS : dropFarm.stake_token_decimals : dropFarm.stake_token_decimals}} {{dropFarm.stake_token_name}}</td>
+                                            <td class="text-nowrap">{{dropFarm.total_stake | US_COMMAS_BIGINT_DECIMALS : dropFarm.stake_token_decimals : dropFarm.stake_token_decimals}} {{dropFarm.stake_token_name}}</td>
+                                            <td class="text-nowrap">{{dropFarm.apy !== null ? dropFarm.apy : '---' | US_COMMAS_BIGINT_DECIMALS : 2 : 2}}%</td>
+                                            <td class="text-nowrap">${{dropFarm.liquidity !== null ? dropFarm.liquidity.toLocaleString('en-us') : '---'}}</td>
+                                            <td class="text-nowrap">{{dropFarm.block_reward | US_COMMAS_BIGINT_DECIMALS : dropFarm.stake_token_decimals : dropFarm.stake_token_decimals}} {{dropFarm.stake_token_name}}</td>
                                         </tr>
                                     </tbody>
                                 </table>
