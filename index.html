@@ -5041,6 +5041,8 @@
                                         decimals : token[0].decimals,
                                         ticker   : token[0].ticker
                                     }
+                                    if (prop === 'token_hash')
+                                        enexPool[prop + '_info'].total_supply = token[0].total_supply;
                                     enexPool.status++;
                                 }
                             })
