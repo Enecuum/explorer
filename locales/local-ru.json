@@ -368,5 +368,7 @@
     "STAKE_EARN" : "Стейк-Доход",
     "EARNED" : "Доход",
     "LIQUIDITY" : "Ликвидность",
-    "BLOCKS_LEFT" : "Осталось блоков"
+    "BLOCKS_LEFT" : "Осталось блоков",
+    "ENEX_POOLS" : "Enex Pools",
+    "NUM_VOLUME" : "Объем {{num}}"
 }

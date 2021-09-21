@@ -392,5 +392,8 @@
     "EARNED" : "Earned",
     "APY" : "APY",
     "LIQUIDITY" : "Liquidity",
-    "BLOCKS_LEFT" : "Blocks left"
+    "BLOCKS_LEFT" : "Blocks left",
+    "ENEX_POOLS" : "Enex Pools",
+    "LP_TOTAL_SUPPLY" : "LP total supply",
+    "NUM_VOLUME" : "Volume {{num}}"
 }

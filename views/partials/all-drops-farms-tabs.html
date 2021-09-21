@@ -29,9 +29,10 @@
                                         <th class="text-nowrap">{{'STAKE_EARN' | translate}}</th>  
                                         <th class="text-nowrap" ng-if="type === 'active'">{{'BLOCKS_LEFT' | translate}}</th>
                                         <th class="text-nowrap">{{'TOTAL_STAKE' | translate}}</th>
+                                        <th class="text-nowrap">{{'EMISSION' | translate}}</th>
                                         <th>{{'APY' | translate}}</th>
                                         <th>{{'LIQUIDITY' | translate}}</th>
-                                        <th class="text-nowrap">{{'BLOCK_REWARD' | translate}}</th>
+                                        <th class="text-nowrap">{{'BLOCK_REWARD' | translate}}</th>                                        
                                     </tr>
                                     </thead>
                                     <tbody style="font-size: 12px;" >
@@ -44,6 +45,7 @@
                                             </td>
                                             <td ng-if="type === 'active'">{{dropFarm.blocks_left | US_COMMAS_INT}}</td>
                                             <td class="text-nowrap">{{dropFarm.total_stake | US_COMMAS_BIGINT_DECIMALS : dropFarm.stake_token_decimals : dropFarm.stake_token_decimals}} {{dropFarm.stake_token_name}}</td>
+                                            <td class="text-nowrap">{{dropFarm.emission | US_COMMAS_BIGINT_DECIMALS : dropFarm.reward_token_decimals : dropFarm.reward_token_decimals}} {{dropFarm.reward_token_name}}</td>
                                             <td class="text-nowrap">{{dropFarm.apy !== null ? dropFarm.apy : '---' | US_COMMAS_BIGINT_DECIMALS : 2 : 2}}%</td>
                                             <td class="text-nowrap">${{dropFarm.liquidity !== null ? dropFarm.liquidity.toLocaleString('en-us') : '---'}}</td>
                                             <td class="text-nowrap">{{dropFarm.block_reward | US_COMMAS_BIGINT_DECIMALS : dropFarm.stake_token_decimals : dropFarm.stake_token_decimals}} {{dropFarm.stake_token_name}}</td>

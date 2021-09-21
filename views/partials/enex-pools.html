@@ -1,0 +1,52 @@
+<div class="row pt-3">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body p-2 p-sm-3">   
+                <div class="row">
+                    <div class="col-12">
+                        <div class="h4 mb-3 pl-2 pl-sm-0">{{"ENEX_POOLS" | translate}}</div>
+                    </div>  
+                </div>
+                <div class="row justify-content-md-center">                                                 
+                    <div class="col-12  px-0 pt-3 pb-0 mb-3 px-lg-2" data-simplebar data-simplebar-lg data-simplebar-auto-hide="false">
+                        <table class="table table-centered table-hover animate-show-hide table-highlighted-head" style="table-layout: auto;" >
+                            <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>{{'NAME' | translate}}</th>
+                                <th class="text-nowrap">{{'NUM_VOLUME' | translate: {num: 1} }}</th>
+                                <th class="text-nowrap">{{'NUM_VOLUME' | translate: {num: 2} }}</th>
+                                <th class="text-nowrap">{{'LP_TOTAL_SUPPLY' | translate}}</th>
+                                <th>{{'LIQUIDITY' | translate}}</th>                                               
+                            </tr>
+                            </thead>
+                            <tbody style="font-size: 12px;" >
+                                <tr ng-repeat="enexPool in enexPools track by $index" ng-if="enexPool.status === 3">
+                                    <td>{{$index + 1}}</td>
+                                    <td class="text-nowrap">
+                                        {{enexPool.asset_1_info.ticker}}
+                                        -
+                                        {{enexPool.asset_2_info.ticker}}
+                                    </td>
+                                    <td class="text-nowrap">
+                                        <span>{{enexPool.volume_1 | US_COMMAS_BIGINT_DECIMALS : enexPool.asset_1_info.decimals : enexPool.asset_1_info.decimals}}</span>
+                                        <a ng-href="#!/token/{{enexPool.asset_1}}" target="_blank">{{enexPool.asset_1_info.ticker}}</a>
+                                    </td>    
+                                    <td class="text-nowrap">
+                                        <span>{{enexPool.volume_2 | US_COMMAS_BIGINT_DECIMALS : enexPool.asset_2_info.decimals : enexPool.asset_2_info.decimals}}</span>
+                                        <a ng-href="#!/token/{{enexPool.asset_2}}" target="_blank">{{enexPool.asset_2_info.ticker}}</a>
+                                    </td>
+                                    <td class="text-nowrap">
+                                        <span>{{enexPool.token_hash_info.total_supply | US_COMMAS_BIGINT_DECIMALS : enexPool.token_hash_info.decimals : enexPool.token_hash_info.decimals}}</span>
+                                        <a ng-href="#!/token/{{enexPool.token_hash}}" target="_blank">{{enexPool.token_hash_info.ticker}}</a>
+                                    </td>
+                                    <td>{{'COMING_SOON' | translate}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>                  
+                </div>
+            </div> <!-- end card-body-->
+        </div> <!-- end card-->   
+    </div>
+</div>

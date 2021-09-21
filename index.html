@@ -90,6 +90,7 @@
                                             <a href="#!/tokens" class="dropdown-item">{{'TOKENS' | translate}}</a>
                                             <a href="#!/pos-contracts" class="dropdown-item">{{'STAKING_PROVIDERS' | translate}}</a>
                                             <a href="#!/drop-farms" class="dropdown-item">{{'DROP_FARMS' | translate}}</a>
+                                            <a href="#!/enex-pools" class="dropdown-item">{{'ENEX_POOLS' | translate}}</a>
                                         </div>
                                     </li>
                                     <li class="nav-item dropdown" ng-if="menuItemsVisibility.showWallet">
@@ -982,7 +983,10 @@
                 </script>
                 <script type="text/ng-template" id="dropFarms">
                     <div class="col-12" ng-include="'views/partials/all-drops-farms-tabs.html'"></div>
-                </script>    
+                </script>
+                <script type="text/ng-template" id="enexPools">
+                    <div class="col-12" ng-include="'views/partials/enex-pools.html'"></div>
+                </script>                    
             </div>
 
             <!-- container -->
@@ -1162,6 +1166,9 @@
         }).when('/drop-farms', {
             controller: 'dropFarmsCtrl',
             templateUrl: 'dropFarms'
+        }).when('/enex-pools', {
+            controller: 'enexPoolsCtrl',
+            templateUrl: 'enexPools'
         })
         .otherwise({
             templateUrl: 'home',
@@ -4996,7 +5003,7 @@
             paused   : []
         }
 
-        provider.get_dex_farms_all.query({farms: []}, function (dexFarms) {
+        provider.get_dex_farms_all.query(function (dexFarms) {
             dexFarms.forEach(function(dexFarm) {
                 if (dexFarm.blocks_left > 0)
                     $scope.dropFarms.active.push(dexFarm);
@@ -5007,6 +5014,43 @@
             });
         });
     });
+
+    app.controller('enexPoolsCtrl', function($scope, $routeParams, $translate, $filter, provider) {
+        $scope.enexPools = [];
+        $scope.tokensArr = [];        
+        let propsArr = ['asset_1', 'asset_2', 'token_hash'];
+
+        provider.get_tickers_all.query(function(tickers_all) {            
+            provider.get_dex_pools.query(function (enexPools) {
+                $scope.enexPools = enexPools;
+
+                $scope.enexPools.forEach(function(enexPool) {
+                    enexPool.status = 0;
+                    propsArr.forEach(function(prop) {
+                        if ($scope.tokensArr.indexOf(enexPool[prop]) === -1 && tickers_all.find(elem => elem.hash === enexPool[prop]))
+                            $scope.tokensArr.push(enexPool[prop]);  
+                    });
+                });
+
+                $scope.tokensArr.forEach(function(hash) {
+                    provider.token_info.query({hash:hash}, function(token) {
+                        $scope.enexPools.forEach(function(enexPool) {
+                            propsArr.forEach(function(prop) {
+                                if (enexPool[prop] === hash) {                                    
+                                    enexPool[prop + '_info'] = {
+                                        decimals : token[0].decimals,
+                                        ticker   : token[0].ticker
+                                    }
+                                    enexPool.status++;
+                                }
+                            })
+                        });
+                    });
+                });
+            });
+        });
+    });
+
 
 	app.run(function($rootScope, $http, $location, $cookies, langService, provider, GLOBAL_APP_CONFIG) {      
 
