@@ -12,7 +12,7 @@
                         <ul class="nav nav-tabs nav-bordered mb-3 nav-filters">
                             <li class="nav-item" ng-repeat="type in tabsOrder">
                                 <a href="javascript;" data-target="#{{type}}DropFarmsTab" data-toggle="tab" aria-expanded="false" data-toggle="tab" class="nav-link h-100 d-flex align-items-center px-1 px-lg-3" ng-class="type === 'active' ? 'active' : ''">
-                                    <span>{{type.toUpperCase() + '_PLURAL' | translate}} ({{dropFarms[type].length + 1}})</span>
+                                    <span>{{type.toUpperCase() + '_PLURAL' | translate}} ({{dropFarms[type].length}})</span>
                                 </a>
                             </li>                                                                                                             
                         </ul>
