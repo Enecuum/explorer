@@ -89,8 +89,8 @@
                                             <a href="#!/tops" class="dropdown-item">{{'ACCOUNTS' | translate}}</a>
                                             <a href="#!/tokens" class="dropdown-item">{{'TOKENS' | translate}}</a>
                                             <a href="#!/pos-contracts" class="dropdown-item">{{'STAKING_PROVIDERS' | translate}}</a>
-                                            <a href="#!/drop-farms" class="dropdown-item">{{'DROP_FARMS' | translate}}</a>
-                                            <a href="#!/enex-pools" class="dropdown-item">{{'ENEX_POOLS' | translate}}</a>
+                                            <a ng-if="showDropFarms" href="#!/drop-farms" class="dropdown-item">{{'DROP_FARMS' | translate}}</a>
+                                            <a ng-if="showEnexPools" href="#!/enex-pools" class="dropdown-item">{{'ENEX_POOLS' | translate}}</a>
                                         </div>
                                     </li>
                                     <li class="nav-item dropdown" ng-if="menuItemsVisibility.showWallet">
@@ -2376,6 +2376,8 @@
 
     app.controller('headerCtrl', function(GLOBAL_APP_CONFIG, $scope, $rootScope, $location, $http, langService) {
         let currentPreset = GLOBAL_APP_CONFIG;
+        $scope.showEnexPools = currentPreset.pagesSectionsVisibility.showEnexPools;
+        $scope.showDropFarms = currentPreset.pagesSectionsVisibility.showDropFarms;
         $scope.tokenName = currentPreset.tokenName;
         $scope.showFullNodesCountCard = currentPreset.pagesSectionsVisibility.showFullNodesCountCard;
         $scope.tokenLogoFile = currentPreset.tokenLogoFileLink;

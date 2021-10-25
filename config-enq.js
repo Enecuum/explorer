@@ -40,7 +40,9 @@
             showROICalc: true,
             showExchangesSection: true,
             showCurrencyToUSDAccountDetails: true,
-            showTestNetDisclaimer: false
+            showTestNetDisclaimer: false,
+            showDropFarms: false,
+            showEnexPools: false
         },
         bannedAccs: [
             "036808ae1adb7604b52345694723df6b09853e9e43105add144604d382951b0df5",

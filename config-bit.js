@@ -34,7 +34,9 @@
             showROICalc: true,
             showExchangesSection: false,
             showCurrencyToUSDAccountDetails: false,
-            showTestNetDisclaimer: true
+            showTestNetDisclaimer: true,
+            showDropFarms: true,
+            showEnexPools: true
         },
         POSChallenge: {
             on: false,  
