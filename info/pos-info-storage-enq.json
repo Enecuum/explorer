@@ -92,5 +92,17 @@
     "description": {
       "en": "Stakely is a blockchain non-custodial staking service focused on giving the most value to its users by creating easy-to-follow tutorials, staking insurance protection, referral system, custom staking dashboards, and a large list of available networks."
     }
-  }
+  },
+  {
+    "pos_id": "ef7c374daaba9ca80493ba7dac5367b0adaa6c0743c5b9188fce2104458cee9c",
+    "logo": "ankr.svg",
+    "website": "https://www.ankr.com",
+    "media": {
+      "twitter": "https://twitter.com/Ankr",
+      "telegram": "https://t.me/ankrnetwork"
+    },
+    "description": {
+      "en": "Ankr is an infrastructure that paves the way to the open internet of the future. Ankr makes participating in, building on, and using blockchains and protocols easy and accessible for everyone. The Ankr platform helps to sequester intermediaries and gatekeepers, builders, and users gain back control over their applications and data hereby making individuals the sole validators independent of middlemen."
+    }
+  }  
 ]
