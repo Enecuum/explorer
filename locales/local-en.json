@@ -395,5 +395,6 @@
     "BLOCKS_LEFT" : "Blocks left",
     "ENEX_POOLS" : "Enex Pools",
     "LP_TOTAL_SUPPLY" : "LP total supply",
-    "NUM_VOLUME" : "Volume {{num}}"
+    "NUM_VOLUME" : "Volume {{num}}",
+    "DELEGATED_BY_OTHERS": "Delegated by others"
 }
