@@ -2,9 +2,9 @@
 
     <div class="col-12">
         <div class="form-row align-items-md-start">
-            <div id="validatorDelegatedByOwnerInputWrapper" class="col-12 col-md-6 col-xl-4 form-group mb-3" style="padding-top: 1px;">
-                <label for="roiValidatorDelegatedByOwnerInput" class="text-nowrap">{{'DELEGATED_BY_OWNER' | translate: translationData}}</label>
-                <input type="text" id="roiValidatorDelegatedByOwnerInput" class="form-control" ng-model="clientPOSData.validatorInput.delegatedByOwner">
+            <div id="validatorDelegatedByOthersInputWrapper" class="col-12 col-md-6 col-xl-4 form-group mb-3" style="padding-top: 1px;">
+                <label for="roiValidatorDelegatedByOthersInput" class="text-nowrap">{{'DELEGATED_BY_OTHERS' | translate: translationData}}</label>
+                <input type="text" id="roiValidatorDelegatedByOthersInput" class="form-control" ng-model="clientPOSData.validatorInput.delegatedByOthers">
                 <small ng-show="!showPOSCalcResult.validator" class="errMsg"></small>
             </div>
             <div id="validatorFeeInputWrapper" class="col-12 col-md-6 col-xl-4 form-group mb-3" style="padding-top: 1px;">
@@ -29,12 +29,12 @@
                     </div>                    
                 </div>
                 <small ng-show="!showPOSCalcResult.validator" class="errMsg"></small>
-            </div>    
-            <div id="validatorDelegatedByOthersInputWrapper" class="col-12 col-md-6 col-xl-4 form-group mb-3" style="padding-top: 1px;">
-                <label for="roiValidatorDelegatedByOthersInput" class="text-nowrap">{{'DELEGATED_BY_OTHERS' | translate: translationData}}</label>
-                <input type="text" id="roiValidatorDelegatedByOthersInput" class="form-control" ng-model="clientPOSData.validatorInput.delegatedByOthers">
-                <small ng-show="!showPOSCalcResult.validator" class="errMsg"></small>
             </div>
+            <div id="validatorDelegatedByOwnerInputWrapper" class="col-12 col-md-6 col-xl-4 form-group mb-3" style="padding-top: 1px;">
+                <label for="roiValidatorDelegatedByOwnerInput" class="text-nowrap">{{'DELEGATED_BY_OWNER' | translate: translationData}}</label>
+                <input type="text" id="roiValidatorDelegatedByOwnerInput" class="form-control" ng-model="clientPOSData.validatorInput.delegatedByOwner">
+                <small ng-show="!showPOSCalcResult.validator" class="errMsg"></small>
+            </div>            
             <div id="validatorUptimeInputWrapper" class="col-12 col-md-6 col-xl-4 form-group mb-3" style="padding-top: 1px;">
                 <label for="roiValidatorUptimeInput">{{'PERFORMANCE' | translate: translationData}},%</label>
 				<div class="input-group bootstrap-touchspin bootstrap-touchspin-injected">
