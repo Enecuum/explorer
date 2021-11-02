@@ -1,22 +1,19 @@
 [
   {
-    "pos_id": "some-staking-provider-id",
-    "website": "https://somePOSWebSite.com",
+    "pos_id": "a05ecf531e4b717d28db5832f32f1f571ad4297a720c95350a74175735086343",
+    "website": "https://stake2earn.com",
+    "logo": "stake2earn.jpeg",
     "media": {
-      "facebook": "https://www.facebook.com/some-staking-provider",
-      "twitter": "https://twitter.com/some-staking-provider",
-      "medium": "https://medium.com/some-staking-provider",
-      "github": "https://github.com/some-staking-provider",
-      "forklog": "https://hub.forklog.com/some-staking-provider",
-      "bitcointalk": "https://bitcointalk.org/some-staking-provider",
-      "linkedin": "https://www.linkedin.com/some-staking-provider",
-      "youtube": "https://www.youtube.com/some-staking-provider",
-      "qq": "https://qm.qq.com/some-staking-provider",
-      "weixin": "https://weixin.qq.com/some-staking-provider",
-      "telegram": "https://t.me/some-staking-provider"
+      "facebook": "https://www.facebook.com/stake2earn",
+      "twitter": "https://twitter.com/stake2earn",
+      "medium": "https://stake2earn.medium.com/",
+      "github": "https://github.com/AlexDCryptoC",
+      "linkedin": "https://www.linkedin.com/company/stake2earn",
+      "youtube": "https://www.youtube.com/c/stake2earn",
+      "telegram": "https://t.me/stake2earn"
     },
     "description": {
-      "en": "EN text about some Staking provider",
+      "en": "stake2earn - your crypto staking provider. Every stake counts!🌜",
       "de": "DE text about some Staking provider",
       "fr": "FR text about some Staking provider",
       "ru": "RU text about some Staking provider",
@@ -25,84 +22,5 @@
       "in": "IN text about some Staking provider",
       "tr": "TR text about some Staking provider"
     }
-  },
-  {
-    "pos_id": "another-staking-provider-id",
-    "website": "https://anotherPOSWebSite.com",
-    "media": {
-      "facebook": "https://www.facebook.com/another-staking-provider",
-      "twitter": "https://twitter.com/another-staking-provider",
-      "medium": "https://medium.com/another-staking-provider",
-      "github": "https://github.com/another-staking-provider",
-      "forklog": "https://hub.forklog.com/another-staking-provider",
-      "bitcointalk": "https://bitcointalk.org/another-staking-provider",
-      "linkedin": "https://www.linkedin.com/another-staking-provider",
-      "youtube": "https://www.youtube.com/another-staking-provider",
-      "qq": "https://qm.qq.com/another-staking-provider",
-      "weixin": "https://weixin.qq.com/another-staking-provider",
-      "telegram": "https://t.me/another-staking-provider"
-    },
-    "description": {
-      "en": "EN text about another Staking provider",
-      "de": "DE text about another Staking provider"
-    }
-  },
-  {
-    "pos_id": "0dc30e84a6be4dff923a84c7511006e195531817c5b54650a42f6fcdc6ebc253",
-    "website": "https://genesislab.net",
-    "logo": "genesis-lab.svg",
-    "media": {
-      "twitter": "https://twitter.com/genesislab_net",
-      "github": "https://github.com/genesis-lab-team",
-      "telegram": "https://t.me/GenesisLab_EN"
-    },
-    "description": {
-      "en": "Genesis Lab is a blockchain-focused development company and trusted Proof-of-Stake validator to comfortably stake your coins and earn rewards with Enecuum, Near, Cosmos, Polkadot, IRIS, Kusama, Kava, Terra and other networks."
-    }
-  },
-  {
-    "pos_id": "b38bdd60ec73324ec7668236dd3f791dafbe8d1c8a939c124493ce4fbf11d801",
-    "logo": "KCS-logo.png"
-  },
-  {
-    "pos_id": "018f23b3fd60c28e12bd428296b98250394b44839d438b5022a9a20686ebd99d",
-    "logo": "trinitylab-logo-256x256.png",
-    "website": "https://trinitylab.org",
-    "media": {
-      "twitter": "https://twitter.com/TrinityLabdao",
-      "medium": "https://medium.com/@Trinitylab"
-    }
-  },
-  {
-    "pos_id": "769498f1056b10e0b8de10099b411e45e0357bdd3d8387ecaa25af5ead7b4970",
-    "logo": "deer-hunter-logo.png"
-  },
-  {
-    "pos_id": "6ae6aa98dcf68928fda8e236f709ec90133666fc746a5bbe5cba34ac7517df3c",
-    "website": "https://stakely.io",
-    "logo": "stakely_logo.jpg",
-    "media": {
-      "twitter": "https://twitter.com/Stakely_io",
-      "medium": "https://medium.com/stakely",
-      "github": "https://github.com/Stakely",
-      "linkedin": "https://www.linkedin.com/company/stakely-io",
-      "youtube": "https://www.youtube.com/channel/UC-8JruXm84AZwFWHU7wTTOg",
-      "telegram": "https://t.me/stakely"
-    },
-    "description": {
-      "en": "Stakely is a blockchain non-custodial staking service focused on giving the most value to its users by creating easy-to-follow tutorials, staking insurance protection, referral system, custom staking dashboards, and a large list of available networks."
-    }
-  },
-  {
-    "pos_id": "ef7c374daaba9ca80493ba7dac5367b0adaa6c0743c5b9188fce2104458cee9c",
-    "logo": "ankr.svg",
-    "website": "https://www.ankr.com",
-    "media": {
-      "twitter": "https://twitter.com/Ankr",
-      "telegram": "https://t.me/ankrnetwork"
-    },
-    "description": {
-      "en": "Ankr is an infrastructure that paves the way to the open internet of the future. Ankr makes participating in, building on, and using blockchains and protocols easy and accessible for everyone. The Ankr platform helps to sequester intermediaries and gatekeepers, builders, and users gain back control over their applications and data hereby making individuals the sole validators independent of middlemen."
-    }
-  }  
+  }, 
 ]
