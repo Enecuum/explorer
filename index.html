@@ -2717,11 +2717,6 @@
         }
 
         $scope.posCalcType = 'delegator';
-        $scope.posCalcAdvancedMode = false;
-
-        $scope.togglePosCalcMode = function() {
-            $scope.posCalcAdvancedMode = !$scope.posCalcAdvancedMode;
-        }
 
         $scope.setPOSCalcType = function(type) {
             $scope.posCalcType = type;
@@ -2764,6 +2759,7 @@
                             stake : 25000
                         },
                         validator : {
+                            delegatedByOthers : 1,
                             delegatedByOwner : 25000,
                             uptime : 95,
                             txsPerDay : 1,
@@ -2808,7 +2804,7 @@
                             stake       : $scope.defaultValues.common.stake                            
                         },
                         validatorInput : {
-                            stake  : $scope.defaultValues.common.stake,
+                            delegatedByOthers  : $scope.defaultValues.validator.delegatedByOthers,
                             posFee : 5,
                             uptime : $scope.defaultValues.validator.uptime,
                             txsPerDay  : $scope.defaultValues.validator.txsPerDay,
@@ -2817,8 +2813,6 @@
                         },
                         validationRules : getValidationRules
                     }
-
-
 
                     $scope.modifyByStep = function(param, direction) {
                         let directions = ['decrease', 'increase'];
@@ -2922,7 +2916,7 @@
                                 price = Number($scope.clientPOSData.validatorInput.priceUSD);
                                 let mainTokenTxFee = $rootScope.mainToken.fee_value / $rootScope.mainTokenFactor;
                                 let posFeeShare = 0.96;
-                                let inputTotalStake = Number($scope.clientPOSData.validatorInput.stake);
+                                let inputTotalStake = Number($scope.clientPOSData.validatorInput.delegatedByOthers) + Number($scope.clientPOSData.validatorInput.delegatedByOwner);
                                 let inputDelegatedByOwner = Number($scope.clientPOSData.validatorInput.delegatedByOwner);
                                 let posFee = Number($scope.clientPOSData.validatorInput.posFee);
                                 let uptime = Number($scope.clientPOSData.validatorInput.uptime) / 100;
@@ -2958,16 +2952,6 @@
                         }
                     });
 
-                    $scope.$watch('posCalcAdvancedMode', function(newValue, oldValue) {
-                        if (newValue !== undefined) {
-                            $scope.clientPOSData.validatorInput.stake  = $scope.defaultValues.common.stake,
-                            $scope.clientPOSData.validatorInput.uptime = $scope.defaultValues.validator.uptime,
-                            $scope.clientPOSData.validatorInput.txsPerDay = $scope.defaultValues.validator.txsPerDay,
-                            $scope.clientPOSData.validatorInput.delegatedByOwner = $scope.defaultValues.validator.delegatedByOwner
-                            $scope.processPOSData('validator');                            
-                        }
-                    });
-
                     function populatePOSROI(type, posDailyReward, dailyRewardInPercent, price = $scope.stats.cg_usd) {
                         $scope.posROIData[type] = [
                             {
@@ -3000,6 +2984,7 @@
                     function getValidationRules(type) {
                         let validationRules = {
                             stake : {
+                                requireToCheck: type === 'delegator' ? true : false,
                                 checks : [
                                     {
                                         method: 'isSet',
@@ -3024,22 +3009,40 @@
                                                         max: $scope.clientPOSData.сonstraints.common.stake.max
                                                     }
                                                 }
-                                    },
-                                    {
-                                        requireToCheck: type === 'validator' ? true : false,
-                                        method: 'moreOrEqualThan',
-                                        args: {value: Number($scope.clientPOSData[`${type}Input`].stake), max: Number($scope.clientPOSData.validatorInput.delegatedByOwner)},
-                                        desiredResult: true,
-                                        errMsg: {
-                                                    msg: 'MUST_BE_GREATER_OR_EQUAL_THAN_NAMED_VALUE',
-                                                    params: {
-                                                        name: $translate.instant('DELEGATED_BY_OWNER') + ($scope.posCalcAdvancedMode === false ? ' ('+ $translate.instant('NEED_TO_SWITCH_ADVANCED_MODE') +')' : '')
-                                                    }
-                                                }
-                                    }                                
+                                    }                              
                                 ],
                                 errMsgSelector: `#${type}StakeInputWrapper .errMsg`
                             },
+                            delegatedByOthers : {
+                                requireToCheck: type === 'validator' ? true : false,
+                                checks : [
+                                    {
+                                        method: 'isSet',
+                                        args: {data: $scope.clientPOSData[`${type}Input`].delegatedByOthers},
+                                        desiredResult: true,
+                                        errMsg: 'REQUIRED'
+                                    },
+                                    {
+                                        method: 'isInteger',
+                                        args: {value: Number($scope.clientPOSData[`${type}Input`].delegatedByOthers)},
+                                        desiredResult: true,
+                                        errMsg: 'INTEGER_REQUIRED'
+                                    },
+                                    {
+                                        method: 'inIntervalBothClosed',
+                                        args: {value: Number($scope.clientPOSData[`${type}Input`].delegatedByOthers), min: 0 , max: Number($scope.clientPOSData.сonstraints.common.stake.max)},
+                                        desiredResult: true,
+                                        errMsg: {
+                                                    msg: 'NOT_IN_RANGE',
+                                                    params: {
+                                                        min: 0,
+                                                        max: $scope.clientPOSData.сonstraints.common.stake.max
+                                                    }
+                                                }
+                                    }                              
+                                ],
+                                errMsgSelector: `#${type}DelegatedByOthersInputWrapper .errMsg`
+                            },                            
                             delegatedByOwner : {
                                 requireToCheck: type === 'validator' ? true : false,
                                 checks : [                                    
@@ -3066,19 +3069,7 @@
                                                     max: $scope.clientPOSData.сonstraints.common.stake.max
                                                 }
                                             }
-                                    },
-                                    {
-                                        requireToCheck: type === 'validator' ? true : false,
-                                        method: 'lessOrEqualThan',
-                                        args: {value: Number($scope.clientPOSData[`${type}Input`].delegatedByOwner), max: Number($scope.clientPOSData[`${type}Input`].stake)},
-                                        desiredResult: true,
-                                        errMsg: {
-                                                    msg: 'MUST_BE_LESS_OR_EQUAL_THAN_NAMED_VALUE',
-                                                    params: {
-                                                        name: $translate.instant('POS_TOTAL_STAKE')
-                                                    }
-                                                }
-                                    }                              
+                                    }
                                 ],
                                 errMsgSelector: `#${type}DelegatedByOwnerInputWrapper .errMsg`
                             },                            
