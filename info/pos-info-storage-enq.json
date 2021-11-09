@@ -119,7 +119,11 @@
       "telegram": "https://t.me/stake2earn"
     },
     "description": {
-      "en": "stake2earn - your crypto staking provider. Every stake counts!🌜"
+      "en": "stake2earn 🌜 - your crypto staking provider. Stake to earn more crypto! 🌜",
+      "fr": "stake2earn 🌜 - votre fournisseur de jalonnement cryptographique. Misez pour gagner plus de crypto! 🌜",
+      "ru": "Stake2earn 🌜 - ваш провайдер криптовалюты. Делайте ставки, чтобы заработать больше криптовалюты! 🌜 ",
+      "in": "स्टेक2अर्न - आपका क्रिप्टो स्टेकिंग प्रदाता। अधिक क्रिप्टो कमाने के लिए दांव! मैं ",
+      "tr": "stake2earn 🌜 - kripto stake sağlayıcınız. Daha fazla kripto kazanmak için bahis yapın! 🌜"
     }             
   }  
 ]
