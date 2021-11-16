@@ -387,3 +387,23 @@ a.disabled{
     border-left-color: transparent;
     border-right-color: transparent;
 }
+
+.logo-from-capital-small, .logo-from-img-small {
+    width: 27px;
+    height: 27px;
+    flex-basis: 27px;
+    flex-grow: 0;
+    flex-shrink: 0;
+    line-height: 27px;
+}
+
+.logo-from-capital-small {
+    margin: auto;
+    text-align: center;
+}
+
+.logo-from-img-small {    
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+}
