@@ -2,7 +2,7 @@
     <tbody>
         <tr ng-repeat="param in contractScheme.paramsOrder track by $index" ng-if="param !== 'skip'">
             <th class="pr-md-3">{{param.toUpperCase()  !== 'TOTAL_SUPPLY' ? (param.toUpperCase()) : (data.token_type === 'Mineable'? 'PREMINE' : 'TOKEN_EMISSION') | translate}}</th>
-            <td class="fit">{{data[param]}}</td>
+            <td class="fit">{{param === 'fee_type' ? (data[param] | translate) : data[param]}}</td>
         </tr>
     </tbody>    
 </table>
