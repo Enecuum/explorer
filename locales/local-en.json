@@ -396,5 +396,6 @@
     "ENEX_POOLS" : "Enex Pools",
     "LP_TOTAL_SUPPLY" : "LP total supply",
     "NUM_VOLUME" : "Volume {{num}}",
-    "DELEGATED_BY_OTHERS": "Delegated by others"
+    "DELEGATED_BY_OTHERS": "Delegated by others",
+    "FARM_CLOSE_STAKE" : "Farm close stake"
 }
