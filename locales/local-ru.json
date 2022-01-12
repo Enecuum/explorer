@@ -118,6 +118,7 @@
     "STATUS_CONFIRMED":"confirmed",
     "STATUS_DUPLICATE":"duplicate",
     "STATUS_REJECTED":"rejected",
+    "STATUS_PENDING":"В ожидании",
     "RETURN":"Вернуться на главную",
 
     "ERR_INPUT_DIGIT": "Пожалуйста, введите число",
@@ -135,7 +136,6 @@
     "TOAST_HEADER_ERR":"Ошибка",
 
     "STATUS_SUCCESS":"success",
-    "STATUS_PENDING":"pending",
     "STATUS_APPROVED":"approved",
 
 
@@ -370,5 +370,6 @@
     "LIQUIDITY" : "Ликвидность",
     "BLOCKS_LEFT" : "Осталось блоков",
     "ENEX_POOLS" : "Enex Pools",
-    "NUM_VOLUME" : "Объем {{num}}"
+    "NUM_VOLUME" : "Объем {{num}}",
+    "TOTAL_AMOUNT" : "Общее количество"
 }
