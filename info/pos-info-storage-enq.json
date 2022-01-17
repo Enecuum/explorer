@@ -125,5 +125,17 @@
       "in": "स्टेक2अर्न - आपका क्रिप्टो स्टेकिंग प्रदाता। अधिक क्रिप्टो कमाने के लिए दांव! मैं ",
       "tr": "stake2earn 🌜 - kripto stake sağlayıcınız. Daha fazla kripto kazanmak için bahis yapın! 🌜"
     }             
-  }  
+  },
+  {
+    "pos_id": "1c876fa7dfee8806b4ce005a2db9c1836d8d77ed14c5ffdf2850c0f4fd2973a3",
+    "logo": "muellerwebservice.png",
+    "website": "https://muellerwebservice.de",
+    "media": {
+      "telegram": "https://t.me/muellerwebservice"
+    },
+    "description": {
+      "en": "Mueller Webservice is a Staking provider enabling you to earn passive income!",
+      "de": "Mueller Webservice ist ein Staking Provider, der es Ihnen ermöglicht, passives Einkommen zu generieren!"
+    }
+  }
 ]
