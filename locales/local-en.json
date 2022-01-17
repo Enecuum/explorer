@@ -397,5 +397,6 @@
     "LP_TOTAL_SUPPLY" : "LP total supply",
     "NUM_VOLUME" : "Volume {{num}}",
     "DELEGATED_BY_OTHERS": "Delegated by others",
-    "FARM_CLOSE_STAKE" : "Farm close stake"
+    "FARM_CLOSE_STAKE" : "Farm close stake",
+    "TOTAL_AMOUNT" : "Total amount"
 }

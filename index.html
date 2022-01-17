@@ -470,7 +470,12 @@
                                     <li class="breadcrumb-item text-truncate short-hash active" aria-current="page">{{'TX' | translate}}</li>
                                 </ol>
                             </nav>
-                           <div class="h4 text-uppercase mx-md-2" ng-class="showContractParams === true ? 'mb-1' : 'mb-4'">{{'TX' | translate}}<span class="text-uppercase badge badge-pill py-1 ml-2" ng-class="statusBadge(tx.status | TX_STATUS)">{{tx.status | TX_STATUS | translate}}</span></div>
+                            <div class="d-flex align-items-center" ng-class="showContractParams === true ? 'mb-1' : 'mb-4'">
+                                <div class="h4 text-uppercase mx-md-2">{{'TX' | translate}}<span class="text-uppercase badge badge-pill py-1 ml-2" ng-class="statusBadge(tx.status | TX_STATUS)">{{tx.status | TX_STATUS | translate}}</span></div>
+                                <div ng-if="txCurrentState === 'isInPending'" class="spinner-grow text-primary" role="status"></div>
+                            </div>    
+                           
+
                             <div class="mb-3 mx-md-2" ng-if="showContractParams">                                
                                 <div class="d-flex align-items-center">
                                     <div class="h4 d-flex align-items-center mr-3">
@@ -494,10 +499,11 @@
                                         <td class="fit"><a ng-href="#!/account/{{tx.to}}">{{tx.to}}</a></td>
                                     </tr>
                                     <tr>
-                                        <td>{{'AMOUNT' | translate}}</td>
+                                        <td ng-if="txCurrentState === 'isInNetwork'">{{'AMOUNT' | translate}}</td>
+                                        <td ng-if="txCurrentState === 'isInPending'">{{'TOTAL_AMOUNT' | translate}}</td>
                                         <td>{{tx.amount | US_COMMAS_BIGINT_DECIMALS : tx.token.decimals : tx.token.decimals}} {{tx.token.ticker}}</td>
                                     </tr>
-                                    <tr>
+                                    <tr ng-if="txCurrentState === 'isInNetwork'">
                                         <td>{{'FEE_VALUE' | translate}}</td>
                                         <td>{{tx.fee | US_COMMAS_BIGINT_DECIMALS : tx.token.decimals : tx.token.decimals}} {{tx.token.ticker}}</td>
                                     </tr>                                   
@@ -559,7 +565,7 @@
                                             <div ng-include="'views/partials/contracts-tx/' + txEIndexDataTemplate"></div>
                                         </td>                                        
                                     </tr>
-                                    <tr>
+                                    <tr ng-if="txCurrentState === 'isInNetwork'">
                                         <td>{{'M_BLOCK_HASH' | translate}}</td>
                                         <td class="fit"><a ng-href="#!/mblock/{{tx.mblocks_hash}}">{{tx.mblocks_hash}}</a></td>
                                     </tr>
@@ -2335,7 +2341,8 @@
             eindex_by_hash : $resource('api/v1/eindex_by_hash?hash=:hash', {hash:'@hash'}),
             get_dex_farms : $resource('api/v1/get_dex_farms?farmer_id=:farmer_id&farms=:farms', {farmer_id:'@farmer_id', farms:'@farms'}, {query: {method: 'GET', isArray: true}}),
             get_dex_pools : $resource('api/v1/get_dex_pools', {query: {method: 'GET', isArray: true}}),
-            get_dex_farms_all : $resource('api/v1/get_dex_farms', {query: {method: 'GET', isArray: true}})
+            get_dex_farms_all : $resource('api/v1/get_dex_farms', {query: {method: 'GET', isArray: true}}),
+            pending_tx_hash : $resource('/api/v1/pending_tx_hash?hash=:hash', {hash:'@hash'}, {query: {method: 'GET', isArray: true}})
 		};
 	});
 
@@ -4926,48 +4933,85 @@
         }  
 	});
 
-	app.controller('transactionCtrl', function($scope, $routeParams, $translate, $filter, provider, schema, commonTools, txParser, contractSchemes, contractFormatter) {
+	app.controller('transactionCtrl', function($scope, $interval, $routeParams, $translate, $filter, provider, schema, commonTools, txParser, contractSchemes, contractFormatter) {
         $scope.showParams = false;
         let defaultValue = '---';
         $scope.txDataInit = defaultValue;
         $scope.txEIndexData = {};
         $scope.statusBadge = commonTools.getTxStatusBadge;
-        provider.transaction.get({hash:$routeParams.hash}, function(tx) {            
-            if (tx.hash !== undefined) {
-                $scope.tx = tx;
-                $scope.tx.token = {};
-                provider.token_info.query({hash:tx.token_hash}, function(token_info) {
-                    $scope.tx.token.ticker = token_info[0].ticker;
-                    $scope.tx.token.decimals =  token_info[0].decimals;
-                    provider.contract_pricelist.get(function(contract_pricelist) {
-                        let txSchema = schema;
+        $scope.txCurrentState = undefined;
+        $scope.interval = $interval(getTxdata, 5000, 0, true);
+        getTxdata();
 
-                        if (txParser.isContract(tx.data, txSchema, contract_pricelist)) {                            
-                            $scope.getContactType = commonTools.getContractTypeTranslation;                    
-                            $scope.showContractParams = true;
-                            $scope.txDataInit = txParser.parse(tx.data, txSchema, contract_pricelist);
-                            $scope.txData = txParser.parse(tx.data, txSchema, contract_pricelist);
-                            $scope.contractScheme = contractSchemes.getScheme($scope.txData.type);
-                            if ($scope.txData.type === 'delegate' || $scope.txData.type === 'undelegate') {
-                                $scope.$watch('tx.token', function(newValue, oldValue) {
-                                    if (newValue.ticker !== undefined && newValue.decimals !== null ) {
-                                        $scope.txData.txToken = {
-                                            hash     : $scope.tx.token_hash,
-                                            ticker   : newValue.ticker,
-                                            decimals : newValue.decimals
-                                        }
-                                        prettifyTxData($scope.txData);                       
-                                    }                    
-                                }, true);                                
-                            } else 
-                                prettifyTxData($scope.txData);
+        function getTxdata() {
+            //console.log(`Trying to get data for Tx ${$routeParams.hash}`);
+            provider.transaction.get({hash:$routeParams.hash}, function(tx) {
+                if (tx.hash !== undefined) {
+                    $scope.txCurrentState = 'isInNetwork';
+                    $scope.tx = tx;
+                    processTxData($scope.tx)                    
+                } else {
+                    provider.pending_tx_hash.query({hash:$routeParams.hash}, function(tx) {
+                        if (tx[0].hash !== undefined) {
+                            $scope.txCurrentState = 'isInPending';                            
+                            $scope.tx = tx[0];
+                            $scope.tx.status = 'STATUS_PENDING';
+                            processTxData($scope.tx)
+                        }
+                    })
+                }
+            });            
+        }
+           
+        function processTxData(tx) {
+            let tokenHash = undefined;
+            if ($scope.txCurrentState === 'isInNetwork')
+                tokenHash = $scope.tx.token_hash;
+            else if ($scope.txCurrentState === 'isInPending')
+                tokenHash = $scope.tx.ticker;
+            else return
 
-                            if ($scope.tx.status !== 2 && $scope.contractScheme.eindexer.length > 0) {
-                                getEIndexData($scope.txData, $scope.contractScheme);
-                            }                                                      
-                        } 
-                    });
-                });                
+            $scope.tx.token = {};
+            provider.token_info.query({hash:tokenHash}, function(token_info) {
+                $scope.tx.token.ticker = token_info[0].ticker;
+                $scope.tx.token.decimals =  token_info[0].decimals;
+                provider.contract_pricelist.get(function(contract_pricelist) {
+                    let txSchema = schema;
+
+                    if (txParser.isContract(tx.data, txSchema, contract_pricelist)) {
+                        $scope.getContactType = commonTools.getContractTypeTranslation;                    
+                        $scope.showContractParams = true;
+                        $scope.txDataInit = txParser.parse(tx.data, txSchema, contract_pricelist);
+                        $scope.txData = txParser.parse(tx.data, txSchema, contract_pricelist);
+                        $scope.contractScheme = contractSchemes.getScheme($scope.txData.type);
+                        if ($scope.txData.type === 'delegate' || $scope.txData.type === 'undelegate') {
+                            $scope.$watch('tx.token', function(newValue, oldValue) {
+                                if (newValue.ticker !== undefined && newValue.decimals !== null ) {
+                                    $scope.txData.txToken = {
+                                        hash     : tokenHash,
+                                        ticker   : newValue.ticker,
+                                        decimals : newValue.decimals
+                                    }
+                                    prettifyTxData($scope.txData);                       
+                                }                    
+                            }, true);                                
+                        } else 
+                            prettifyTxData($scope.txData);
+
+                        if ($scope.tx.status !== 2 && $scope.contractScheme.eindexer.length > 0) {
+                            getEIndexData($scope.txData, $scope.contractScheme);
+                        }                                                      
+                    } 
+                });
+            });            
+        }
+        
+        $scope.$watch('txCurrentState', function(newValue, oldValue) {
+            if (newValue === 'isInNetwork') {
+                //console.log(`Tx ${$scope.tx.hash} is in network`);
+                $interval.cancel($scope.interval);
+            } else if (newValue === 'isInPending') {                
+                //console.log(`Tx ${$scope.tx.hash} is in pending`);
             }
         });
 
