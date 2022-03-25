@@ -193,8 +193,8 @@
 							<td class="text-nowrap text-right">{{token.fee_value}}</td>
 						</tr>						
 						<tr>
-							<td>{{'FEE_MIN' | translate}}</td>
-							<td class="text-nowrap text-right">{{token.fee_type === 'FEE_TYPE_FLAT' ? '---' : token.fee_min + ' ' + token.ticker}}</td>
+							<td>{{'FEE_MIN' | translate}}</td>							
+							<td class="text-nowrap text-right">{{token.fee_type == 'FEE_TYPE_PERCENT' ? token.fee_min : '---' }}</td>
 						</tr>
 						<tr>
 							<td>{{'DECIMALS' | translate}}</td>

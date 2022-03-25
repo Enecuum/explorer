@@ -8,16 +8,19 @@
                 <th>{{'TRX_FEE' | translate}}</th>
                 <th>{{'HASH_TRX' | translate}}</th>
                 <th>{{'STATUS' | translate}}</th>
-                
-                
             </tr>
         </thead>
         <tbody style="font-size: 12px;">
             <tr ng-repeat="record in account.txs.records">
                 <td>{{record.time === null ? 'null' : record.time}}</td>
                 <td>{{getTxTypeLocaleString(record.rectype) | translate}}</td>
-                <td>{{record.amount | US_COMMAS_BIGINT_DECIMALS : token.decimals : token.decimals}} {{networkData.tickers[record.token_hash].ticker}}</td>
-                <td>{{record.fee_value| US_COMMAS_BIGINT_DECIMALS : token.decimals : token.decimals}} {{networkData.tickers[record.token_hash].ticker}}</td>
+                <td>{{record.amount | US_COMMAS_BIGINT_DECIMALS : record.token.decimals : record.token.decimals}} {{networkData.tickers[record.token_hash].ticker}}</td>
+                <td ng-if="record.fee_type !== 2">
+                    {{record.calculatedFee | US_COMMAS_BIGINT_DECIMALS : record.token.decimals : record.token.decimals}} {{networkData.tickers[record.token_hash].ticker}}
+                </td>
+                <td ng-if="record.fee_type === 2">
+                    {{record.fee_value | US_COMMAS_BIGINT_DECIMALS : maintoken.decimals : maintoken.decimals}} {{maintoken.ticker}}
+                </td>
                 <td><a class="d-block fit" style="width: 100px;" ng-href="{{getTxLink(record)}}">{{record.hash}}</a></td>
                 <td><span class="badge" ng-class="statusBadge(record.status | TX_STATUS)">{{record.status | TX_STATUS | translate}}</span></td>                
             </tr>
