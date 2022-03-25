@@ -1533,7 +1533,12 @@
                     contractScheme.paramsOrder.splice(2, 0, "token_type");                 
                     txData.parameters.decimals = parseInt(txData.parameters.decimals);
                     txData.parameters.token_type = commonTools.getTokenType(txData.parameters);
-                    let res = commonTools.getTokenFees(txData.parameters);
+                    let res = {}
+                    if (txData.parameters.fee_type === 2)
+                        res = commonTools.getTokenFees(txData.parameters, txData.maintoken);
+                    else
+                        res = commonTools.getTokenFees(txData.parameters);
+
                     txData.parameters.fee_type = res.fee_type.toUpperCase();
                     txData.parameters.fee_value = res.fee_value;
                     txData.parameters.fee_min = res.fee_min;
@@ -1727,7 +1732,7 @@
             return result;
         }
 
-        function formatData(txData) {            
+        function formatData(txData) {
             let contractScheme = contractSchemes.getScheme(txData.type);
             filterUndefinedParams(txData, contractScheme);
             let formatDataByScheme = getTxDataFormatter(contractScheme);
@@ -2149,6 +2154,7 @@
                 return tokenType;
             },
             getTokenFees: function(token, nativeToken = {decimals: 10, ticker: '---'}) {
+
                 let res = {
                     fee_type : '---',
                     fee_value : '---',
@@ -5012,6 +5018,11 @@
                                     prettifyTxData($scope.txData);                       
                                 }                    
                             }, true);                                
+                        } else if ($scope.txData.type === 'create_token') {
+                            $rootScope.$watch('mainToken', function(newValue, oldValue) {
+                                $scope.txData.maintoken = newValue;
+                                prettifyTxData($scope.txData);
+                            }, true);
                         } else 
                             prettifyTxData($scope.txData);
 
