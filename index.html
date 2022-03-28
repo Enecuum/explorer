@@ -2169,7 +2169,7 @@
                     res.fee_min = $filter('US_COMMAS_BIGINT_DECIMALS')(token.fee_min, token.decimals, token.decimals) +' '+ token.ticker;
                     res.fee_value = $filter('US_COMMAS_BIGINT_DECIMALS')(token.fee_value, 2, 2) + '%';
                 } else if (token.fee_type === 2) {
-                    res.fee_type = 'FEE_TYPE_IN_NATIVE_TOKEN';
+                    res.fee_type = 'FEE_TYPE_NATIVE';
                     res.fee_value = $filter('US_COMMAS_BIGINT_DECIMALS')(token.fee_value, nativeToken.decimals, nativeToken.decimals) +' '+ nativeToken.ticker;
                     res.fee_min = $filter('US_COMMAS_BIGINT_DECIMALS')(token.fee_min, nativeToken.decimals, nativeToken.decimals) +' '+ nativeToken.ticker;
                 }

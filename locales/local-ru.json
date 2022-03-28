@@ -74,6 +74,7 @@
     "FEE_TYPE":"Тип комиссии",
     "FEE_TYPE_FLAT":"Фиксированная",
     "FEE_TYPE_PERCENT":"Процентная",
+    "FEE_TYPE_NATIVE":"Нативная",
     "FEE_VALUE":"Комиссия",
     "FEE_MIN":"Мин. комиссия",
     "TOKEN_HOLDERS":"Держатели токена",
