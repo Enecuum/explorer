@@ -3,20 +3,14 @@
 		"token_id":"0000000000000000000000000000000000000000000000000000000000000001",
 		"website":"https://bit.enecuum.com/info/token/logo/bit/",
         "logo": "bit-black.png",
-		"media": {                            
-            "twitter":"https://twitter.com/enq_enecuum",
-            "medium":"https://blog.enecuum.com/",
-            "github":"https://github.com/Enecuum",
-            "forklog":"https://hub.forklog.com/companies/enecuum/",
-            "bitcointalk":"https://bitcointalk.org/index.php?topic=2939909.0;topicseen",
-            "linkedin":"https://www.linkedin.com/company/enecuum-limited/",
-            "youtube":"https://www.youtube.com/channel/UCyZqNfzK_PP82nkAVOlmN4Q",
-            "qq":"https://qm.qq.com/cgi-bin/qm/qr?k=YfdokyjJnlKl0eAuhVXEc6JtVsoKnxvI&authKey=6WpHwP4Cu/kAAyPyVuBWZeQCjhEyijvLyGf6Jj6P7f9LVCe/9ZZC7YIfRtudjD23&noverify=0",
-            "weixin":"https://weixin.qq.com/g/AwYAAJdSThUYHIJmetSinRGfcwtrkRovBmLZZr5moi0UXRIW56Me4ts56gByaeYU",
-            "telegram":"https://t.me/Enecuum_EN"
+		"media": {
+                "website":"https://mybit.network",
+                "explorer":"https://bit.enecuum.com",
+                "app":"https://app.enecuum.com/enq-bitRelease-v.0.14.0+816.apk",
+                "wallet":"https://wallet.mybit.network/"
             },
         "documents": {
-            "whitepaper":"https://enecuum.com/pdf/pp_en.pdf"
+            "guides":"https://guides.enecuum.com/bit/how-to-mine-bit.html#what-is-bit"
         },
         "description": {
             "en":"Test network BIT allows users to experience mobile mining without buying minimal stake and to try out PoW and PoS nodes as well as to test services built upon Enecuum node API.",
@@ -34,9 +28,17 @@
 		"website":"https://bit.enecuum.com/info/token/logo/bit/",
         "logo": "enx-black.png",
 		"media": {
+            "twitter":"https://twitter.com/ENEXSPACE",
+            "medium":"https://blog.enex.space",
+            "github":"https://github.com/TrinityLabDAO",
+            "linkedin":"https://www.linkedin.com/company/enecuum-limited/",
+            "telegram":"https://t.me/enexspace",
+            "reddit":"https://www.reddit.com/user/enex_space",
+            "website":"https://enex.space",
+            "app":"https://app.enex.space"
         },
         "documents": {
-            "whitepaper":"https://enecuum.com/pdf/pp_en.pdf"
+            "guides":"https://enex.gitbook.io/enex-space/"
         },
         "description": {
             "en":"Test network BIT allows users to experience mobile mining without buying minimal stake and to try out PoW and PoS nodes as well as to test services built upon Enecuum node API.",
