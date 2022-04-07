@@ -61,6 +61,7 @@
     "MAX_TPS":"Max TPS",
     "LAST_BLOCK":"Last block",
     "ACCOUNTS":"Accounts",
+    "ACCOUNT":"Account",
     "HASHRATE":"Hashrate",
     "NOT_APPLICABLE":"N/A",
     "NODES":"nodes",
@@ -399,5 +400,10 @@
     "NUM_VOLUME" : "Volume {{num}}",
     "DELEGATED_BY_OTHERS": "Delegated by others",
     "FARM_CLOSE_STAKE" : "Farm close stake",
-    "TOTAL_AMOUNT" : "Total amount"
+    "TOTAL_AMOUNT" : "Total amount",
+    "SEARCH_RESULTS" : "Search results",
+    "GO_TO_PAGE" : "Go to page",
+    "VIEW_AS_API_DATA" : "View as API data",
+    "POOL":"Pool",
+    "FARM":"Farm"
 }

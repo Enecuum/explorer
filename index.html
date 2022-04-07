@@ -149,6 +149,33 @@
                         </nav>
                     </div>
                 </div>
+                <div class="modal fade" id="{{searchModalId}}" tabindex="-1" role="dialog">
+                    <div class="modal-dialog modal-dialog-centered modal-sm">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                            <h5 class="modal-title">{{'SEARCH_RESULTS' | translate}}</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                            </div> 
+                            <div class="modal-body d-flex justify-content-center">
+                                <table>
+                                    <tr ng-repeat="item in searchResult">
+                                        <td class="h5 pr-3 py-2">{{searchItemsList[item.type].alias | translate}}</td>
+                                        <td ng-if="item.type !== 'pool' && item.type !== 'farm'" class="py-2">
+                                            <button ng-click="locateToSearchResult(item)" type="button" class="btn btn-info">{{'INFO' | translate}}</button>
+                                        </td>
+                                        <td ng-if="item.type === 'pool' || item.type === 'farm'" class="py-2">
+                                            <button ng-click="locateToSearchResult(item)" type="button" class="btn btn-info">
+                                                <span class="mr-1">API</span>
+                                                <i class="fas fa-external-link-square-alt"></i>
+                                        </td>                                        
+                                    </tr>
+                                </table>
+                            </div>
+                        </div><!-- /.modal-content -->
+                    </div><!-- /.modal-dialog -->
+                </div>
             </div>
             <!-- Start Content-->
             <div class="container">
@@ -1434,6 +1461,17 @@
                     position: 'top-right',
                     loader: false
                 })                
+            },
+            info : function(msg) {
+                $.toast({
+                    heading: 'Info',
+                    text: msg,
+                    icon: 'info',
+                    hideAfter: 5000,
+                    stack: 3,
+                    position: 'top-right',
+                    loader: false
+                })                
             }
         }
     });    
@@ -2390,7 +2428,7 @@
        $scope.showTestNetDisclaimer = currentPreset.pagesSectionsVisibility.showTestNetDisclaimer;
     });
 
-    app.controller('headerCtrl', function(GLOBAL_APP_CONFIG, $scope, $rootScope, $location, $http, langService) {
+    app.controller('headerCtrl', function(GLOBAL_APP_CONFIG, $scope, $rootScope, $location, $http, provider, langService, schema, txParser, Toast, $window) {
         let currentPreset = GLOBAL_APP_CONFIG;
         $scope.showEnexPools = currentPreset.pagesSectionsVisibility.showEnexPools;
         $scope.showDropFarms = currentPreset.pagesSectionsVisibility.showDropFarms;
@@ -2403,25 +2441,41 @@
         $scope.translationData = {
             tokenName: currentPreset.tokenName
         };
+        $scope.searchResult = [];
 
+        $scope.searchModalId = 'searchModal'
+        $scope.searchModalSelector = `#${$scope.searchModalId}`;
+        $scope.searchItemsList = {
+            token        : {path: 'token', alias: 'TOKEN'},
+            kblock       : {path: 'macroblock', alias: 'K_BLOCK'},
+            mblock       : {path: 'mblock', alias: 'MICROBLOCK'},
+            sblock       : {path: 'sblock', alias: 'S_BLOCK'}, 
+            account      : {path: 'account', alias: 'ACCOUNT'},
+            pos          : {path: 'pos-contract', alias: 'POS_CONTRACT'},
+            pool         : {path: '/api/v1/search?value=', alias: 'POOL'},
+            farm         : {path: '/api/v1/get_dex_farms?farmer_id=""&farms=', alias: 'FARM'},
+            tx           : {path: 'tx', alias: 'TX'}        
+        }         
+        $scope.locateToSearchResult = function (searchResultItem) {
+            if($scope.searchItemsList.hasOwnProperty(searchResultItem.type)) {
+                if(searchResultItem.type !== 'pool' && searchResultItem.type !== 'farm')
+                    $location.path(`/${$scope.searchItemsList[searchResultItem.type].path}/${$scope.search_value}`);
+                else {
+                    $window.open(`${$scope.searchItemsList[searchResultItem.type].path}${$scope.search_value}`, "_blank");
+                }
+                $($scope.searchModalSelector).modal('hide');
+            }
+        }
     	//TODO: search should be performed by client
-	    $scope.on_search = function () {
-            console.log('search ', $scope.search_value);
+	    $scope.on_search = function () {           
+            console.log(`Search: ${$scope.search_value}`);         
 		    $http({method: 'GET', url: `api/v1/search?value=`+$scope.search_value}).
 		    then(function (response) {
-		    	if (response.data.type === 'kblock'){
-				    $location.path(`/macroblock/${response.data.link}`);
-                } else if (response.data.type === 'mblock'){
-                    $location.path(`/mblock/${response.data.link}`);
-                } else if (response.data.type === 'sblock'){
-                    $location.path(`/sblock/${response.data.link}`);
-			    } else if (response.data.type === 'tx'){
-				    $location.path(`/tx/${response.data.link}`);
-			    } else if (response.data.type === 'account'){
-				    $location.path(`/account/${response.data.link}`);
-			    }  else if (response.data.type === 'token'){
-                    $location.path(`/token/${response.data.link}`);
-                }
+                $scope.searchResult = response.data;
+                if (response.data.length > 0)                   
+                    $($scope.searchModalSelector).modal('show');
+                else
+                    Toast.info('Nothing found');
 		    });
 	    };
         $scope.ls = langService;
@@ -3967,6 +4021,10 @@
                     if ($scope.token.customerInfo.documents !== undefined && $scope.token.customerInfo.documents.hasOwnProperty('whitepaper')) {
                         $scope.additionalTokenData.whitepaperLink = $scope.additionalTokenData.whitepaperLinkText = $scope.token.customerInfo.documents.whitepaper;               
                     }
+
+                    if ($scope.token.customerInfo.documents !== undefined && $scope.token.customerInfo.documents.hasOwnProperty('guides')) {
+                        $scope.additionalTokenData.guidesLink = $scope.additionalTokenData.whitepaperLinkText = $scope.token.customerInfo.documents.whitepaper;               
+                    }
                     if ($scope.token.customerInfo.media !== undefined) {
                         $scope.media = $scope.token.customerInfo.media;
                         $scope.mediaWidgetNamePrefix = 'project';               
@@ -4974,8 +5032,8 @@
                     $scope.tx = tx;
                     processTxData($scope.tx)                    
                 } else {
-                    provider.pending_tx_hash.query({hash:$routeParams.hash}, function(tx) {
-                        if (tx[0].hash !== undefined) {
+                    provider.pending_tx_hash.query({hash:$routeParams.hash}, function(tx) {                        
+                        if (tx.length > 0 && tx[0].hash !== undefined) {
                             $scope.txCurrentState = 'isInPending';                            
                             $scope.tx = tx[0];
                             $scope.tx.status = 'STATUS_PENDING';
@@ -5148,7 +5206,8 @@
             facebook : 'fab fa-facebook-f',
             forklog : '',
             externalLink: 'fas fa-external-link-alt',
-            instagram: 'fab fa-instagram-square'
+            instagram: 'fab fa-instagram-square',
+            reddit: 'fab fa-reddit'
         }
 
         $rootScope.existCookies = function () {
