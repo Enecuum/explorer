@@ -371,5 +371,6 @@
     "BLOCKS_LEFT" : "Осталось блоков",
     "ENEX_POOLS" : "Enex Pools",
     "NUM_VOLUME" : "Объем {{num}}",
-    "TOTAL_AMOUNT" : "Общее количество"
+    "TOTAL_AMOUNT" : "Общее количество",
+    "GUIDES" : "Руководства"
 }

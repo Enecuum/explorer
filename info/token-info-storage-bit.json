@@ -1,55 +1,61 @@
 [
 	{
-		"token_id":"0000000000000000000000000000000000000000000000000000000000000001",
-		"website":"https://bit.enecuum.com/info/token/logo/bit/",
+        "token_id":"0000000000000000000000000000000000000000000000000000000000000001",
+        "website":"https://mybit.network",
         "logo": "bit-black.png",
-		"media": {
-                "website":"https://mybit.network",
-                "explorer":"https://bit.enecuum.com",
-                "app":"https://app.enecuum.com/enq-bitRelease-v.0.14.0+816.apk",
-                "wallet":"https://wallet.mybit.network/"
-            },
-        "documents": {
-            "guides":"https://guides.enecuum.com/bit/how-to-mine-bit.html#what-is-bit"
+        "media": {                            
+            "twitter":"https://twitter.com/enq_enecuum",
+            "medium":"https://blog.enecuum.com/",
+            "github":"https://github.com/Enecuum",
+            "forklog":"https://hub.forklog.com/companies/enecuum/",
+            "bitcointalk":"https://bitcointalk.org/index.php?topic=2939909.0;topicseen",
+            "linkedin":"https://www.linkedin.com/company/enecuum-limited/",
+            "youtube":"https://www.youtube.com/channel/UCyZqNfzK_PP82nkAVOlmN4Q",
+            "qq":"https://qm.qq.com/cgi-bin/qm/qr?k=YfdokyjJnlKl0eAuhVXEc6JtVsoKnxvI&authKey=6WpHwP4Cu/kAAyPyVuBWZeQCjhEyijvLyGf6Jj6P7f9LVCe/9ZZC7YIfRtudjD23&noverify=0",
+            "weixin":"https://weixin.qq.com/g/AwYAAJdSThUYHIJmetSinRGfcwtrkRovBmLZZr5moi0UXRIW56Me4ts56gByaeYU",
+            "telegram":"https://t.me/Enecuum_EN"
         },
+        "documents": {
+            "whitepaper":"https://enecuum.com/pdf/pp_en.pdf",
+            "guides": "https://guides.enecuum.com/bit/how-to-mine-bit.html"
+        },     
         "description": {
             "en":"Test network BIT allows users to experience mobile mining without buying minimal stake and to try out PoW and PoS nodes as well as to test services built upon Enecuum node API.",
-        	"de":"Test network BIT allows users to experience mobile mining without buying minimal stake and to try out PoW and PoS nodes as well as to test services built upon Enecuum node API.",
+            "de":"Test network BIT allows users to experience mobile mining without buying minimal stake and to try out PoW and PoS nodes as well as to test services built upon Enecuum node API.",
             "fr":"Test network BIT allows users to experience mobile mining without buying minimal stake and to try out PoW and PoS nodes as well as to test services built upon Enecuum node API.",
             "ru":"Test network BIT allows users to experience mobile mining without buying minimal stake and to try out PoW and PoS nodes as well as to test services built upon Enecuum node API.",
             "pt":"Test network BIT allows users to experience mobile mining without buying minimal stake and to try out PoW and PoS nodes as well as to test services built upon Enecuum node API.",
             "vi":"Test network BIT allows users to experience mobile mining without buying minimal stake and to try out PoW and PoS nodes as well as to test services built upon Enecuum node API.",
             "in":"Test network BIT allows users to experience mobile mining without buying minimal stake and to try out PoW and PoS nodes as well as to test services built upon Enecuum node API.",
             "tr":"Test network BIT allows users to experience mobile mining without buying minimal stake and to try out PoW and PoS nodes as well as to test services built upon Enecuum node API."
-        }
-	},
+        }                     
+    },
     {
 		"token_id":"824e7b171c01e971337c1b25a055023dd53c003d4aa5aa8b58a503d7c622651e",
-		"website":"https://bit.enecuum.com/info/token/logo/bit/",
-        "logo": "enx-black.png",
+		"website":"https://enex.space",
+        "logo": "ENEX-orange.svg",
 		"media": {
             "twitter":"https://twitter.com/ENEXSPACE",
             "medium":"https://blog.enex.space",
             "github":"https://github.com/TrinityLabDAO",
             "linkedin":"https://www.linkedin.com/company/enecuum-limited/",
             "telegram":"https://t.me/enexspace",
-            "reddit":"https://www.reddit.com/user/enex_space",
-            "website":"https://enex.space",
-            "app":"https://app.enex.space"
+            "reddit":"https://www.reddit.com/user/enex_space"
         },
         "documents": {
             "guides":"https://enex.gitbook.io/enex-space/"
         },
         "description": {
-            "en":"Test network BIT allows users to experience mobile mining without buying minimal stake and to try out PoW and PoS nodes as well as to test services built upon Enecuum node API.",
-        	"de":"Test network BIT allows users to experience mobile mining without buying minimal stake and to try out PoW and PoS nodes as well as to test services built upon Enecuum node API.",
-            "fr":"Test network BIT allows users to experience mobile mining without buying minimal stake and to try out PoW and PoS nodes as well as to test services built upon Enecuum node API.",
-            "ru":"Test network BIT allows users to experience mobile mining without buying minimal stake and to try out PoW and PoS nodes as well as to test services built upon Enecuum node API.",
-            "pt":"Test network BIT allows users to experience mobile mining without buying minimal stake and to try out PoW and PoS nodes as well as to test services built upon Enecuum node API.",
-            "vi":"Test network BIT allows users to experience mobile mining without buying minimal stake and to try out PoW and PoS nodes as well as to test services built upon Enecuum node API.",
-            "in":"Test network BIT allows users to experience mobile mining without buying minimal stake and to try out PoW and PoS nodes as well as to test services built upon Enecuum node API.",
-            "tr":"Test network BIT allows users to experience mobile mining without buying minimal stake and to try out PoW and PoS nodes as well as to test services built upon Enecuum node API."
-        }
+            "en":"ENEX.SPACE is DeFi platform built on Enecuum blockchain. It consists of liquidity pools, treasury, Station, Space Drops, Harvest farms, Token machine.",
+        	"de":"ENEX.SPACE is DeFi platform built on Enecuum blockchain. It consists of liquidity pools, treasury, Station, Space Drops, Harvest farms, Token machine.",
+            "fr":"ENEX.SPACE is DeFi platform built on Enecuum blockchain. It consists of liquidity pools, treasury, Station, Space Drops, Harvest farms, Token machine.",
+            "ru":"ENEX.SPACE is DeFi platform built on Enecuum blockchain. It consists of liquidity pools, treasury, Station, Space Drops, Harvest farms, Token machine.",
+            "pt":"ENEX.SPACE is DeFi platform built on Enecuum blockchain. It consists of liquidity pools, treasury, Station, Space Drops, Harvest farms, Token machine.",
+            "vi":"ENEX.SPACE is DeFi platform built on Enecuum blockchain. It consists of liquidity pools, treasury, Station, Space Drops, Harvest farms, Token machine.",
+            "in":"ENEX.SPACE is DeFi platform built on Enecuum blockchain. It consists of liquidity pools, treasury, Station, Space Drops, Harvest farms, Token machine.",
+            "tr":"ENEX.SPACE is DeFi platform built on Enecuum blockchain. It consists of liquidity pools, treasury, Station, Space Drops, Harvest farms, Token machine."
+        },
+        "coingecko_id": "enex"
 	},
     {
         "token_id":"some-token-id",
@@ -66,7 +72,8 @@
             "qq":"https://qm.qq.com/some-token",
             "weixin":"https://weixin.qq.com/some-token",
             "telegram":"https://t.me/some-token",
-            "instagram":"https://www.instagram.com/some-token"
+            "instagram":"https://www.instagram.com/some-token",
+            "reddit":"https://www.reddit.com/some-token"
         },
         "documents": {
             "whitepaper": "https://someTokenWhitepaper.pdf"
@@ -98,7 +105,8 @@
             "qq":"https://qm.qq.com/another-token",
             "weixin":"https://weixin.qq.com/another-token",
             "telegram":"https://t.me/another-token",
-            "instagram":"https://www.instagram.com/another-token"
+            "instagram":"https://www.instagram.com/another-token",
+            "reddit":"https://www.reddit.com/another-token"
         },
         "description": {
             "en":"EN text about another token",

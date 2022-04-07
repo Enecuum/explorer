@@ -398,5 +398,6 @@
     "NUM_VOLUME" : "Volume {{num}}",
     "DELEGATED_BY_OTHERS": "Delegated by others",
     "FARM_CLOSE_STAKE" : "Farm close stake",
-    "TOTAL_AMOUNT" : "Total amount"
+    "TOTAL_AMOUNT" : "Total amount",
+    "GUIDES" : "Guides"
 }

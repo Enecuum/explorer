@@ -13,10 +13,12 @@
             "youtube": "https://www.youtube.com/channel/UCyZqNfzK_PP82nkAVOlmN4Q",
             "qq": "https://qm.qq.com/cgi-bin/qm/qr?k=YfdokyjJnlKl0eAuhVXEc6JtVsoKnxvI&authKey=6WpHwP4Cu/kAAyPyVuBWZeQCjhEyijvLyGf6Jj6P7f9LVCe/9ZZC7YIfRtudjD23&noverify=0",
             "weixin": "https://weixin.qq.com/g/AwYAAJdSThUYHIJmetSinRGfcwtrkRovBmLZZr5moi0UXRIW56Me4ts56gByaeYU",
-            "telegram": "https://t.me/Enecuum_EN"
+            "telegram": "https://t.me/Enecuum_EN",
+            "reddit": "https://www.reddit.com/r/EnecuumDev/"
         },
         "documents": {
-            "whitepaper": "https://enecuum.com/pdf/pp_en.pdf"
+            "whitepaper": "https://enecuum.com/pdf/pp_en.pdf",
+            "guides": "https://guides.enecuum.com/"
         },     
         "description": {
             "en": "ENQ is used in Pulse Network and can be mined in Enecuum's mobile mining application utilizing the Proof-of-Activity algorithm.",

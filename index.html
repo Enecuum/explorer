@@ -3909,7 +3909,9 @@
             officialSiteLink : '',
             officialSiteText : '---',
             whitepaperLink : '',
-            whitepaperLinkText : '---'
+            whitepaperLinkText : '---',
+            guidesLink : '',
+            guidesLinkText : '---'
         };
 
         $scope.stake = null;
@@ -3951,6 +3953,9 @@
                     }
                     if ($scope.token.customerInfo.documents !== undefined && $scope.token.customerInfo.documents.hasOwnProperty('whitepaper')) {
                         $scope.additionalTokenData.whitepaperLink = $scope.additionalTokenData.whitepaperLinkText = $scope.token.customerInfo.documents.whitepaper;               
+                    }
+                    if ($scope.token.customerInfo.documents !== undefined && $scope.token.customerInfo.documents.hasOwnProperty('guides')) {
+                        $scope.additionalTokenData.guidesLink = $scope.additionalTokenData.guidesLinkText = $scope.token.customerInfo.documents.guides;               
                     }
                     if ($scope.token.customerInfo.media !== undefined) {
                         $scope.media = $scope.token.customerInfo.media;
@@ -5120,7 +5125,8 @@
             facebook : 'fab fa-facebook-f',
             forklog : '',
             externalLink: 'fas fa-external-link-alt',
-            instagram: 'fab fa-instagram-square'
+            instagram: 'fab fa-instagram-square',
+            reddit: 'fab fa-reddit-alien'
         }
 
         $rootScope.existCookies = function () {
