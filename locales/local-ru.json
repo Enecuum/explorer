@@ -379,5 +379,19 @@
     "GO_TO_PAGE" : "Перейти на страницу",
     "VIEW_AS_API_DATA" : "View as API data",
     "POOL":"Пул",
-    "FARM":"Ферма"
+    "FARM":"Ферма",
+    "ASSET0" : "Asset 0",
+    "ASSET1" : "Asset 1",
+    "ASSET2" : "Asset 2",
+    "ASSET3" : "Asset 3",
+    "PLENGTH" : "Route length",
+    "AMOUNT_OUT" : "Amount out",
+    "AMOUNT_IN_MAX" : "Amount in max",
+    "AMOUNT_OUT_MIN" : "Amount out min",
+    "POOL_SELL_EXACT_ROUTED" : "ENEX sell exact routed",
+    "POOL_BUY_EXACT_ROUTED" : "ENEX buy exact routed",
+    "POOL_SELL_EXACT" : "ENEX sell exact",
+    "POOL_BUY_EXACT" : "ENEX buy exact",
+    "DEX_CMD_DISTRIBUTE" : "Station distribute",
+    "FARM_ADD_EMISSION" : "Добавление эмиссии на ферме"
 }
