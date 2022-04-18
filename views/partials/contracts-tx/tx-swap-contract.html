@@ -9,7 +9,7 @@
             <td class="fit" ng-if="param === 'asset_out'">
                 <a ng-href="#!/token/{{data[param]}}" target="_blank">{{data[param]}}</a>
                 <span classs="mr-2">({{txData.parameters['asset_out_token_ticker']}})</span>              
-            </td>            
+            </td>                        
             <td class="fit" ng-if="param !== 'asset_in' && param !== 'asset_out'">{{data[param]}}</td>
         </tr>
     </tbody>    

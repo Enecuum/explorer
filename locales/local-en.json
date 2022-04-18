@@ -369,6 +369,7 @@
     "AMOUNT_2" : "Amount 2",
     "LP_TOKENS_RECEIVED" : "LP tokens received",
     "TOKENS_RECEIVED" : "Tokens received",
+    "TOKENS_SENT" : "TOKENS SENT",
     "POOL_ADD_LIQUIDITY" : "Add liquidity",
     "POOL_REMOVE_LIQUIDITY" : "Remove liquidity",
     "FARM_CREATE" : "Create farm",
@@ -405,5 +406,13 @@
     "GO_TO_PAGE" : "Go to page",
     "VIEW_AS_API_DATA" : "View as API data",
     "POOL":"Pool",
-    "FARM":"Farm"
+    "FARM":"Farm",
+    "ASSET0" : "Asset 0",
+    "ASSET1" : "Asset 1",
+    "ASSET2" : "Asset 2",
+    "ASSET3" : "Asset 3",
+    "PLENGTH" : "Route length",
+    "AMOUNT_OUT" : "Amount out",
+    "AMOUNT_IN_MAX" : "Amount in Max",
+    "AMOUNT_OUT_MIN" : "Amount out Min" 
 }

@@ -1641,6 +1641,38 @@
                         txData.parameters.asset_out_token_ticker = token_info[0].ticker;
                         txData.parameters.asset_out_token_decimals = token_info[0].decimals;
                     });                   
+                },               
+                pool_sell_exact : function(txData, contractScheme) {
+                    let assetsList = {
+                        amount_in      : 'asset_in',
+                        amount_out_min : 'asset_out'
+                    }
+                    populateListOfAmounts(txData, contractScheme, assetsList);                                      
+                },               
+                pool_sell_exact_routed : function(txData, contractScheme) {
+                    let maxAssetProps = getMaxAssetProps(txData);
+                    let assetsList = {
+                        amount_in      : 'asset0',
+                        amount_out_min : maxAssetProps.maxAssetAlias
+                    }
+                    populateListOfAmounts(txData, contractScheme, assetsList);
+                    populateTransitionalAssetsData(maxAssetProps.realMaxAssetIndex, txData);
+                },               
+                pool_buy_exact : function(txData, contractScheme) {
+                    let assetsList = {
+                        amount_in_max : 'asset_in',
+                        amount_out    : "asset_out"
+                    }
+                    populateListOfAmounts(txData, contractScheme, assetsList);
+                },               
+                pool_buy_exact_routed : function(txData, contractScheme) {
+                    let maxAssetProps = getMaxAssetProps(txData);
+                    let assetsList = {
+                        amount_in_max : 'asset0',
+                        amount_out    : maxAssetProps.maxAssetAlias
+                    }
+                    populateListOfAmounts(txData, contractScheme, assetsList);
+                    populateTransitionalAssetsData(maxAssetProps.realMaxAssetIndex, txData);
                 },
                 farm_create : function(txData, contractScheme) {
                     let assetsList = {
@@ -1658,6 +1690,11 @@
                             txData.parameters.amount_token_ticker = farmData.stake_token_name;
                             txData.parameters.amount_token_link = `#!/token/${farmData.stake_token_hash}`;                           
                         }         
+                    });
+                },
+                dexCmdDistribute : function(txData) {
+                    provider.token_info.query({hash:txData.parameters.token_hash}, function(token_info) {
+                        txData.parameters.token_ticker = token_info[0].ticker;
                     });
                 },
                 default : function(txData, contractScheme) {
@@ -1713,6 +1750,30 @@
             });            
         }
 
+        function getMaxAssetProps(txData) {
+            let maxAssetIndex = 4; //suppose that final output asset is 'asset3'
+            let maxAssetAlias = '';
+            let realMaxAssetIndex = 0;
+            for(let i = 1; i <= maxAssetIndex; i++) {                
+                if (txData.parameters.hasOwnProperty(`asset${i}`) && txData.parameters[`asset${i}`] !== undefined && txData.parameters[`asset${i}`] !== "---") {
+                    maxAssetAlias = `asset${i}`;
+                    realMaxAssetIndex = i;
+                }
+            }
+
+            return { maxAssetAlias : maxAssetAlias, realMaxAssetIndex : realMaxAssetIndex}
+        }
+
+        function populateTransitionalAssetsData(realMaxAssetIndex, txData) {
+            for(let j = 1 ; j < realMaxAssetIndex; j++) {                
+                provider.token_info.query({hash:txData.parameters[`asset${j}`]}, function(token_info) {
+                    console.log(txData.parameters[`asset${j}`])
+                    txData.parameters[`asset${j}_token_ticker`] = token_info[0].ticker;
+                    txData.parameters[`asset${j}_token_decimals`] = token_info[0].decimals;
+                });                
+            }            
+        }
+
         function populatePoolToken(txData) {
             let pairId = `${txData.parameters.asset_1}${txData.parameters.asset_2}`;
             provider.get_dex_pools.query(function(dexPooolsArr) {
@@ -1730,7 +1791,7 @@
         }
 
         function populateListOfAmounts(txData, contractScheme, assetsList) {
-            contractScheme.asToken.forEach(function(param) {           
+            contractScheme.asToken.forEach(function(param) { 
                 let token = {};
                 provider.token_info.query({hash:txData.parameters[assetsList[param]]}, function(token_info) {
                     if (token_info[0] !== undefined) {
@@ -1872,6 +1933,38 @@
                 eindexer    : ['iswapout'],
                 eindexerTemlate : 'tx-pool-swap-contract-eindexer'
             },
+            pool_sell_exact : {
+                paramsOrder : ["amount_in", "amount_out_min", "asset_in", "asset_out"],
+                asToken     : ["amount_in", "amount_out_min"],
+                formatAs    : 'pool_sell_exact',
+                template    : 'tx-swap-exact-contract',
+                eindexer    : ['iswapout'],
+                eindexerTemlate : 'tx-pool-swap-contract-eindexer'
+            },
+            pool_buy_exact : {
+                paramsOrder : ["amount_in_max", "amount_out", "asset_in",  "asset_out"],
+                asToken     : ["amount_in_max", "amount_out"],
+                formatAs    : 'pool_buy_exact',
+                template    : 'tx-swap-exact-contract',
+                eindexer    : ['iswapout'],
+                eindexerTemlate : 'tx-pool-swap-contract-eindexer'
+            },
+            pool_sell_exact_routed : {
+                paramsOrder : ["amount_in", "amount_out_min", "plength", "asset0", "asset1", "asset2", "asset3",],
+                asToken     : ["amount_in", "amount_out_min"],
+                formatAs    : 'pool_sell_exact_routed',
+                template    : 'tx-swap-exact-contract-routed',
+                eindexer    : ['iswapout'],
+                eindexerTemlate : 'tx-pool-swap-contract-eindexer'
+            },
+            pool_buy_exact_routed : {
+                paramsOrder : ["amount_in_max", "amount_out", "plength", "asset0", "asset1", "asset2", "asset3",],
+                asToken     : ["amount_in_max", "amount_out"],
+                formatAs    : 'pool_buy_exact_routed',
+                template    : 'tx-swap-exact-contract-routed',
+                eindexer    : ['iswapout'],
+                eindexerTemlate : 'tx-pool-swap-contract-eindexer'
+            },
             farm_create : {
                 paramsOrder : ["stake_token", "reward_token", "block_reward", "emission"],
                 asToken     : ["block_reward", "emission"],
@@ -1909,6 +2002,20 @@
                 template    : 'default',
                 eindexer    : ['ifdecrew'],
                 eindexerTemlate : 'tx-farm-get-reward-contract-eindexer'
+            },
+            farm_add_emission : {
+                paramsOrder : ["farm_id", "amount"],
+                asToken     : ["amount"],
+                formatAs    : 'increaseDecreaseStake',
+                template    : 'default',
+                eindexer    : []
+            },
+            dex_cmd_distribute : {
+                paramsOrder : ["token_hash"],
+                asToken     : [],
+                formatAs    : 'dexCmdDistribute',
+                template    : 'dex-cmd-distribute',
+                eindexer    : []                
             },
             unknown_contract : {
                 paramsOrder : [],
@@ -2147,24 +2254,30 @@
             },
             getContractTypeTranslation : function(contractType, incorrectValue = '---') {
                 let contractTypes = {
-                    "create_token"          : "CREATE_TOKEN",
-                    "create_pos"            : "CREATE_POS_CONTRACT",
-                    "delegate"              : "DELEGATE",
-                    "undelegate"            : "UNDELEGATE",
-                    "transfer"              : "TRANSFER",
-                    "pos_reward"            : "CLAIM_REWARD",
-                    "mint"                  : "MINT",
-                    "burn"                  : "BURN",
-                    "pool_create"           : "POOL_CREATE",
-                    "pool_add_liquidity"    : "POOL_ADD_LIQUIDITY",
-                    "pool_remove_liquidity" : "POOL_REMOVE_LIQUIDITY",
-                    "pool_swap"             : "POOL_SWAP",
-                    "farm_create"           : "FARM_CREATE",
-                    "farm_get_reward"       : "FARM_GET_REWARD",
-                    "farm_increase_stake"   : "FARM_INCREASE_STAKE",
-                    "farm_close_stake"      : "FARM_CLOSE_STAKE",
-                    "farm_decrease_stake"   : "FARM_DECREASE_STAKE",
-                    "unknown_contract"      : "UNKNOWN_CONTRACT"
+                    "create_token"           : "CREATE_TOKEN",
+                    "create_pos"             : "CREATE_POS_CONTRACT",
+                    "delegate"               : "DELEGATE",
+                    "undelegate"             : "UNDELEGATE",
+                    "transfer"               : "TRANSFER",
+                    "pos_reward"             : "CLAIM_REWARD",
+                    "mint"                   : "MINT",
+                    "burn"                   : "BURN",
+                    "pool_create"            : "POOL_CREATE",
+                    "pool_add_liquidity"     : "POOL_ADD_LIQUIDITY",
+                    "pool_remove_liquidity"  : "POOL_REMOVE_LIQUIDITY",
+                    "pool_swap"              : "POOL_SWAP",
+                    "farm_create"            : "FARM_CREATE",
+                    "farm_get_reward"        : "FARM_GET_REWARD",
+                    "farm_increase_stake"    : "FARM_INCREASE_STAKE",
+                    "farm_close_stake"       : "FARM_CLOSE_STAKE",
+                    "farm_decrease_stake"    : "FARM_DECREASE_STAKE",
+                    "farm_add_emission"      : "FARM_ADD_EMISSION",
+                    "pool_sell_exact"        : "POOL_SELL_EXACT",
+                    "pool_buy_exact"         : "POOL_BUY_EXACT",
+                    "pool_sell_exact_routed" : "POOL_SELL_EXACT_ROUTED",
+                    "pool_buy_exact_routed"  : "POOL_BUY_EXACT_ROUTED",
+                    "dex_cmd_distribute"     : "DEX_CMD_DISTRIBUTE",
+                    "unknown_contract"       : "UNKNOWN_CONTRACT"
                 };
                 if (contractTypes.hasOwnProperty(contractType)) {
                     return contractTypes[contractType];
@@ -2218,35 +2331,40 @@
 
     app.factory('schema', function () {
         let schema = {
-            "root" :            "0000",
-            "custom" :          "0100",
-            "create_token" :    "0200",
-            "delegate" :        "0300",
-            "undelegate" :      "0400",
-            "signature" :       "0500",
-            "hash" :            "0600",
-            "string" :          "0700",
-            "int" :             "0800",
-            "bigint" :          "0900",
-            "float" :           "0a00",
-            "object" :          "0c00",
-            "key" :             "0d00",
-            "procedure_name" :  "0e00",
-            "parameters" :      "0f00",
-            "create_pos" :      "1000",
-            "pos_reward" :      "1100",
-            "transfer" :        "1200",
-            "mint" :            "1300",
-            "burn" :            "1400",
-            "pool_create" :     "1500",
-            "pool_add_liquidity" :      "1600",
-            "pool_remove_liquidity" :   "1700",
-            "pool_swap" :               "1800",
-            "farm_create" :             "1900",
-            "farm_get_reward" :         "1a00",
-            "farm_increase_stake" :     "1b00",
-            "farm_close_stake" :        "1c00",
-            "farm_decrease_stake" :     "1d00"
+            "root": "0000",
+            "custom": "0100",
+            "create_token": "0200",
+            "delegate": "0300",
+            "undelegate": "0400",
+            "signature": "0500",
+            "hash": "0600",
+            "string": "0700",
+            "int": "0800",
+            "bigint": "0900",
+            "float": "0a00",
+            "object": "0c00",
+            "key": "0d00",
+            "procedure_name": "0e00",
+            "parameters": "0f00",
+            "create_pos": "1000",
+            "pos_reward": "1100",
+            "transfer": "1200",
+            "mint": "1300",
+            "burn": "1400",
+            "pool_create": "1500",
+            "pool_add_liquidity": "1600",
+            "pool_remove_liquidity": "1700",
+            "pool_sell_exact": "1800",
+            "farm_create": "1900",
+            "farm_get_reward": "1a00",
+            "farm_increase_stake": "1b00",
+            "farm_close_stake": "1c00",
+            "farm_decrease_stake": "1d00",
+            "farm_add_emission": "1e00",
+            "dex_cmd_distribute": "1f00",
+            "pool_sell_exact_routed": "2000",
+            "pool_buy_exact": "2100",
+            "pool_buy_exact_routed": "2200",
         };
         return schema                
     });

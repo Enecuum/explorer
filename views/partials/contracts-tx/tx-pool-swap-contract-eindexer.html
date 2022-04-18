@@ -1,13 +1,22 @@
 <table class="table table-sm tx-data-table no-border mb-0" ng-init="assetsInfo=txData.parameters">
     <tbody>
-        <tr>
+        <tr ng-if="txData.type === 'pool_sell_exact' || txData.type === 'pool_sell_exact_routed'">
             <th class="pr-md-3">{{'TOKENS_RECEIVED' | translate}}</th>
             <td class="fit">
             	<span classs="mr-2">
-                    {{txEIndexData.iswapout | US_COMMAS_BIGINT_DECIMALS : assetsInfo.asset_out_decimals : assetsInfo.asset_out_decimals}}
-                    <a ng-href="/#!/token/{{assetsInfo.asset_out}}" target="_blank">{{assetsInfo.asset_out_token_ticker}}</a>
+                    {{txEIndexData.iswapout | US_COMMAS_BIGINT_DECIMALS : assetsInfo.amount_out_min_token_decimals : assetsInfo.amount_out_min_token_decimals}}
+                    <a ng-href="/#!/token/{{assetsInfo.amount_out_min_token_hash}}" target="_blank">{{assetsInfo.amount_out_min_token_ticker}}</a>
                 </span>     	
             </td>
         </tr>
+        <tr ng-if="txData.type === 'pool_buy_exact' || txData.type === 'pool_buy_exact_routed'">
+            <th class="pr-md-3">{{'TOKENS_SENT' | translate}}</th>
+            <td class="fit">
+                <span classs="mr-2">
+                    {{txEIndexData.iswapout | US_COMMAS_BIGINT_DECIMALS : assetsInfo.amount_in_max_token_decimals : assetsInfo.amount_in_max_token_decimals}}
+                    <a ng-href="/#!/token/{{assetsInfo.amount_in_max_token_hash}}" target="_blank">{{assetsInfo.amount_in_max_token_ticker}}</a>
+                </span>         
+            </td>
+        </tr>        
     </tbody>
 </table>

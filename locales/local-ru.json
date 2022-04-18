@@ -348,6 +348,7 @@
     "AMOUNT_2" : "Количество токенов 2",
     "LP_TOKENS_RECEIVED" : "Получено LP токенов",
     "TOKENS_RECEIVED" : "Получено токенов",
+    "TOKENS_SENT" : "Отправлено токенов",
     "POOL_ADD_LIQUIDITY" : "Добавить ликвидность",
     "POOL_REMOVE_LIQUIDITY" : "Удалить ликвидность",
     "FARM_CREATE" : "Создать ферму",
