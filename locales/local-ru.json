@@ -378,5 +378,7 @@
     "GO_TO_PAGE" : "Перейти на страницу",
     "VIEW_AS_API_DATA" : "View as API data",
     "POOL":"Пул",
-    "FARM":"Ферма"
+    "FARM":"Ферма",
+    "GUIDES" : "Руководства"
+
 }

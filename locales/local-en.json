@@ -405,5 +405,6 @@
     "GO_TO_PAGE" : "Go to page",
     "VIEW_AS_API_DATA" : "View as API data",
     "POOL":"Pool",
-    "FARM":"Farm"
+    "FARM":"Farm",
+    "GUIDES" : "Guides"
 }
