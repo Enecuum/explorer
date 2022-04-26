@@ -73,6 +73,7 @@
     "FEE_TYPE":"Fee type",
     "FEE_TYPE_FLAT":"Flat",
     "FEE_TYPE_PERCENT":"Percent",
+    "FEE_TYPE_NATIVE":"Native",
     "FEE_VALUE":"Fee value",
     "FEE_MIN":"Min. fee",
     "TOKEN_HOLDERS":"Token holders",

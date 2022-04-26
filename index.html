@@ -505,7 +505,12 @@
                                     </tr>
                                     <tr ng-if="txCurrentState === 'isInNetwork'">
                                         <td>{{'FEE_VALUE' | translate}}</td>
-                                        <td>{{tx.fee | US_COMMAS_BIGINT_DECIMALS : tx.token.decimals : tx.token.decimals}} {{tx.token.ticker}}</td>
+                                        <td ng-if="tx.fee_type !== 2">
+                                            {{tx.fee | US_COMMAS_BIGINT_DECIMALS : tx.token.decimals : tx.token.decimals}} {{tx.token.ticker}}
+                                        </td>
+                                        <td ng-if="tx.fee_type === 2">
+                                            {{tx.fee_value | US_COMMAS_BIGINT_DECIMALS : maintoken.decimals : maintoken.decimals}} {{maintoken.ticker}}
+                                        </td>
                                     </tr>                                   
                                     <tr>
                                         <td>{{'DATA' | translate}}</td>
@@ -1528,7 +1533,12 @@
                     contractScheme.paramsOrder.splice(2, 0, "token_type");                 
                     txData.parameters.decimals = parseInt(txData.parameters.decimals);
                     txData.parameters.token_type = commonTools.getTokenType(txData.parameters);
-                    let res = commonTools.getTokenFees(txData.parameters);
+                    let res = {}
+                    if (txData.parameters.fee_type === 2)
+                        res = commonTools.getTokenFees(txData.parameters, txData.maintoken);
+                    else
+                        res = commonTools.getTokenFees(txData.parameters);
+
                     txData.parameters.fee_type = res.fee_type.toUpperCase();
                     txData.parameters.fee_value = res.fee_value;
                     txData.parameters.fee_min = res.fee_min;
@@ -1722,7 +1732,7 @@
             return result;
         }
 
-        function formatData(txData) {            
+        function formatData(txData) {
             let contractScheme = contractSchemes.getScheme(txData.type);
             filterUndefinedParams(txData, contractScheme);
             let formatDataByScheme = getTxDataFormatter(contractScheme);
@@ -2143,7 +2153,8 @@
 
                 return tokenType;
             },
-            getTokenFees: function(token) {
+            getTokenFees: function(token, nativeToken = {decimals: 10, ticker: '---'}) {
+
                 let res = {
                     fee_type : '---',
                     fee_value : '---',
@@ -2157,6 +2168,10 @@
                     res.fee_type = 'FEE_TYPE_PERCENT';
                     res.fee_min = $filter('US_COMMAS_BIGINT_DECIMALS')(token.fee_min, token.decimals, token.decimals) +' '+ token.ticker;
                     res.fee_value = $filter('US_COMMAS_BIGINT_DECIMALS')(token.fee_value, 2, 2) + '%';
+                } else if (token.fee_type === 2) {
+                    res.fee_type = 'FEE_TYPE_NATIVE';
+                    res.fee_value = $filter('US_COMMAS_BIGINT_DECIMALS')(token.fee_value, nativeToken.decimals, nativeToken.decimals) +' '+ nativeToken.ticker;
+                    res.fee_min = $filter('US_COMMAS_BIGINT_DECIMALS')(token.fee_min, nativeToken.decimals, nativeToken.decimals) +' '+ nativeToken.ticker;
                 }
                 return res;
             }            
@@ -4073,7 +4088,6 @@
                     }
 
                     provider.roi.query({hash:$routeParams.hash},function(roiArrForLerp) {
-
                         if (Array.isArray(roiArrForLerp) && roiArrForLerp.length > 0) {
                             $scope.min_stake  = roiArrForLerp[0].stake / Math.pow(10, $scope.token.decimals);
                             $scope.stake = $scope.min_stake;
@@ -4119,10 +4133,14 @@
                     }
                 $scope.token.ticker = ticker.ticker;
                 $scope.token.caption = ticker.caption;
-                let feesObject = commonTools.getTokenFees($scope.token);
-                $scope.token.fee_type = feesObject.fee_type;
-                $scope.token.fee_value = feesObject.fee_value;
-                $scope.token.fee_min = feesObject.fee_min;
+                $rootScope.$watch('mainToken', function(newValue, oldValue) {
+                    if (newValue.hasOwnProperty('ticker') && newValue.ticker !== undefined) {
+                        let feesObject = commonTools.getTokenFees($scope.token, newValue);
+                        $scope.token.fee_type = feesObject.fee_type;
+                        $scope.token.fee_value = feesObject.fee_value;
+                        $scope.token.fee_min = feesObject.fee_min;
+                    }
+                }, true);               
             });
             provider.transaction.get({hash:$routeParams.hash}, function(issue_token_tx) {
                 $scope.issue_token_tx = issue_token_tx;
@@ -4577,13 +4595,15 @@
             radialChart : undefined,
             translationData : undefined,            
             showCurrencyToUSDAccountDetails : currentPreset.pagesSectionsVisibility.showCurrencyToUSDAccountDetails          
-        }
+        }        
 
         $rootScope.$watch('mainToken', function(newValue, oldValue) {
             if (newValue !== undefined || oldValue !== undefined) {
                 $scope.viewData.translationData = {
                     mainTokenTicker: $rootScope.mainToken.ticker
-                }                
+                }
+
+                $scope.maintoken = newValue;                
                 populateMainTokenBalanceDetails();
                 $scope.$watch('account.balances.mainTokenDetails.total.value', function(newAvailableBalance, oldAvailableBalance) {
                     if (newAvailableBalance !== undefined || oldAvailableBalance !== undefined) { // if populateMainTokenBalanceDetails() set mainToken's balances from API
@@ -4844,9 +4864,7 @@
             } else {
                 $scope.viewData.radialChart.updateSeries([$scope.account.balances.generalRepresentation.otherTokensPercentage, $scope.account.balances.generalRepresentation.mainTokenPercentage]);
             }
-
-        }
-             
+        }             
 
         $scope.getAccTxs = function(page){
             $scope.isLoading = true;
@@ -4856,8 +4874,11 @@
                     $scope.account.txs.records.forEach(function(record) {
                         record.time = dateTimeConverter.getTimestamp(record.time);
                         provider.token_info.query({hash:record.token_hash}, function(token_info) {
-                            record.token_decimals = token_info[0] !== undefined ? token_info[0].decimals : 0;
-                        });
+                            record.token_decimals = token_info[0] !== undefined ? token_info[0].decimals : 0;                           
+                            provider.transaction.get({hash:record.hash}, function(tx) {
+                                record.calculatedFee = tx.fee;
+                            })
+                        });                        
                     }); 
                     $scope.account.txs.page_count = account_txs.page_count;
                     $scope.isLoading = false;
@@ -4938,7 +4959,7 @@
         }  
 	});
 
-	app.controller('transactionCtrl', function($scope, $interval, $routeParams, $translate, $filter, provider, schema, commonTools, txParser, contractSchemes, contractFormatter) {
+	app.controller('transactionCtrl', function($scope, $rootScope, $interval, $routeParams, $translate, $filter, provider, schema, commonTools, txParser, contractSchemes, contractFormatter) {
         $scope.showParams = false;
         let defaultValue = '---';
         $scope.txDataInit = defaultValue;
@@ -4946,8 +4967,10 @@
         $scope.statusBadge = commonTools.getTxStatusBadge;
         $scope.txCurrentState = undefined;
         $scope.interval = $interval(getTxdata, 5000, 0, true);
-        getTxdata();
-
+        getTxdata();        
+        $rootScope.$watch('mainToken', function(newValue, oldValue) {
+            $scope.maintoken = newValue;
+        }, true);
         function getTxdata() {
             //console.log(`Trying to get data for Tx ${$routeParams.hash}`);
             provider.transaction.get({hash:$routeParams.hash}, function(tx) {
@@ -5000,6 +5023,11 @@
                                     prettifyTxData($scope.txData);                       
                                 }                    
                             }, true);                                
+                        } else if ($scope.txData.type === 'create_token') {
+                            $rootScope.$watch('mainToken', function(newValue, oldValue) {
+                                $scope.txData.maintoken = newValue;
+                                prettifyTxData($scope.txData);
+                            }, true);
                         } else 
                             prettifyTxData($scope.txData);
 
