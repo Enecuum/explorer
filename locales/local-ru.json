@@ -269,6 +269,7 @@
     "TOKENS_ID": "ID токенов",
     "NO_RECORDS_AVAILABLE": "Нет доступных записей",
     "ACCOUNT_DETAILS": "Аккаунт",
+    "ACCOUNT":"Аккаунт",
     "STAKE_POWER_EXPLANATION_P1": "Процент от общего стейка активных PoS контрактов.",
     "STAKE_POWER_EXPLANATION_P2": "Для неактивных контрактов вычисляется в предположении, что данный PoS активен.",
     "ACTIVE_POS_NUM": "Активных POS",
@@ -373,5 +374,11 @@
     "ENEX_POOLS" : "Enex Pools",
     "NUM_VOLUME" : "Объем {{num}}",
     "TOTAL_AMOUNT" : "Общее количество",
+    "SEARCH_RESULTS" : "Результат поиска",
+    "GO_TO_PAGE" : "Перейти на страницу",
+    "VIEW_AS_API_DATA" : "View as API data",
+    "POOL":"Пул",
+    "FARM":"Ферма",
     "GUIDES" : "Руководства"
+
 }

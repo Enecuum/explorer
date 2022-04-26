@@ -15,7 +15,7 @@
                 <td class="text-nowrap">{{token.issue_time !== undefined ? get_time(token.issue_time) : '---'}}</td>
                 <td class="text-nowrap">{{'TOKEN_ISSUE' | translate}}</td>
                 <td class="text-nowrap">{{token.total_supply | US_COMMAS_BIGINT_DECIMALS : token.decimals : token.decimals}} {{token.ticker}}</td>
-                <td class="text-nowrap">{{token.fee_value}}</td>
+                <td class="text-nowrap">{{(issue_token_tx.fee || '---') | US_COMMAS_BIGINT_DECIMALS : mainToken.decimals : mainToken.decimals }} {{mainToken.ticker}}</td>
                 <td><a ng-href="#!/tx/{{token.hash}}" class="d-block fit responsive-hash">{{token.hash}}</a></td>
                 <td>{{issue_token_tx.status | TX_STATUS | translate}}</td>
             </tr>
