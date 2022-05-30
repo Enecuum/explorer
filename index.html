@@ -1524,7 +1524,7 @@
             let result = [];            
             ratesObj.forEach(function(currency) {
                 let commasFormatter = new Intl.NumberFormat("en-us", {
-                    useGrouping: 'true',
+                    useGrouping: true,
                     minimumFractionDigits: currency.toFixed,
                     maximumFractionDigits: currency.toFixed
                 });
