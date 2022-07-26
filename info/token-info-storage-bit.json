@@ -112,5 +112,34 @@
             "en":"EN text about another token",
             "de":"DE text about another token"
         }             
+    },
+	    {
+        "token_id":"e2fa409b9150b6489ec9913d3afbc7db1fe0e94ac09537e458aea673d341367a",
+        "website":"https://ppbcfa.ru/",
+        "logo": "surc_logo.png",
+        "media": {                            
+            "twitter": "https://twitter.com/",
+            "medium": "https://",
+            "github": "https://github.com/DimitriiVM/ICO-FVE-DFA",
+            "forklog": "https://hub.forklog.com/",
+            "bitcointalk": "https://bitcointalk.org/",
+            "linkedin": "https://www.linkedin.com/",
+            "youtube": "https://www.youtube.com/",
+            "qq": "https://qm.qq.com/",
+            "weixin": "https://weixin.qq.com/",
+            "telegram": "https://t.me/",
+            "reddit": "https://www.reddit.com/"
+        },
+        "documents": {
+            "whitepaper": "https://ppbcfa.ru/",
+            "guides": "https://ppbcfa.ru/"
+        },     
+        "description": {
+            "en": "SURC tokens are imitated by the First Volga Region Exchange of Digital Financial Assets to collect primary investments. Further, during the IPO on the Moscow Stock Exchange, tokens will be redeemed taking into account interest or convected into shares.",
+            "de": "Die SURC-Token werden von der Ersten Wolga-Börse für digitale Finanzanlagen simuliert, um Primärinvestitionen zu sammeln. Als nächstes werden die Token bei einem Börsengang an der Moskauer Börse unter Berücksichtigung von Zinsen zurückgekauft oder in Aktien umgewandelt.",
+            "fr": "Les jetons SURC sont simulés Par la première bourse d'Actifs Financiers Numériques de la Volga pour la collecte des investissements primaires. Ensuite, lors de l'introduction en bourse à la bourse de Moscou, les jetons seront rachetés en tenant compte des intérêts ou convertis en actions.",
+            "ru": "Токены SURC имитированы Первой Поволжской Биржей Цифровых Финансовых Активов для сбора первичных инвестиций. Далее при IPO на Московской Бирже токены будут выкуплены с учетом процентов или конвектированы в акции.",
+         },
+        "coingecko_id": "SURC"             
     }
 ]
