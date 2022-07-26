@@ -1,12 +1,12 @@
 [
     {
-        "token_id":"0000000000000000000000000000000000000000000000000000000000000000",
-        "website":"https://enecuum.com",
+        "token_id":"e2fa409b9150b6489ec9913d3afbc7db1fe0e94ac09537e458aea673d341367a",
+        "website":"https://ppbcfa.ru/",
         "logo": "enq-color.png",
         "media": {                            
             "twitter": "https://twitter.com/enq_enecuum",
             "medium": "https://blog.enecuum.com/",
-            "github": "https://github.com/Enecuum",
+            "github": "https://github.com/DimitriiVM/ICO-FVE-DFA",
             "forklog": "https://hub.forklog.com/companies/enecuum/",
             "bitcointalk": "https://bitcointalk.org/index.php?topic=2939909.0;topicseen",
             "linkedin": "https://www.linkedin.com/company/enecuum-limited/",
@@ -17,8 +17,8 @@
             "reddit": "https://www.reddit.com/r/EnecuumDev/"
         },
         "documents": {
-            "whitepaper": "https://enecuum.com/pdf/pp_en.pdf",
-            "guides": "https://guides.enecuum.com/"
+            "whitepaper": "https://ppbcfa.ru/",
+            "guides": "https://ppbcfa.ru/"
         },     
         "description": {
             "en": "ENQ is used in Pulse Network and can be mined in Enecuum's mobile mining application utilizing the Proof-of-Activity algorithm.",
