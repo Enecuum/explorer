@@ -2,13 +2,13 @@
     {
         "token_id":"e2fa409b9150b6489ec9913d3afbc7db1fe0e94ac09537e458aea673d341367a",
         "website":"https://ppbcfa.ru/",
-        "logo": "surc_logo.png",
+        "logo": "https://github.com/DimitriiVM/ICO-FVE-DFA/blob/main/info/token/logo/surc/surc_logo.png?raw=true",
         "media": {                            
             "github": "https://github.com/DimitriiVM/ICO-FVE-DFA",
         },
         "documents": {
-            "whitepaper": "https://ppbcfa.ru/",
-            "guides": "https://ppbcfa.ru/"
+            "whitepaper": "https://ppbcfa.ru/informatsiia_dlia_inviestorov/",
+            "guides": "https://ppbcfa.ru/novosti_piervoi_povolzhskoi_birzhi/"
         },     
         "description": {
             "en": "SURC tokens are imitated by the First Volga Region Exchange of Digital Financial Assets to collect primary investments. Further, during the IPO on the Moscow Stock Exchange, tokens will be redeemed taking into account interest or convected into shares.",
