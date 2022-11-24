@@ -2370,6 +2370,7 @@
             roi : $resource('api/v1/roi?hash=:hash', {hash:'@hash'}),
             stake_limits : $resource('api/v1/get_stake_limits', {}),
             get_tickers_all : $resource('api/v1/get_tickers_all', {query: {method: 'GET', isArray: true}}),
+            get_tickers_all_unfiltered : $resource('api/v1/get_tickers_all_unfiltered', {query: {method: 'GET', isArray: true}}),
             get_token_info_page : $resource('api/v1/get_token_info_page?page=:page&type:=type', {page:'@page',type:'@type'}),
             token_info : $resource('' + 'api/v1/token_info?hash=:hash', {hash:'@hash'}, {query: {method: 'GET', isArray: true}}),
             get_token_holder_count : $resource('api/v1/get_token_holder_count?token_hash=:token_hash', {token_hash:'@token_hash'}),
@@ -2377,6 +2378,7 @@
             get_tokens_count : $resource('api/v1/get_tokens_count', {}),
             balance_main_token : $resource('/api/v1/balance?id=:id', {id:'@id'}),
             balance_all : $resource('/api/v1/balance_all?id=:id', {id:'@id'}, {query: {method: 'GET', isArray: true}}),
+            balance_all_unfiltered : $resource('/api/v1/balance_all_unfiltered?id=:id', {id:'@id'}, {query: {method: 'GET', isArray: true}}),
             get_pos_total_stake : $resource('/api/v1/get_pos_total_stake'),
             get_pos_list_all : $resource('/api/v1/get_pos_list_all'),
             get_pos_list : $resource('/api/v1/get_pos_list?owner=:owner', {owner:'@owner'}, {query: {method: 'GET', isArray: true}}),
@@ -3915,9 +3917,9 @@
         });
 
         $scope.getPage = function(paramsObj = {page: 0, type: 'all'}) {
-            provider.get_tickers_all.query(function(tickers_all) {
+            provider.get_tickers_all_unfiltered.query(function(tickers_all_unfiltered) {
                 $scope.tickers = {};
-                tickers_all.forEach(function(ticker) {
+                tickers_all_unfiltered.forEach(function(ticker) {
                     $scope.tickers[ticker.hash] = {ticker: ticker.ticker, caption: ticker.caption, logo: undefined};
                 });
 
@@ -4180,8 +4182,8 @@
                 commonTools.genQR('#qrTokenIDCode', $scope.token.hash);                
             }
 
-            provider.get_tickers_all.query(function(tickers_all) {
-                let ticker = tickers_all.find(function(ticker) {return (ticker.hash === $scope.token.hash) ? true : false;});
+            provider.get_tickers_all_unfiltered.query(function(tickers_all_unfiltered) {
+                let ticker = tickers_all_unfiltered.find(function(ticker) {return (ticker.hash === $scope.token.hash) ? true : false;});
                 if (ticker === undefined)
                     ticker = {
                         ticker  : '',
@@ -4670,8 +4672,8 @@
                             populateReferralsInfo();                            
                         }
 
-                        provider.get_tickers_all.query(function(tickers_all) {
-                            tickers_all.forEach(function(ticker) {
+                        provider.get_tickers_all_unfiltered.query(function(tickers_all_unfiltered) {
+                            tickers_all_unfiltered.forEach(function(ticker) {
                                 $scope.networkData.tickers[ticker.hash] = {ticker: ticker.ticker, caption: ticker.caption};                                
                             });
                             renderChart();
@@ -4748,13 +4750,13 @@
         }
 
         function populateBalancesAndPrices() {
-            provider.balance_all.query({id:$routeParams.id}, function(balance_all) {
-                if (balance_all.length > 0) {
+            provider.balance_all_unfiltered.query({id:$routeParams.id}, function(balance_all_unfiltered) {
+                if (balance_all_unfiltered.length > 0) {
                     customerInfoStorage.getStorage('token').query({}, function(allTokensCustomersInfo) {                            
                         allCustomersTokensInfo = allTokensCustomersInfo;
                         if (allCustomersTokensInfo !== undefined) {
                             let coingeckoIDsString = '';
-                            $scope.account.balances.allTokensAsList = balance_all;                    
+                            $scope.account.balances.allTokensAsList = balance_all_unfiltered;                    
                             $scope.account.balances.allTokensAsList.forEach(function(token) {
                                 if ($scope.networkData.tickers[token.token] !== undefined) {
                                     token.caption = $scope.networkData.tickers[token.token].caption;
@@ -5148,14 +5150,14 @@
         $scope.tokensArr = [];        
         let propsArr = ['asset_1', 'asset_2', 'token_hash'];
 
-        provider.get_tickers_all.query(function(tickers_all) {            
+        provider.get_tickers_all_unfiltered.query(function(tickers_all_unfiltered) {            
             provider.get_dex_pools.query(function (enexPools) {
                 $scope.enexPools = enexPools;
 
                 $scope.enexPools.forEach(function(enexPool) {
                     enexPool.status = 0;
                     propsArr.forEach(function(prop) {
-                        if ($scope.tokensArr.indexOf(enexPool[prop]) === -1 && tickers_all.find(elem => elem.hash === enexPool[prop]))
+                        if ($scope.tokensArr.indexOf(enexPool[prop]) === -1 && tickers_all_unfiltered.find(elem => elem.hash === enexPool[prop]))
                             $scope.tokensArr.push(enexPool[prop]);  
                     });
                 });
