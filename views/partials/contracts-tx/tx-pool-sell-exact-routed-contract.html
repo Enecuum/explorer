@@ -1,0 +1,42 @@
+<table class="table table-sm tx-data-table no-border" ng-init="data=txData.parameters">
+    <tbody>
+        <tr>
+            <th class="pr-md-3">{{'ASSET_IN' | translate}}</th>
+            <td>
+                <a ng-href="#!/token/{{data.asset0}}" target="_blank">{{data.asset0}}</a>
+                <span classs="mr-2">({{txData.parameters.amount_in_token_ticker}})</span>
+            </td>
+        </tr>
+        <tr>
+            <th class="pr-md-3">{{'AMOUNT_IN' | translate}}</th>
+            <td class="fit">{{data.amount_in}}</td>
+        </tr>
+        <tr>
+            <th class="pr-md-3">{{'ASSET_OUT' | translate}}</th>
+            <td>
+                <a ng-href="#!/token/{{data.amount_out_min_token_hash}}" target="_blank">{{data.amount_out_min_token_hash}}</a>
+                <span classs="mr-2">({{txData.parameters.amount_out_min_token_ticker}})</span>
+            </td>
+        </tr>        
+        <tr>
+            <th class="pr-md-3">{{'AMOUNT_OUT_MIN' | translate}}</th>
+            <td class="fit">{{data.amount_out_min}}</td>
+        </tr>
+        <tr ng-init="routeTokens=txData.parameters.routeTickers">
+            <th class="pr-md-3">{{'ROUTE' | translate}}</th>
+            <td>
+                <div class="d-flex align-items-center justify-content-left">    
+                    <div class="d-flex align-items-center justify-content-left mr-1">
+                        <a ng-href="#!/token/{{data.asset0}}" target="_blank" class="mr-1">{{txData.parameters.amount_in_token_ticker}}</a> <i class="mdi dripicons-arrow-right"></i>
+                    </div>
+                    <div class="d-flex align-items-center justify-content-left mr-1" ng-repeat="token in routeTokens track by $index" ng-if="$index>0">
+                        <a ng-href="#!/token/{{txData.parameters['asset'+$index]}}" target="_blank" class="mr-1">{{token.ticker}}</a> <i class="mdi dripicons-arrow-right"></i>
+                    </div>
+                    <div class="d-flex align-items-center justify-content-left">
+                        <a ng-href="#!/token/{{data.amount_out_min_token_hash}}" target="_blank">{{txData.parameters.amount_out_min_token_ticker}}</a>
+                    </div>
+                </div>
+            </td>
+        </tr>
+    </tbody>    
+</table>
