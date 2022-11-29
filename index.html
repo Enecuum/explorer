@@ -1641,7 +1641,71 @@
                         txData.parameters.asset_out_token_ticker = token_info[0].ticker;
                         txData.parameters.asset_out_token_decimals = token_info[0].decimals;
                     });                   
+                },               
+                pool_sell_exact : function(txData, contractScheme) {
+                    let assetsList = {
+                        amount_in : 'asset_in',
+                        amount_out_min : "asset_out"
+                    }
+                    populateListOfAmounts(txData, contractScheme, assetsList);
+                    provider.token_info.query({hash:txData.parameters.asset_out}, function(token_info) {
+                        txData.parameters.asset_out_token_ticker = token_info[0].ticker;
+                        txData.parameters.asset_out_token_decimals = token_info[0].decimals;
+                    });                   
+                },               
+                pool_sell_exact_routed : function(txData, contractScheme) {                    
+                    let targetAssetIndex = Number(txData.parameters.plength)-1;
+                    let assetsList = {
+                        amount_in : 'asset0',
+                        amount_out_min : `asset${targetAssetIndex}`
+                    }
+                    populateListOfAmounts(txData, contractScheme, assetsList);
+                    txData.parameters.routeTickers = [];
+                    for (let i = 1; i < targetAssetIndex; i++) {
+                        provider.token_info.query({hash:txData.parameters[`asset${i}`]}, function(token_info) {
+                            txData.parameters.routeTickers[i] = {                                
+                                ticker : token_info[0].ticker
+                            }
+                        });
+                    }
+
+                    provider.token_info.query({hash:txData.parameters[`asset${targetAssetIndex}`]}, function(token_info) {
+                        txData.parameters.asset_out_token_ticker = token_info[0].ticker;
+                        txData.parameters.asset_out_token_decimals = token_info[0].decimals;
+                    });                  
+                },               
+                pool_buy_exact : function(txData, contractScheme) {
+                    let assetsList = {
+                        amount_in_max : 'asset_in',
+                        amount_out    : "asset_out"
+                    }
+                    populateListOfAmounts(txData, contractScheme, assetsList);
+                    provider.token_info.query({hash:txData.parameters.asset_out}, function(token_info) {
+                        txData.parameters.asset_out_token_ticker = token_info[0].ticker;
+                        txData.parameters.asset_out_token_decimals = token_info[0].decimals;
+                    });                   
                 },
+                pool_buy_exact_routed : function(txData, contractScheme) {                    
+                    let targetAssetIndex = Number(txData.parameters.plength)-1;
+                    let assetsList = {
+                        amount_in_max  : 'asset0',
+                        amount_out     : `asset${targetAssetIndex}`
+                    }
+                    populateListOfAmounts(txData, contractScheme, assetsList);
+                    txData.parameters.routeTickers = [];
+                    for (let i = 1; i < targetAssetIndex; i++) {
+                        provider.token_info.query({hash:txData.parameters[`asset${i}`]}, function(token_info) {
+                            txData.parameters.routeTickers[i] = {                                
+                                ticker : token_info[0].ticker
+                            }
+                        });
+                    }
+
+                    provider.token_info.query({hash:txData.parameters[`asset${targetAssetIndex}`]}, function(token_info) {
+                        txData.parameters.asset_out_token_ticker = token_info[0].ticker;
+                        txData.parameters.asset_out_token_decimals = token_info[0].decimals;
+                    });                  
+                },  
                 farm_create : function(txData, contractScheme) {
                     let assetsList = {
                         block_reward : 'reward_token',
@@ -1869,6 +1933,38 @@
                 asToken     : ["amount_in"],
                 formatAs    : 'pool_swap',
                 template    : 'tx-swap-contract',
+                eindexer    : ['iswapout'],
+                eindexerTemlate : 'tx-pool-swap-contract-eindexer'
+            },
+            pool_sell_exact : {
+                paramsOrder : ["asset_in", "amount_in", "asset_out", "amount_out_min"],
+                asToken     : ["amount_in", "amount_out_min"],
+                formatAs    : 'pool_sell_exact',
+                template    : 'tx-swap-contract',
+                eindexer    : ['iswapout'],
+                eindexerTemlate : 'tx-pool-swap-contract-eindexer'
+            },
+            pool_sell_exact_routed : {
+                paramsOrder : [],
+                asToken     : ["amount_in", "amount_out_min"],
+                formatAs    : 'pool_sell_exact_routed',
+                template    : 'tx-pool-sell-exact-routed-contract',
+                eindexer    : ['iswapout'],
+                eindexerTemlate : 'tx-pool-swap-contract-eindexer'
+            },
+            pool_buy_exact : {
+                paramsOrder : ["asset_in", "amount_in_max", "asset_out", "amount_out"],
+                asToken     : ["amount_in_max", "amount_out"],
+                formatAs    : 'pool_buy_exact',
+                template    : 'tx-pool-buy-exact-contract',
+                eindexer    : ['iswapout'],
+                eindexerTemlate : 'tx-pool-swap-contract-eindexer'
+            },
+            pool_buy_exact_routed : {
+                paramsOrder : [],
+                asToken     : ["amount_in_max","amount_out"],
+                formatAs    : 'pool_buy_exact_routed',
+                template    : 'tx-pool-buy-exact-routed-contract',
                 eindexer    : ['iswapout'],
                 eindexerTemlate : 'tx-pool-swap-contract-eindexer'
             },
@@ -2147,24 +2243,28 @@
             },
             getContractTypeTranslation : function(contractType, incorrectValue = '---') {
                 let contractTypes = {
-                    "create_token"          : "CREATE_TOKEN",
-                    "create_pos"            : "CREATE_POS_CONTRACT",
-                    "delegate"              : "DELEGATE",
-                    "undelegate"            : "UNDELEGATE",
-                    "transfer"              : "TRANSFER",
-                    "pos_reward"            : "CLAIM_REWARD",
-                    "mint"                  : "MINT",
-                    "burn"                  : "BURN",
-                    "pool_create"           : "POOL_CREATE",
-                    "pool_add_liquidity"    : "POOL_ADD_LIQUIDITY",
-                    "pool_remove_liquidity" : "POOL_REMOVE_LIQUIDITY",
-                    "pool_swap"             : "POOL_SWAP",
-                    "farm_create"           : "FARM_CREATE",
-                    "farm_get_reward"       : "FARM_GET_REWARD",
-                    "farm_increase_stake"   : "FARM_INCREASE_STAKE",
-                    "farm_close_stake"      : "FARM_CLOSE_STAKE",
-                    "farm_decrease_stake"   : "FARM_DECREASE_STAKE",
-                    "unknown_contract"      : "UNKNOWN_CONTRACT"
+                    "create_token"           : "CREATE_TOKEN",
+                    "create_pos"             : "CREATE_POS_CONTRACT",
+                    "delegate"               : "DELEGATE",
+                    "undelegate"             : "UNDELEGATE",
+                    "transfer"               : "TRANSFER",
+                    "pos_reward"             : "CLAIM_REWARD",
+                    "mint"                   : "MINT",
+                    "burn"                   : "BURN",
+                    "pool_create"            : "POOL_CREATE",
+                    "pool_add_liquidity"     : "POOL_ADD_LIQUIDITY",
+                    "pool_remove_liquidity"  : "POOL_REMOVE_LIQUIDITY",
+                    "pool_swap"              : "POOL_SWAP",
+                    "pool_sell_exact"        : "POOL_SELL_EXACT",
+                    "pool_buy_exact"         : "POOL_BUY_EXACT",
+                    "pool_sell_exact_routed" : "POOL_SELL_EXACT_ROUTED",
+                    "pool_buy_exact_routed"  : "POOL_BUY_EXACT_ROUTED",
+                    "farm_create"            : "FARM_CREATE",
+                    "farm_get_reward"        : "FARM_GET_REWARD",
+                    "farm_increase_stake"    : "FARM_INCREASE_STAKE",
+                    "farm_close_stake"       : "FARM_CLOSE_STAKE",
+                    "farm_decrease_stake"    : "FARM_DECREASE_STAKE",
+                    "unknown_contract"       : "UNKNOWN_CONTRACT"
                 };
                 if (contractTypes.hasOwnProperty(contractType)) {
                     return contractTypes[contractType];
@@ -2218,35 +2318,40 @@
 
     app.factory('schema', function () {
         let schema = {
-            "root" :            "0000",
-            "custom" :          "0100",
-            "create_token" :    "0200",
-            "delegate" :        "0300",
-            "undelegate" :      "0400",
-            "signature" :       "0500",
-            "hash" :            "0600",
-            "string" :          "0700",
-            "int" :             "0800",
-            "bigint" :          "0900",
-            "float" :           "0a00",
-            "object" :          "0c00",
-            "key" :             "0d00",
-            "procedure_name" :  "0e00",
-            "parameters" :      "0f00",
-            "create_pos" :      "1000",
-            "pos_reward" :      "1100",
-            "transfer" :        "1200",
-            "mint" :            "1300",
-            "burn" :            "1400",
-            "pool_create" :     "1500",
-            "pool_add_liquidity" :      "1600",
-            "pool_remove_liquidity" :   "1700",
-            "pool_swap" :               "1800",
-            "farm_create" :             "1900",
-            "farm_get_reward" :         "1a00",
-            "farm_increase_stake" :     "1b00",
-            "farm_close_stake" :        "1c00",
-            "farm_decrease_stake" :     "1d00"
+            "root": "0000",
+            "custom": "0100",
+            "create_token": "0200",
+            "delegate": "0300",
+            "undelegate": "0400",
+            "signature": "0500",
+            "hash": "0600",
+            "string": "0700",
+            "int": "0800",
+            "bigint": "0900",
+            "float": "0a00",
+            "object": "0c00",
+            "key": "0d00",
+            "procedure_name": "0e00",
+            "parameters": "0f00",
+            "create_pos": "1000",
+            "pos_reward": "1100",
+            "transfer": "1200",
+            "mint": "1300",
+            "burn": "1400",
+            "pool_create": "1500",
+            "pool_add_liquidity": "1600",
+            "pool_remove_liquidity": "1700",
+            "pool_sell_exact": "1800",
+            "farm_create": "1900",
+            "farm_get_reward": "1a00",
+            "farm_increase_stake": "1b00",
+            "farm_close_stake": "1c00",
+            "farm_decrease_stake": "1d00",
+            "farm_add_emission": "1e00",
+            "dex_cmd_distribute": "1f00",
+            "pool_sell_exact_routed": "2000",
+            "pool_buy_exact": "2100",
+            "pool_buy_exact_routed": "2200",
         };
         return schema                
     });
@@ -5091,7 +5196,7 @@
 
                         if ($scope.tx.status !== 2 && $scope.contractScheme.eindexer.length > 0) {
                             getEIndexData($scope.txData, $scope.contractScheme);
-                        }                                                      
+                        }                                                    
                     } 
                 });
             });            
