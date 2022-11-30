@@ -106,7 +106,28 @@
 					<table class="table table-centered ordinary-table animate-show-hide table-td-font-size-15 mb-0">
 						<tr>
 							<td class="border-top-0">{{'PRICE' | translate}}</td>
-							<td class="text-nowrap text-right font-weight-bolder border-top-0">$ {{token.price !== undefined ? token.price: '---'}}</td>
+							<td class="text-nowrap text-right font-weight-bolder border-top-0">
+								<div class="d-flex align-items-center justify-content-end nowrap">
+                                    <div style="line-height: 12px;">{{token.priceInfo.value !== undefined ? token.priceInfo.value : '---'}}</div>
+
+                                    <img
+                                        class="ml-1"
+                                        ng-if="token.priceInfo.origin !== undefined && token.priceInfo.origin === 'cg'"
+                                        src="assets/images/logos/coingecko-logo.png"
+                                        width="16">
+                                    <img
+                                        class="ml-1"
+                                        ng-if="token.priceInfo.origin !== undefined && token.priceInfo.origin === 'user-info-cg'"
+                                        src="assets/images/logos/coingecko-logo.png"
+                                        width="16">
+                                    <img
+                                        class="ml-1"
+                                        style="padding-bottom: 3px;"
+                                        ng-if="token.priceInfo.origin !== undefined && token.priceInfo.origin === 'dex'"
+                                        src="assets/images/logos/enex-logo.png"
+                                        width="16">        
+                                </div>
+							</td>
 						</tr>
 						<tr>
 							<td>{{'MARKET_CAP' | translate}}</td>

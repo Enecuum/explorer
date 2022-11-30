@@ -4021,7 +4021,13 @@
             }
         });
 
-        $scope.getPage = function(paramsObj = {page: 0, type: 'all'}) {
+        $scope.commasFormatter = new Intl.NumberFormat("en-us", {
+            useGrouping: true,
+            minimumFractionDigits: 2,
+            minimumFractionDigits: 6
+        });
+
+        $scope.getPage = function(paramsObj = {page: 0, type: 'all'}) {            
             provider.get_tickers_all_unfiltered.query(function(tickers_all_unfiltered) {
                 $scope.tickers = {};
                 tickers_all_unfiltered.forEach(function(ticker) {
@@ -4036,9 +4042,9 @@
                     $scope.tokensPages[paramsObj.type].entitiesOnPage = tokenInfo.page_size;
                     $scope.tokensPages[paramsObj.type].tokens = tokenInfo.tokens;                 
                     $scope.tokensPages[paramsObj.type].tokens.forEach(function(token, i) {                        
-
+                        token.priceInfo = getTokenPriceInfo(token);
                         token.type = commonTools.getTokenType(token).toUpperCase();
-                        token.status = (token.in_slot === 1 ? 'Active' : 'Inactive').toUpperCase();
+                        token.status = (token.in_slot === 1 ? 'Active' : 'Inactive').toUpperCase();                        
                         if (allCustomersTokensInfo !== undefined) {
                             let customerTokenInfo = allCustomersTokensInfo.find(tokenInfoBlock => tokenInfoBlock.token_id === token.token_hash);
                             if (customerTokenInfo !== undefined) {
@@ -4046,8 +4052,11 @@
                                     $http({method: 'GET', url: 'https://api.coingecko.com/api/v3/simple/price?ids=' + customerTokenInfo.coingecko_id + '&vs_currencies=USD'}).
                                     then(function (response) {
                                         let info = response.data[customerTokenInfo.coingecko_id];
-                                        if (response.data !== undefined && info !== undefined && info.usd !== undefined) {                                    
-                                            token.price = '$' + info.usd;
+                                        if (response.data !== undefined && info !== undefined && info.usd !== undefined) {
+                                            token.priceInfo = {
+                                                origin : 'user-info-cg',
+                                                value  : '$' + $scope.commasFormatter.format(info.usd)
+                                            }
                                             token.marketCapUSD = '$' + currencyExchange.bigIntConvertValueToCurrency(token.total_supply, info.usd, token.decimals, 2);
                                         }
                                     });
@@ -4076,7 +4085,24 @@
             $scope.tabsOrder.forEach(function(type) {
                 $scope.getPage({page: 0, type: type});
             });
-        })
+        });
+
+        function getTokenPriceInfo(token) {
+            let res = {
+                origin : undefined,
+                value : undefined
+            }
+            if (token.cg_price_usd !== undefined && token.cg_price_usd !== null && token.cg_price_usd !== "") {
+                res.origin = 'cg' 
+                res.value = '$' + $scope.commasFormatter.format(token.cg_price_usd);
+            } else if (token.dex_price_usd !== undefined && token.dex_price_usd !== null && token.dex_price_usd !== "") {
+                res.origin = 'dex' 
+                res.value = '$' + $scope.commasFormatter.format(token.dex_price_usd);
+            }
+            return res    
+        }
+
+
     });
 
     app.controller('tokenCtrl', function($scope, $rootScope, $routeParams, GLOBAL_APP_CONFIG, provider, customerInfoStorage, commonTools, $translate, $filter, roiCalc, Toast, $http, currencyExchange) {
@@ -4089,7 +4115,11 @@
             guidesLink : '',
             guidesLinkText : '---'
         };
-
+        $scope.commasFormatter = new Intl.NumberFormat("en-us", {
+            useGrouping: true,
+            minimumFractionDigits: 2,
+            minimumFractionDigits: 6
+        });
         $scope.stake = null;
         $scope.mediaWidgetNamePrefix = 'default';
         $scope.page_num = 0;
@@ -4103,6 +4133,7 @@
             $scope.token.type = commonTools.getTokenType($scope.token);
             $scope.tokenTypeBadgeClass = getTokenTypeBadgeClass($scope.token.type);
             $scope.tokenDescriptionText = undefined;
+            $scope.token.priceInfo = getTokenPriceInfo($scope.token);
             customerInfoStorage.getInfo('token', $routeParams.hash).then(function(customerInfo) {                
                 $scope.token.customerInfo = customerInfo;
                 $rootScope.$watch('curLang.id', function(newValue, oldValue) {                                    
@@ -4144,14 +4175,17 @@
                         $http({method: 'GET', url: 'https://api.coingecko.com/api/v3/simple/price?ids=' + coingecko_id + '&vs_currencies=USD'}).
                         then(function (response) {
                             let info = response.data[coingecko_id];
-                            if (response.data !== undefined && info !== undefined && info.usd !== undefined) {                                    
-                                $scope.token.price = info.usd;
+                            if (response.data !== undefined && info !== undefined && info.usd !== undefined) {
+                                token.priceInfo = {
+                                    origin : 'user-info-cg',
+                                    value  : '$' + $scope.commasFormatter.format(info.usd)
+                                }
                                 $scope.token.marketCap = currencyExchange.bigIntConvertValueToCurrency($scope.token.total_supply, info.usd, $scope.token.decimals, 2);
                             }
                         });               
                     }
                     customerInfoStorage.assignLogo($scope, 'token', $scope.token.customerInfo.logoURL);
-                }                
+                }              
             }, function(res) {
                 $scope.token.customerInfo = res;
             });
@@ -4347,6 +4381,20 @@
                     badgeClass = "d-none";
             }
             return badgeClass;
+        }
+        function getTokenPriceInfo(token) {
+            let res = {
+                origin : undefined,
+                value : undefined
+            }
+            if (token.cg_price_usd !== undefined && token.cg_price_usd !== null && token.cg_price_usd !== "") {
+                res.origin = 'cg' 
+                res.value = '$' + $scope.commasFormatter.format(token.cg_price_usd);
+            } else if (token.dex_price_usd !== undefined && token.dex_price_usd !== null && token.dex_price_usd !== "") {
+                res.origin = 'dex' 
+                res.value = '$' + $scope.commasFormatter.format(token.dex_price_usd);
+            }
+            return res    
         }
 
         $scope.getHistory(0);
