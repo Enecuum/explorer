@@ -4043,6 +4043,7 @@
                     $scope.tokensPages[paramsObj.type].tokens = tokenInfo.tokens;                 
                     $scope.tokensPages[paramsObj.type].tokens.forEach(function(token, i) {                        
                         token.priceInfo = getTokenPriceInfo(token);
+                        token.marketCapUSD = (token.priceInfo.value !== undefined ? '$' + currencyExchange.bigIntConvertValueToCurrency(token.total_supply, token.priceInfo.value, token.decimals, 2) : '---');
                         token.type = commonTools.getTokenType(token).toUpperCase();
                         token.status = (token.in_slot === 1 ? 'Active' : 'Inactive').toUpperCase();                        
                         if (allCustomersTokensInfo !== undefined) {
@@ -4094,10 +4095,10 @@
             }
             if (token.cg_price_usd !== undefined && token.cg_price_usd !== null && token.cg_price_usd !== "") {
                 res.origin = 'cg' 
-                res.value = '$' + $scope.commasFormatter.format(token.cg_price_usd);
+                res.value = token.cg_price_usd;
             } else if (token.dex_price_usd !== undefined && token.dex_price_usd !== null && token.dex_price_usd !== "") {
                 res.origin = 'dex' 
-                res.value = '$' + $scope.commasFormatter.format(token.dex_price_usd);
+                res.value = token.dex_price_usd;
             }
             return res    
         }
