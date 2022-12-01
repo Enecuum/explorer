@@ -108,7 +108,7 @@
 							<td class="border-top-0">{{'PRICE' | translate}}</td>
 							<td class="text-nowrap text-right font-weight-bolder border-top-0">
 								<div class="d-flex align-items-center justify-content-end nowrap">
-                                    <div style="line-height: 12px;">{{token.priceInfo.value !== undefined ? token.priceInfo.value : '---'}}</div>
+                                    <div style="line-height: 12px;">$ {{token.priceInfo.value !== undefined ? commasFormatter.format(token.priceInfo.value) : '---'}}</div>
 
                                     <img
                                         class="ml-1"
@@ -135,7 +135,7 @@
 						</tr>						
 						<tr>
 							<td>{{'FULLY_MC' | translate}}</td>
-							<td class="text-nowrap text-right">---</td>
+							<td class="text-nowrap text-right font-weight-bolder">$ {{token.fdMarketCap !== undefined ? token.fdMarketCap : '---'}}</td>
 						</tr>												
 					</table>
 					<div class="d-none d-lg-block" style="height: 53px;"> </div>					

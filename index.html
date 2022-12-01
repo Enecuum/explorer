@@ -4134,6 +4134,11 @@
             $scope.tokenTypeBadgeClass = getTokenTypeBadgeClass($scope.token.type);
             $scope.tokenDescriptionText = undefined;
             $scope.token.priceInfo = getTokenPriceInfo($scope.token);
+            $scope.token.marketCap = currencyExchange.bigIntConvertValueToCurrency($scope.token.total_supply, $scope.token.priceInfo.value, $scope.token.decimals, 2);
+            if ($scope.token.type === 'Mineable')
+                $scope.token.fdMarketCap = currencyExchange.bigIntConvertValueToCurrency($scope.token.max_supply, $scope.token.priceInfo.value, $scope.token.decimals, 2);
+            else
+                $scope.token.fdMarketCap = $scope.token.marketCap;
             customerInfoStorage.getInfo('token', $routeParams.hash).then(function(customerInfo) {                
                 $scope.token.customerInfo = customerInfo;
                 $rootScope.$watch('curLang.id', function(newValue, oldValue) {                                    
@@ -4389,10 +4394,10 @@
             }
             if (token.cg_price_usd !== undefined && token.cg_price_usd !== null && token.cg_price_usd !== "") {
                 res.origin = 'cg' 
-                res.value = '$' + $scope.commasFormatter.format(token.cg_price_usd);
+                res.value = token.cg_price_usd;
             } else if (token.dex_price_usd !== undefined && token.dex_price_usd !== null && token.dex_price_usd !== "") {
                 res.origin = 'dex' 
-                res.value = '$' + $scope.commasFormatter.format(token.dex_price_usd);
+                res.value = token.dex_price_usd;
             }
             return res    
         }
@@ -4902,7 +4907,23 @@
             });            
         }
 
+        function getTokenPriceInfo(token) {
+            let res = {
+                origin : undefined,
+                value : 0.0
+            }
+            if (token.cg_price_usd !== undefined && token.cg_price_usd !== null && token.cg_price_usd !== "") {
+                res.origin = 'cg' 
+                res.value = Number(token.cg_price_usd);
+            } else if (token.dex_price_usd !== undefined && token.dex_price_usd !== null && token.dex_price_usd !== "") {
+                res.origin = 'dex' 
+                res.value = Number(token.dex_price_usd);
+            }
+            return res    
+        }
+
         function populateBalancesAndPrices() {
+            priceAmountsTokensArr = [];
             provider.balance_all_unfiltered.query({id:$routeParams.id}, function(balance_all_unfiltered) {
                 if (balance_all_unfiltered.length > 0) {
                     customerInfoStorage.getStorage('token').query({}, function(allTokensCustomersInfo) {                            
@@ -4915,48 +4936,59 @@
                                     token.caption = $scope.networkData.tickers[token.token].caption;
                                     provider.token_info.query({hash:token.token}, function(token_info) {
                                         token.type = commonTools.getTokenType(token_info[0]);
+                                        let customerTokenInfo = allCustomersTokensInfo.find(tokenInfoBlock => tokenInfoBlock.token_id === token.token);
+                                        if (customerTokenInfo !== undefined  && customerTokenInfo.coingecko_id !== undefined) {
+                                            token.coingecko_id = customerTokenInfo.coingecko_id;                                            
+                                            $http({method: 'GET', url: 'https://api.coingecko.com/api/v3/simple/price?ids=' + token.coingecko_id + '&vs_currencies=USD'}).
+                                            then(function (response) {
+                                                if (response.data !== undefined) {                                                                 
+                                                    let info = response.data[token.coingecko_id];                                            
+                                                    if (info !== undefined && info.usd !== undefined) {
+                                                        token.priceInfo = {
+                                                            origin : 'cg',
+                                                            value : Number(info.usd)
+                                                        }
+                                                        
+                                                        if (token.token === $rootScope.mainToken.hash) {
+                                                            $scope.account.balances.mainTokenDetails.total.toUSD = currencyExchange.bigIntConvertValueToCurrency($scope.account.balances.mainTokenDetails.total.value, Number(info.usd), token.decimals, 2);
+                                                        } else
+                                                            token.usdValue = currencyExchange.bigIntConvertValueToCurrency(token.amount, Number(info.usd), token.decimals, 2);
+                                                        priceAmountsTokensArr.push({
+                                                            hash: token.token,
+                                                            price: Number(info.usd),
+                                                            amount: token.token === $rootScope.mainToken.hash ? $scope.account.balances.mainTokenDetails.total.value : token.amount,
+                                                            decimals: token.decimals 
+                                                        });                                                                                               
+                                                    }
+                                                    getGeneralBalancesRepresentation(priceAmountsTokensArr);
+                                                }
+                                            });
+                                        } else {
+                                            token.coingecko_id = undefined;
+                                            token.priceInfo = getTokenPriceInfo(token_info[0]);
+                                            if (token.token === $rootScope.mainToken.hash) {
+                                                $scope.account.balances.mainTokenDetails.total.toUSD = currencyExchange.bigIntConvertValueToCurrency($scope.account.balances.mainTokenDetails.total.value, token.priceInfo.value, token.decimals, 2);
+                                            } else
+                                                token.usdValue = currencyExchange.bigIntConvertValueToCurrency(token.amount, token.priceInfo.value, token.decimals, 2);
+                                            priceAmountsTokensArr.push({
+                                                hash: token.token,
+                                                price: token.priceInfo.value,
+                                                amount: token.token === $rootScope.mainToken.hash ? $scope.account.balances.mainTokenDetails.total.value : token.amount,
+                                                decimals: token.decimals 
+                                            });
+                                            getGeneralBalancesRepresentation(priceAmountsTokensArr);
+                                        } 
                                     });
-                                    let customerTokenInfo = allCustomersTokensInfo.find(tokenInfoBlock => tokenInfoBlock.token_id === token.token);
-                                    if (customerTokenInfo !== undefined  && customerTokenInfo.coingecko_id !== undefined) {
-                                        token.coingecko_id = customerTokenInfo.coingecko_id;
-                                        coingeckoIDsString += coingeckoIDsString.length === 0 ? customerTokenInfo.coingecko_id : ',' + customerTokenInfo.coingecko_id;
-                                    } else {
-                                         token.coingecko_id = undefined;
-                                    } 
+
                                 }                      
                             });
-                            let cgTokensArr = [];
-                            if (coingeckoIDsString.length > 0) {                               
-                                $http({method: 'GET', url: 'https://api.coingecko.com/api/v3/simple/price?ids=' + coingeckoIDsString + '&vs_currencies=USD'}).
-                                then(function (response) {
-                                    if (response.data !== undefined) {
-                                        $scope.account.balances.allTokensAsList.forEach(function(token, i, arr) {                                            
-                                            let info = response.data[token.coingecko_id];                                            
-                                            if (info !== undefined && info.usd !== undefined) {
-                                                token.price = info.usd;
-                                                token.usdValue = currencyExchange.bigIntConvertValueToCurrency(token.amount, info.usd, token.decimals, 2);
-                                                if (token.token === $rootScope.mainToken.hash) {
-                                                    $scope.account.balances.mainTokenDetails.total.toUSD = currencyExchange.bigIntConvertValueToCurrency($scope.account.balances.mainTokenDetails.total.value, info.usd, token.decimals, 2);
-                                                }
-                                                cgTokensArr.push({
-                                                    hash: token.token,
-                                                    price: token.price,
-                                                    amount: token.token === $rootScope.mainToken.hash ? $scope.account.balances.mainTokenDetails.total.value : token.amount,
-                                                    decimals: token.decimals 
-                                                });                                                                                               
-                                            }
-                                        });
-                                        getGeneralBalancesRepresentation(cgTokensArr);
-                                    }
-                                });                              
-                            }
                         }
                     });
                 }
             });    
         }
 
-        function getGeneralBalancesRepresentation(cgTokensArr) {
+        function getGeneralBalancesRepresentation(priceAmountsTokensArr) {
             let generalRepresentation = {
                 totalBalanceUSD : BigInt(0),
                 mainTokenUSDValue : BigInt(0),
@@ -4970,7 +5002,7 @@
             let decimalsMultiplier = 0;
             let counter = null;
 
-            cgTokensArr.forEach(function(item, i, arr) {
+            priceAmountsTokensArr.forEach(function(item, i, arr) {
                 item.tokenUSDValue = BigInt(item.amount);
                 let priceDecimalPart = item.price.toString().split('.')[1]
                 item.priceDecimals = priceDecimalPart !== undefined ? priceDecimalPart.length : 0;
@@ -4998,7 +5030,7 @@
                 generalRepresentation.totalBalanceUSD += item.tokenUSDValue;
             });
 
-            let mainToken = cgTokensArr.find(token => token.hash === $rootScope.mainToken.hash);
+            let mainToken = priceAmountsTokensArr.find(token => token.hash === $rootScope.mainToken.hash);
             if (mainToken !== undefined) {                                
                 let multiplier = 0;
                 if (mainToken.tokenToUSDDecimals > generalRepresentation.totalMaxDecimals) {
