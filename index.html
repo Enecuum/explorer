@@ -2312,6 +2312,20 @@
                     res.fee_min = $filter('US_COMMAS_BIGINT_DECIMALS')(token.fee_min, nativeToken.decimals, nativeToken.decimals) +' '+ nativeToken.ticker;
                 }
                 return res;
+            },
+            getTokenPriceInfo: function (token) {
+                let res = {
+                    origin : undefined,
+                    value : undefined
+                }
+                if (token.cg_price_usd !== undefined && token.cg_price_usd !== null && token.cg_price_usd !== "") {
+                    res.origin = 'cg' 
+                    res.value = Number.parseFloat(token.cg_price_usd).toFixed(10);
+                } else if (token.dex_price_usd !== undefined && token.dex_price_usd !== null && token.dex_price_usd !== "") {
+                    res.origin = 'dex' 
+                    res.value = Number.parseFloat(token.dex_price_usd).toFixed(10);
+                }
+                return res    
             }            
         }    
     });
@@ -2460,13 +2474,13 @@
     app.factory('provider', function (GLOBAL_APP_CONFIG, $resource){       
         let nodeUrl = GLOBAL_APP_CONFIG.externalLinks.peerMapURL;
 		return {
-			page : $resource('api/v1/page?n=:n', {n:'@n'}),
-			macroblock : $resource('api/v1/macroblock?hash=:hash', {hash:'@hash'}),
-			mblock : $resource('api/v1/mblock?hash=:hash', {hash:'@hash'}),
+            page : $resource('api/v1/page?n=:n', {n:'@n'}),
+            macroblock : $resource('api/v1/macroblock?hash=:hash', {hash:'@hash'}),
+            mblock : $resource('api/v1/mblock?hash=:hash', {hash:'@hash'}),
             sblock : $resource('api/v1/sblock?hash=:hash', {hash:'@hash'}),
-			lastblocks : $resource('api/v1/lastblocks', {}),
-			lasttxs : $resource('api/v1/lasttxs', {}),
-			stats : $resource('api/v1/stats', {}),
+            lastblocks : $resource('api/v1/lastblocks', {}),
+            lasttxs : $resource('api/v1/lasttxs', {}),
+            stats : $resource('api/v1/stats', {}),
             externalStats : $resource(nodeUrl + 'api/v1/stats', {}),
             account : $resource('api/v1/account:filter?id=:id&page=:page', {filter:'@filter',id:'@id', page:'@page'}),
             agent_info : $resource('/api/v1/stat/agent_info?id=:id', {id:'@id'}),
@@ -4042,7 +4056,7 @@
                     $scope.tokensPages[paramsObj.type].entitiesOnPage = tokenInfo.page_size;
                     $scope.tokensPages[paramsObj.type].tokens = tokenInfo.tokens;                 
                     $scope.tokensPages[paramsObj.type].tokens.forEach(function(token, i) {                        
-                        token.priceInfo = getTokenPriceInfo(token);
+                        token.priceInfo = commonTools.getTokenPriceInfo(token);
                         token.marketCapUSD = (token.priceInfo.value !== undefined ? '$' + currencyExchange.bigIntConvertValueToCurrency(token.total_supply, token.priceInfo.value, token.decimals, 2) : '---');
                         token.type = commonTools.getTokenType(token).toUpperCase();
                         token.status = (token.in_slot === 1 ? 'Active' : 'Inactive').toUpperCase();                        
@@ -4056,9 +4070,9 @@
                                         if (response.data !== undefined && info !== undefined && info.usd !== undefined) {
                                             token.priceInfo = {
                                                 origin : 'user-info-cg',
-                                                value  : '$' + $scope.commasFormatter.format(info.usd)
+                                                value  : Number.parseFloat(info.usd).toFixed(10)
                                             }
-                                            token.marketCapUSD = '$' + currencyExchange.bigIntConvertValueToCurrency(token.total_supply, info.usd, token.decimals, 2);
+                                            token.marketCapUSD = '$' + currencyExchange.bigIntConvertValueToCurrency(token.total_supply, token.priceInfo.value, token.decimals, 2);
                                         }
                                     });
                                 }
@@ -4087,23 +4101,6 @@
                 $scope.getPage({page: 0, type: type});
             });
         });
-
-        function getTokenPriceInfo(token) {
-            let res = {
-                origin : undefined,
-                value : undefined
-            }
-            if (token.cg_price_usd !== undefined && token.cg_price_usd !== null && token.cg_price_usd !== "") {
-                res.origin = 'cg' 
-                res.value = token.cg_price_usd;
-            } else if (token.dex_price_usd !== undefined && token.dex_price_usd !== null && token.dex_price_usd !== "") {
-                res.origin = 'dex' 
-                res.value = token.dex_price_usd;
-            }
-            return res    
-        }
-
-
     });
 
     app.controller('tokenCtrl', function($scope, $rootScope, $routeParams, GLOBAL_APP_CONFIG, provider, customerInfoStorage, commonTools, $translate, $filter, roiCalc, Toast, $http, currencyExchange) {
@@ -4134,7 +4131,7 @@
             $scope.token.type = commonTools.getTokenType($scope.token);
             $scope.tokenTypeBadgeClass = getTokenTypeBadgeClass($scope.token.type);
             $scope.tokenDescriptionText = undefined;
-            $scope.token.priceInfo = getTokenPriceInfo($scope.token);
+            $scope.token.priceInfo = commonTools.getTokenPriceInfo($scope.token);
             $scope.token.marketCap = currencyExchange.bigIntConvertValueToCurrency($scope.token.total_supply, $scope.token.priceInfo.value, $scope.token.decimals, 2);
             if ($scope.token.type === 'Mineable')
                 $scope.token.fdMarketCap = currencyExchange.bigIntConvertValueToCurrency($scope.token.max_supply, $scope.token.priceInfo.value, $scope.token.decimals, 2);
@@ -4184,9 +4181,9 @@
                             if (response.data !== undefined && info !== undefined && info.usd !== undefined) {
                                 token.priceInfo = {
                                     origin : 'user-info-cg',
-                                    value  : '$' + $scope.commasFormatter.format(info.usd)
+                                    value  : Number.parseFloat(info.usd).toFixed(20)
                                 }
-                                $scope.token.marketCap = currencyExchange.bigIntConvertValueToCurrency($scope.token.total_supply, info.usd, $scope.token.decimals, 2);
+                                $scope.token.marketCap = currencyExchange.bigIntConvertValueToCurrency($scope.token.total_supply, token.priceInfo.value, $scope.token.decimals, 2);
                             }
                         });               
                     }
@@ -4388,21 +4385,6 @@
             }
             return badgeClass;
         }
-        function getTokenPriceInfo(token) {
-            let res = {
-                origin : undefined,
-                value : undefined
-            }
-            if (token.cg_price_usd !== undefined && token.cg_price_usd !== null && token.cg_price_usd !== "") {
-                res.origin = 'cg' 
-                res.value = token.cg_price_usd;
-            } else if (token.dex_price_usd !== undefined && token.dex_price_usd !== null && token.dex_price_usd !== "") {
-                res.origin = 'dex' 
-                res.value = token.dex_price_usd;
-            }
-            return res    
-        }
-
         $scope.getHistory(0);
     });
     app.controller('posContractsCtrl', function($scope, provider, $translate, customerInfoStorage) {
@@ -4908,21 +4890,6 @@
             });            
         }
 
-        function getTokenPriceInfo(token) {
-            let res = {
-                origin : undefined,
-                value : 0.0
-            }
-            if (token.cg_price_usd !== undefined && token.cg_price_usd !== null && token.cg_price_usd !== "") {
-                res.origin = 'cg' 
-                res.value = Number(token.cg_price_usd);
-            } else if (token.dex_price_usd !== undefined && token.dex_price_usd !== null && token.dex_price_usd !== "") {
-                res.origin = 'dex' 
-                res.value = Number(token.dex_price_usd);
-            }
-            return res    
-        }
-
         function populateBalancesAndPrices() {
             priceAmountsTokensArr = [];
             provider.balance_all_unfiltered.query({id:$routeParams.id}, function(balance_all_unfiltered) {
@@ -4966,7 +4933,7 @@
                                             });
                                         } else {
                                             token.coingecko_id = undefined;
-                                            token.priceInfo = getTokenPriceInfo(token_info[0]);
+                                            token.priceInfo = commonTools.getTokenPriceInfo(token_info[0]);
                                             if (token.token === $rootScope.mainToken.hash) {
                                                 $scope.account.balances.mainTokenDetails.total.toUSD = currencyExchange.bigIntConvertValueToCurrency($scope.account.balances.mainTokenDetails.total.value, token.priceInfo.value, token.decimals, 2);
                                             } else
