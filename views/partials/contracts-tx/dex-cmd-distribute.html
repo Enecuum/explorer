@@ -1,0 +1,13 @@
+<table class="table table-sm tx-data-table no-border" ng-init="data=txData.parameters">
+    <tbody>
+        <tr ng-repeat="param in contractScheme.paramsOrder track by $index" ng-if="param !== 'skip'">
+            <th class="pr-md-3">{{'TOKEN' | translate}}</th>
+            <td class="fit">
+            	<a ng-href="#!/token/{{data.token_hash}}" target="_blank">
+            		<span>{{data.token_hash}}</span>
+            	</a>
+				<span >({{data.token_ticker}})</span>           	
+            </td>
+        </tr>
+    </tbody>    
+</table>

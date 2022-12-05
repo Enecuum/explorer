@@ -379,6 +379,7 @@
     "VIEW_AS_API_DATA" : "View as API data",
     "POOL":"Пул",
     "FARM":"Ферма",
+    "DEX_CMD_DISTRIBUTE" : "Station distribute",
+    "FARM_ADD_EMISSION" : "Добавление эмиссии на ферме",
     "GUIDES" : "Руководства"
-
 }
