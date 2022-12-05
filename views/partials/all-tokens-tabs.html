@@ -53,7 +53,7 @@
                                             <td class="text-nowrap">{{token.total_supply | US_COMMAS_BIGINT_DECIMALS : token.decimals : 2}} {{tickers[token.token_hash].ticker}}</td>
                                             <td class="text-nowrap">
                                                 <div class="d-flex align-items-center justify-content-start nowrap">
-                                                    <div style="line-height: 12px;">{{token.priceInfo.value !== undefined ? '$' + token.priceInfo.value : '---'}}</div>
+                                                    <div style="line-height: 12px;">{{token.priceInfo.value !== undefined ? '$' + (zeroTrim(token.priceInfo.value) | US_COMMAS_MIN_2_DIGITS) : '---'}}</div>
 
                                                     <img
                                                         class="ml-1"

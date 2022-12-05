@@ -2049,6 +2049,12 @@
         maximumFractionDigits: '0'
     });
 
+    let commasFormatterNumberMin2Digits = new Intl.NumberFormat("en-us", {
+        useGrouping: true,
+        minimumFractionDigits: '2',
+        maximumFractionDigits: '10'
+    });
+
     app.filter('US_COMMAS_BIGINT_DECIMALS', function() {
         return function(input, decimals=10, fixed=10) {
             if(typeof input === 'bigint' || !isNaN(input)) {
@@ -2101,6 +2107,11 @@
         }
     });    
 
+    app.filter('US_COMMAS_MIN_2_DIGITS', function(){
+        return function(input){
+            return commasFormatterNumberMin2Digits.format(input);
+        }
+    });
 
 
     app.filter('USD', function(){
@@ -2313,20 +2324,28 @@
                 }
                 return res;
             },
-            getTokenPriceInfo: function (token) {
+            getTokenPriceInfo: function(token) {
                 let res = {
                     origin : undefined,
                     value : undefined
                 }
                 if (token.cg_price_usd !== undefined && token.cg_price_usd !== null && token.cg_price_usd !== "") {
                     res.origin = 'cg' 
-                    res.value = Number.parseFloat(token.cg_price_usd).toFixed(10);
+                    res.value = Number.parseFloat(token.cg_price_usd).toFixed(10);                    
                 } else if (token.dex_price_usd !== undefined && token.dex_price_usd !== null && token.dex_price_usd !== "") {
                     res.origin = 'dex' 
                     res.value = Number.parseFloat(token.dex_price_usd).toFixed(10);
                 }
                 return res    
-            }            
+            },
+            zeroTrim: function(value) {
+                let res = value;
+                if (typeof value === 'string')
+                    res = value.replace(/\.?0+$/,'');
+                else if (typeof value === 'number')
+                    res = Number.parseFloat(value).toFixed(10).toString().replace(/\.?0+$/,'');
+                return res
+            }
         }    
     });
 
@@ -2473,7 +2492,7 @@
 
     app.factory('provider', function (GLOBAL_APP_CONFIG, $resource){       
         let nodeUrl = GLOBAL_APP_CONFIG.externalLinks.peerMapURL;
-		return {
+        return {
             page : $resource('api/v1/page?n=:n', {n:'@n'}),
             macroblock : $resource('api/v1/macroblock?hash=:hash', {hash:'@hash'}),
             mblock : $resource('api/v1/mblock?hash=:hash', {hash:'@hash'}),
@@ -2517,8 +2536,8 @@
             get_dex_pools : $resource('api/v1/get_dex_pools', {query: {method: 'GET', isArray: true}}),
             get_dex_farms_all : $resource('api/v1/get_dex_farms', {query: {method: 'GET', isArray: true}}),
             pending_tx_hash : $resource('/api/v1/pending_tx_hash?hash=:hash', {hash:'@hash'}, {query: {method: 'GET', isArray: true}})
-		};
-	});
+        };
+    });
 
     app.directive('onLoadFile', function ($parse) {
         return {
@@ -4041,6 +4060,8 @@
             minimumFractionDigits: 6
         });
 
+        $scope.zeroTrim = commonTools.zeroTrim;
+
         $scope.getPage = function(paramsObj = {page: 0, type: 'all'}) {            
             provider.get_tickers_all_unfiltered.query(function(tickers_all_unfiltered) {
                 $scope.tickers = {};
@@ -4118,6 +4139,8 @@
             minimumFractionDigits: 2,
             minimumFractionDigits: 6
         });
+
+        $scope.zeroTrim = commonTools.zeroTrim;
         $scope.stake = null;
         $scope.mediaWidgetNamePrefix = 'default';
         $scope.page_num = 0;

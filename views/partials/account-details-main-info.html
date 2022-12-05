@@ -153,9 +153,11 @@
 			    					<td class="text-muted"><a ng-href="#!/token/{{token.token}}">{{token.caption}} ({{networkData.tickers[token.token].ticker}})</a></td>
 			    					<td class="fit"><span class="font-weight-bolder text-nowrap">{{token.amount | US_COMMAS_BIGINT_DECIMALS : token.decimals : token.decimals}}</span></td>
 			    					<td>
-			    						<span class="font-weight-bolder text-nowrap">
-			    						$ {{token.priceInfo.value !== undefined ? token.priceInfo.value : 0 | US_COMMAS_4}}
-			    						</span>
+			    						<span class="font-weight-bolder text-nowrap">			    							
+				    						<span ng-if="token.priceInfo.value !== undefined && token.priceInfo.value < 0.0001 && token.priceInfo.value > 0"> < $ 0.0001 </span>
+				    						<span ng-if="token.priceInfo.value !== undefined && token.priceInfo.value > 0.0001"> $ {{token.priceInfo.value | US_COMMAS_4}} </span>
+				    						<span ng-if="token.priceInfo.value == undefined || token.priceInfo.value == 0"> $ 0.0000 </span>
+				    					</span>
 			    					</td>
 			    					<td class="fit">
 			    						<span class="font-weight-bolder">

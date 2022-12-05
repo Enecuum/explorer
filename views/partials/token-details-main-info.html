@@ -108,7 +108,7 @@
 							<td class="border-top-0">{{'PRICE' | translate}}</td>
 							<td class="text-nowrap text-right font-weight-bolder border-top-0">
 								<div class="d-flex align-items-center justify-content-end nowrap">
-                                    <div style="line-height: 12px;">$ {{token.priceInfo.value !== undefined ? commasFormatter.format(token.priceInfo.value) : '---'}}</div>
+                                    <div style="line-height: 12px;">$ {{token.priceInfo.value !== undefined ? (zeroTrim(token.priceInfo.value) | US_COMMAS_MIN_2_DIGITS) : '---'}}</div>
 
                                     <img
                                         class="ml-1"
