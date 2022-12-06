@@ -382,6 +382,8 @@
     "FARM_CREATE" : "Create farm",
     "FARM_DECREASE_STAKE" : "Decrease stake on farm",
     "FARM_ID" : "Farm ID",
+    "DEX_CMD_DISTRIBUTE" : "Station distribute",
+    "FARM_ADD_EMISSION" : "Add emission on farm",
     "STAKE_TOKEN" : "Stake token",
     "REWARD_TOKEN" : "Reward token",
     "EMISSION" : "Emission",

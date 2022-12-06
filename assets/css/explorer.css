@@ -407,3 +407,7 @@ a.disabled{
     background-position: center;
     background-size: contain;
 }
+
+.apexcharts-datalabel-value, .apexcharts-datalabel-label {
+    fill: #555 !important; }
+}
