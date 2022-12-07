@@ -16,13 +16,16 @@
                 <td>{{token.type}}</td>
                 <td><a class="d-block fit" style="width: 100px;" ng-href="#!/tx/{{token.token}}">{{token.token}}</a></td>
                 <td class="text-nowrap">{{token.amount | US_COMMAS_BIGINT_DECIMALS : token.decimals : token.decimals}} {{networkData.tickers[token.token].ticker}}</td>
+
+                <td>
+                    <span class="text-nowrap" ng-if="token.priceInfo.value !== undefined && token.priceInfo.value < 0.0001 && token.priceInfo.value > 0"> < $ 0.0001 </span>
+                    <span class="text-nowrap" ng-if="token.priceInfo.value !== undefined && token.priceInfo.value > 0.0001"> $ {{token.priceInfo.value | US_COMMAS_4}} </span>
+                    <span class="text-nowrap" ng-if="token.priceInfo.value == undefined || token.priceInfo.value == 0"> $ 0.0000 </span>
+                </td>
+                <td class="text-nowrap" ng-if="token.token === mainToken.hash">                    
+                    $ {{account.balances.mainTokenDetails.total.toUSD !== undefined ? account.balances.mainTokenDetails.total.toUSD : '0.00'}}
+                </td>
                 <td class="text-nowrap" ng-if="token.token !== mainToken.hash">
-                    $ {{token.price !== undefined ? token.price : 0 | US_COMMAS_4}}
-                </td>
-                <td class="text-nowrap" ng-if="token.token === mainToken.hash">
-                    $ {{token.price !== undefined ? token.price : 0 | US_COMMAS_4}}
-                </td>
-                <td class="text-nowrap">
                     $ {{token.usdValue  !== undefined ? token.usdValue : '0.00'}}
                 </td>
             </tr>
