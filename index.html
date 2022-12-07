@@ -5343,13 +5343,13 @@
         });
     });
 
-    app.controller('enexPoolsCtrl', function($scope, $routeParams, $translate, $filter, provider) {
+    app.controller('enexPoolsCtrl', function($scope, $routeParams, $translate, $filter, provider, commonTools) {
         $scope.enexPools = [];
         $scope.tokensArr = [];        
         let propsArr = ['asset_1', 'asset_2', 'token_hash'];
 
         provider.get_tickers_all_unfiltered.query(function(tickers_all_unfiltered) {            
-            provider.get_dex_pools.query(function (enexPools) {
+            provider.get_dex_pools.query(function (enexPools) {                
                 $scope.enexPools = enexPools;
 
                 $scope.enexPools.forEach(function(enexPool) {
@@ -5358,6 +5358,15 @@
                         if ($scope.tokensArr.indexOf(enexPool[prop]) === -1 && tickers_all_unfiltered.find(elem => elem.hash === enexPool[prop]))
                             $scope.tokensArr.push(enexPool[prop]);  
                     });
+
+                    if (!isNaN(enexPool.liquidity)) {
+                        if (typeof enexPool.liquidity == 'string')
+                            enexPool.liquidity = Number.parseFloat(enexPool.liquidity);                        
+                    } else
+                        enexPool.liquidity = 0;
+
+                    enexPool.liquidityFrormatted = commonTools.zeroTrim(enexPool.liquidity);
+
                 });
 
                 $scope.tokensArr.forEach(function(hash) {
