@@ -40,7 +40,7 @@
                                         <span>{{enexPool.token_hash_info.total_supply | US_COMMAS_BIGINT_DECIMALS : enexPool.token_hash_info.decimals : enexPool.token_hash_info.decimals}}</span>
                                         <a ng-href="#!/token/{{enexPool.token_hash}}" target="_blank">{{enexPool.token_hash_info.ticker}}</a>
                                     </td>
-                                    <td>{{'COMING_SOON' | translate}}</td>
+                                    <td>$ {{enexPool.liquidityFrormatted | US_COMMAS_MIN_2_DIGITS}}</td>
                                 </tr>
                             </tbody>
                         </table>

@@ -555,11 +555,11 @@
                                                     <a class="dropdown-toggle btn btn-primary btn-sm bg-blue text-white" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="mdi mdi-eye-outline"></i></a>
                                                     <div class="dropdown-menu dropdown-menu-right">
                                                         <ul class="nav nav-tabs">
-                                                            <li class="dropdown-item nav-item">
-                                                                <a class="dropdown-item nav-link active" href="javascript;" data-target="#txDataTab" data-toggle="tab" aria-expanded="true" data-toggle="tab">{{"TX_DATA_FORMATTED" | translate}}</a>
+                                                            <li class="dropdown-item nav-item px-0">
+                                                                <a class="dropdown-item nav-link active px-3" href="javascript;" data-target="#txDataTab" data-toggle="tab" aria-expanded="true" data-toggle="tab">{{"TX_DATA_FORMATTED" | translate}}</a>
                                                             </li>                            
-                                                            <li class="dropdown-item nav-item">
-                                                                <a class="dropdown-item nav-link" href="javascript;" data-target="#txDataInitTab" data-toggle="tab" aria-expanded="false" data-toggle="tab">{{"TX_DATA_AS_IS" | translate}}</a> 
+                                                            <li class="dropdown-item nav-item px-0">
+                                                                <a class="dropdown-item nav-link px-3" href="javascript;" data-target="#txDataInitTab" data-toggle="tab" aria-expanded="false" data-toggle="tab">{{"TX_DATA_AS_IS" | translate}}</a> 
                                                             </li>
                                                         </ul>
                                                     </div>    
@@ -2180,7 +2180,15 @@
             ifk : 'REW_TX_IFK', 
             ifg : 'REW_TX_IFG',
             ifl : 'REW_TX_IFL',
-            idust : 'REW_TX_DUST'
+            idust : 'REW_TX_DUST',
+            ifdecrew : 'FARM_DECREASE_STAKE',
+            iswapout : 'POOL_SWAP',
+            iliqrmv2 : 'POOL_REMOVE_LIQUIDITY',
+            iliqrmv1 : 'POOL_REMOVE_LIQUIDITY',
+            iliqaddlt : 'POOL_ADD_LIQUIDITY',
+            ipcreatelt : 'POOL_CREATE',
+            ifrew : 'FARM_GET_REWARD',
+            ifcloserew : 'FARM_CLOSE_STAKE'
         };
         function valueToBigInt(inputNumber, decimals=10) {
             let multiplier = 10 ** decimals;
@@ -2261,6 +2269,8 @@
 
                 if (path !== undefined)
                     link = '#!/' + path + record.hash;
+                else
+                    link = '#!/tx/' + record.hash;
 
                 return link;
 
@@ -2348,7 +2358,7 @@
             getTokenPriceInfo: function(token) {
                 let res = {
                     origin : undefined,
-                    value : undefined
+                    value : 0
                 }
                 if (token.cg_price_usd !== undefined && token.cg_price_usd !== null && token.cg_price_usd !== "") {
                     res.origin = 'cg' 
@@ -4747,7 +4757,7 @@
             return parseInt(h, 16)
         }));
     }
-	app.controller('accountCtrl', function(GLOBAL_APP_CONFIG, $rootScope, $scope, $http, $routeParams, validator, dateTimeConverter, provider, commonTools, customerInfoStorage, apexRadialChart, currencyExchange) {
+	app.controller('accountCtrl', function(GLOBAL_APP_CONFIG, $rootScope, $scope, $http, $routeParams, validator, dateTimeConverter, provider, commonTools, customerInfoStorage, apexRadialChart, currencyExchange, schema, txParser, contractSchemes) {
         let currentPreset = GLOBAL_APP_CONFIG;
         let incorrectValue =  '---';
         $scope.account = {
@@ -4978,6 +4988,7 @@
                                         } else {
                                             token.coingecko_id = undefined;
                                             token.priceInfo = commonTools.getTokenPriceInfo(token_info[0]);
+
                                             if (token.token === $rootScope.mainToken.hash) {
                                                 $scope.account.balances.mainTokenDetails.total.toUSD = currencyExchange.bigIntConvertValueToCurrency($scope.account.balances.mainTokenDetails.total.value, token.priceInfo.value, token.decimals, 2);
                                             } else
@@ -5126,17 +5137,26 @@
             provider.account_transactions.get({id:$scope.account.id, page:page}, function(account_txs) {                                    
                 $scope.account.txs.records = account_txs.records;
                 if ($scope.account.txs.records !== undefined) {
-                    $scope.account.txs.records.forEach(function(record) {
-                        record.time = dateTimeConverter.getTimestamp(record.time);
-                        provider.token_info.query({hash:record.token_hash}, function(token_info) {
-                            record.token_decimals = token_info[0] !== undefined ? token_info[0].decimals : 0;                           
-                            provider.transaction.get({hash:record.hash}, function(tx) {
-                                record.calculatedFee = tx.fee;
-                            })
-                        });                        
-                    }); 
-                    $scope.account.txs.page_count = account_txs.page_count;
-                    $scope.isLoading = false;
+                    provider.contract_pricelist.get(function(contract_pricelist) {
+                        let txSchema = schema;
+                        $scope.account.txs.records.forEach(function(record) {
+                            record.time = dateTimeConverter.getTimestamp(record.time);
+                            provider.token_info.query({hash:record.token_hash}, function(token_info) {
+                                record.token_decimals = token_info[0] !== undefined ? token_info[0].decimals : 0;                           
+                                provider.transaction.get({hash:record.hash}, function(tx) {
+                                    record.calculatedFee = tx.fee;
+                                })
+                            });
+                            if (txParser.isContract(record.data, txSchema, contract_pricelist)) {
+                                $scope.getContactType = commonTools.getContractTypeTranslation;
+                                record.txData = txParser.parse(record.data, txSchema, contract_pricelist);
+                                record.isContract = true;
+                            } else
+                                record.isContract = false;                       
+                        }); 
+                        $scope.account.txs.page_count = account_txs.page_count;
+                        $scope.isLoading = false;
+                    });
                 }
             });
             $scope.account.txs.page_num = page;
@@ -5342,13 +5362,13 @@
         });
     });
 
-    app.controller('enexPoolsCtrl', function($scope, $routeParams, $translate, $filter, provider) {
+    app.controller('enexPoolsCtrl', function($scope, $routeParams, $translate, $filter, provider, commonTools) {
         $scope.enexPools = [];
         $scope.tokensArr = [];        
         let propsArr = ['asset_1', 'asset_2', 'token_hash'];
 
         provider.get_tickers_all_unfiltered.query(function(tickers_all_unfiltered) {            
-            provider.get_dex_pools.query(function (enexPools) {
+            provider.get_dex_pools.query(function (enexPools) {                
                 $scope.enexPools = enexPools;
 
                 $scope.enexPools.forEach(function(enexPool) {
@@ -5357,6 +5377,15 @@
                         if ($scope.tokensArr.indexOf(enexPool[prop]) === -1 && tickers_all_unfiltered.find(elem => elem.hash === enexPool[prop]))
                             $scope.tokensArr.push(enexPool[prop]);  
                     });
+
+                    if (!isNaN(enexPool.liquidity)) {
+                        if (typeof enexPool.liquidity == 'string')
+                            enexPool.liquidity = Number.parseFloat(enexPool.liquidity);                        
+                    } else
+                        enexPool.liquidity = 0;
+
+                    enexPool.liquidityFrormatted = commonTools.zeroTrim(enexPool.liquidity);
+
                 });
 
                 $scope.tokensArr.forEach(function(hash) {
