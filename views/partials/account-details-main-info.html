@@ -59,7 +59,7 @@
 										<td colspan="2" class="font-weight-bolder">{{account.balances.mainTokenDetails.total.value | US_COMMAS_BIGINT_DECIMALS : mainToken.decimals : mainToken.decimals}}</td>
 									</tr>
 									<tr>
-										<td class="font-size-15 text-muted">{{'MAIN_TOKEN_VALUE' | translate: translationData}}:</td>
+										<td class="font-size-15 text-muted">{{'MAIN_TOKEN_VALUE' | translate: viewData.translationData}}:</td>
 										<td class="font-weight-bolder">$ {{account.balances.mainTokenDetails.total.toUSD}} </td>
 										<td>
 											<div class="d-flex align-items-center">
