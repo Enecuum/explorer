@@ -2180,7 +2180,15 @@
             ifk : 'REW_TX_IFK', 
             ifg : 'REW_TX_IFG',
             ifl : 'REW_TX_IFL',
-            idust : 'REW_TX_DUST'
+            idust : 'REW_TX_DUST',
+            ifdecrew : 'FARM_DECREASE_STAKE',
+            iswapout : 'POOL_SWAP',
+            iliqrmv2 : 'POOL_REMOVE_LIQUIDITY',
+            iliqrmv1 : 'POOL_REMOVE_LIQUIDITY',
+            iliqaddlt : 'POOL_ADD_LIQUIDITY',
+            ipcreatelt : 'POOL_CREATE',
+            ifrew : 'FARM_GET_REWARD',
+            ifcloserew : 'FARM_CLOSE_STAKE'
         };
         function valueToBigInt(inputNumber, decimals=10) {
             let multiplier = 10 ** decimals;
@@ -2261,6 +2269,8 @@
 
                 if (path !== undefined)
                     link = '#!/' + path + record.hash;
+                else
+                    link = '#!/tx/' + record.hash;
 
                 return link;
 
