@@ -48,7 +48,7 @@
 						<div class="d-flex align-items-center justify-content-between">
 				    		<div class="mb-2 d-flex align-items-center">
 				    			<div class="header-title mr-2 text-uppercase mb-0">{{'TOTAL_BALANCE' | translate}}:</div>
-				    			<div class="font-size-20 font-weight-bolder">$ {{account.balances.generalRepresentation.totalBalanceUSD | US_COMMAS_BIGINT_DECIMALS : account.balances.generalRepresentation.totalMaxDecimals : 2}}</div>	    			
+				    			<div class="font-size-20 font-weight-bolder">$ {{account.balances.generalRepresentation.f_totalTokensUSDValueFormatted.value}}</div>	    			
 				    		</div>		    			
 				    	</div>
 				    	<div class="pt-xl-3">
@@ -60,7 +60,7 @@
 									</tr>
 									<tr>
 										<td class="font-size-15 text-muted">{{'MAIN_TOKEN_VALUE' | translate: viewData.translationData}}:</td>
-										<td class="font-weight-bolder">$ {{account.balances.mainTokenDetails.total.toUSD}} </td>
+										<td class="font-weight-bolder">$ {{account.balances.generalRepresentation.f_mainTokenUSDValueFormatted.value}} </td>
 										<td>
 											<div class="d-flex align-items-center">
 												<div class="apex-chart-legend blue mr-1"></div>
@@ -70,7 +70,7 @@
 									</tr>
 									<tr>
 										<td class="font-size-15 text-muted">{{'TOKEN_VALUE' | translate}}:</td>
-										<td class="font-weight-bolder">$ {{account.balances.generalRepresentation.otherTokensUSDValue | US_COMMAS_BIGINT_DECIMALS : account.balances.generalRepresentation.otherTokensMaxDecimals : 2}}</td>
+										<td class="font-weight-bolder">$ {{account.balances.generalRepresentation.f_otherTokensUSDValueFormatted.value}}</td>
 										<td>
 											<div class="d-flex align-items-center">
 												<div class="apex-chart-legend pink mr-1"></div>
@@ -98,7 +98,7 @@
 		    			<div class="header-title mr-2 text-uppercase mb-0 text-nowrap">{{'MAIN_TOKEN_BALANCE' | translate: viewData.translationData}}:</div>
 		    			<div class="font-size-20 font-weight-bolder">
 		    				<span class="text-nowrap">{{account.balances.mainTokenDetails.total.value | US_COMMAS_BIGINT_DECIMALS : mainToken.decimals : mainToken.decimals}} </span>
-		    				<span class="text-nowrap">($ {{account.balances.mainTokenDetails.total.toUSD}})</span>
+		    				<span class="text-nowrap">($ {{account.balances.generalRepresentation.f_mainTokenUSDValueFormatted.value}})</span>
 		    			</div>	    			
 		    		</div>		    			
 		    	</div>
@@ -134,7 +134,7 @@
 				<div class="d-flex align-items-center justify-content-between">
 		    		<div class="mb-2 d-flex align-items-center">
 		    			<div class="header-title mr-2 text-uppercase mb-0">{{'TOKEN_BALANCE' | translate}}:</div>
-		    			<div class="font-size-20 font-weight-bolder">$ {{account.balances.generalRepresentation.otherTokensUSDValue | US_COMMAS_BIGINT_DECIMALS : account.balances.generalRepresentation.otherTokensMaxDecimals : 2}}</div>	    			
+		    			<div class="font-size-20 font-weight-bolder">$ {{account.balances.generalRepresentation.f_otherTokensUSDValueFormatted.value}}</div>	    			
 		    		</div>		    			
 		    	</div>
     			<div data-simplebar data-simplebar-lg data-simplebar-auto-hide="false" class="mt-2" style="max-height: 120px;">

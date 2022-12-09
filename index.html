@@ -2098,6 +2098,37 @@
         }
     });
 
+    app.filter('BIGINT_DECIMALS', function() {
+        return function(input, decimals=10, fixed=10, asObject=false) {
+            if(typeof input === 'bigint' || !isNaN(input)) {
+                if (decimals === undefined || decimals === null || isNaN(decimals) || input === null)
+                    return '---';          
+                let str = BigInt(input).toString();
+                let integerPart = '0';
+                let fractionalPart = '0';
+                let delimiter = decimals !== 0 ? (fixed !== 0 ? '.' : '') : '';
+                if (str.length > decimals) {
+                    integerPart = BigInt(str.substring(0, str.length - decimals));
+                    fractionalPart = str.substring(str.length - decimals);
+                } else {
+                    fractionalPart = str.substring(str.length - decimals);
+                    for (let i=0; i < (decimals - str.length); i++) {
+                        fractionalPart = '0' + fractionalPart;
+                    }                      
+                }
+                if (asObject === true)
+                    return {
+                        integerPart,
+                        fractionalPart : fractionalPart.substring(0, fixed),
+                        value : integerPart + delimiter + fractionalPart.substring(0, fixed)
+                    }
+                else     
+                    return integerPart + delimiter + fractionalPart.substring(0, fixed);
+            } else
+                return input;
+        }
+    });
+
     app.filter('US_COMMAS_10', function(){
         return function(input){
             if(isNaN(input))    return input;
@@ -4757,7 +4788,7 @@
             return parseInt(h, 16)
         }));
     }
-	app.controller('accountCtrl', function(GLOBAL_APP_CONFIG, $rootScope, $scope, $http, $routeParams, validator, dateTimeConverter, provider, commonTools, customerInfoStorage, apexRadialChart, currencyExchange, schema, txParser, contractSchemes) {
+	app.controller('accountCtrl', function(GLOBAL_APP_CONFIG, $rootScope, $scope, $filter, $http, $routeParams, validator, dateTimeConverter, provider, commonTools, customerInfoStorage, apexRadialChart, currencyExchange, schema, txParser, contractSchemes) {
         let currentPreset = GLOBAL_APP_CONFIG;
         let incorrectValue =  '---';
         $scope.account = {
@@ -4972,7 +5003,7 @@
                                                         }
                                                         
                                                         if (token.token === $rootScope.mainToken.hash) {
-                                                            $scope.account.balances.mainTokenDetails.total.toUSD = currencyExchange.bigIntConvertValueToCurrency($scope.account.balances.mainTokenDetails.total.value, Number(info.usd), token.decimals, 2);
+                                                            $scope.account.balances.mainTokenDetails.total.toUSD = currencyExchange.bigIntConvertValueToCurrency($scope.account.balances.mainTokenDetails.total.value, Number(info.usd), token.decimals, 4);
                                                         } else
                                                             token.usdValue = currencyExchange.bigIntConvertValueToCurrency(token.amount, Number(info.usd), token.decimals, 2);
                                                         priceAmountsTokensArr.push({
@@ -4990,7 +5021,7 @@
                                             token.priceInfo = commonTools.getTokenPriceInfo(token_info[0]);
 
                                             if (token.token === $rootScope.mainToken.hash) {
-                                                $scope.account.balances.mainTokenDetails.total.toUSD = currencyExchange.bigIntConvertValueToCurrency($scope.account.balances.mainTokenDetails.total.value, token.priceInfo.value, token.decimals, 2);
+                                                $scope.account.balances.mainTokenDetails.total.toUSD = currencyExchange.bigIntConvertValueToCurrency($scope.account.balances.mainTokenDetails.total.value, token.priceInfo.value, token.decimals, 4);
                                             } else
                                                 token.usdValue = currencyExchange.bigIntConvertValueToCurrency(token.amount, token.priceInfo.value, token.decimals, 2);
                                             priceAmountsTokensArr.push({
@@ -5048,8 +5079,9 @@
                 }
 
                 item.tokenUSDValue = item.tokenUSDValue * commonTools.valueToBigInt(item.price, item.priceDecimals).value;
-                if (item.hash === $rootScope.mainToken.hash)
-                    generalRepresentation.mainTokenUSDValue = item.tokenUSDValue
+                if (item.hash === $rootScope.mainToken.hash) {
+                    generalRepresentation.mainTokenUSDValue = item.tokenUSDValue;                    
+                }
                 generalRepresentation.totalBalanceUSD += item.tokenUSDValue;
             });
 
@@ -5079,6 +5111,17 @@
             }
 
             $scope.account.balances.generalRepresentation = generalRepresentation;
+            generalRepresentation.f_otherTokensUSDValueFormatted = $filter('BIGINT_DECIMALS')(generalRepresentation.otherTokensUSDValue, generalRepresentation.otherTokensMaxDecimals, 4, true);
+            generalRepresentation.f_mainTokenUSDValueFormatted = $filter('BIGINT_DECIMALS')(generalRepresentation.mainTokenUSDValue, generalRepresentation.totalMaxDecimals, 4, true);
+            generalRepresentation.f_totalTokensUSDValueFormatted = $filter('BIGINT_DECIMALS')(generalRepresentation.totalBalanceUSD, generalRepresentation.totalMaxDecimals, 4, true);
+
+            let orderArr = ['f_mainTokenUSDValueFormatted', 'f_otherTokensUSDValueFormatted','f_totalTokensUSDValueFormatted'];
+            orderArr.forEach(function(item,index,arr) {
+                let elem = generalRepresentation[item];
+                elem.fractionalPart = Number.parseFloat('0.' + elem.fractionalPart).toFixed(2).toString().replace('0.','');
+                generalRepresentation[item].value = elem.integerPart.toLocaleString('en-us') + '.' + elem.fractionalPart;
+            });
+
             renderChart();
         }
 
