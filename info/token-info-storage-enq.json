@@ -70,7 +70,7 @@
             "de":"Dieses Rock 'n' Roll-Token wurde erstellt, um ein Tutorial-Video zum Hinzufügen einer Beschreibung einem benutzerdefinierten Token aufzunehmen.",
             "fr":"Ce jeton Rock 'n' Roll a été créé pour enregistrer un tutoriel vidéo sur l'ajout d'une description à un jeton personnalisé.",
             "ru":"Этот Rock 'n' Roll токен был создан для записи обучающего видео по добавлению описания к кастомному токену"
-        },        
+        }        
     },
     {
         "token_id":"some-token-id",
