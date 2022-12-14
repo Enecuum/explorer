@@ -53,7 +53,25 @@
     {
         "token_id":"dcc4c5b656f476930cb00de7ceaa6f3b7f819f9e0f84d63b5eeb1d8940de3ebb",
         "logo": "BGF.jpg"    
-    },   
+    },
+    {
+        "token_id":"819047ece11a23923551f60998769c7eb24d21d9f9a8ff373fd8f1030afde44f",
+        "website":"https://testrnrsite.com",
+        "logo": "RnR_Logo.png"
+        "media": {                            
+            "facebook":"https://www.facebook.com/testrnrtoken",
+            "twitter":"https://twitter.com/testrnrtoken",
+            "medium":"https://medium.com/testrnrtoken",
+            "youtube":"https://www.youtube.com/testrnrtoken",
+            "telegram":"https://t.me/testrnrtoken"
+        }, 
+        "description": {
+            "en":"This Rock 'n' Roll token was created to record a tutorial video on adding a description to a custom token",
+            "de":"Dieses Rock 'n' Roll-Token wurde erstellt, um ein Tutorial-Video zum Hinzufügen einer Beschreibung zu einem benutzerdefinierten Token aufzunehmen.",
+            "fr":"Ce jeton Rock 'n' Roll a été créé pour enregistrer un tutoriel vidéo sur l'ajout d'une description à un jeton personnalisé.",
+            "ru":"Этот Rock 'n' Roll токен был создан для записи обучающего видео по добавлению описания к кастомному токену"
+        },        
+    },
     {
         "token_id":"some-token-id",
         "website":"https://someTokenWebsite.com",
