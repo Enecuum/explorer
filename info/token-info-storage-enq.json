@@ -54,6 +54,20 @@
         "token_id":"dcc4c5b656f476930cb00de7ceaa6f3b7f819f9e0f84d63b5eeb1d8940de3ebb",
         "logo": "BGF.jpg"    
     },   
+     {
+        "token_id":"28d3c0721aca846d687de392257ea209cd27cbe4d386864129c3aae621a01af4",
+        "logo": "PUG_Logo.jpg",
+        "description": {
+            "en":"It's just a meme token",
+            "de":"Es ist nur ein Meme-Token",
+            "fr":"C'est juste un meme token",
+            "ru":"Это просто мем-токен",
+            "pt":"É apenas um token de meme",
+            "vi":"Nó chỉ là một mã thông báo meme",
+            "in":"Itu hanya token meme",
+            "tr":"Bu sadece bir meme token"
+        }           
+    },
     {
         "token_id":"some-token-id",
         "website":"https://someTokenWebsite.com",
