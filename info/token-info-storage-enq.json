@@ -53,6 +53,18 @@
     {
         "token_id":"dcc4c5b656f476930cb00de7ceaa6f3b7f819f9e0f84d63b5eeb1d8940de3ebb",
         "logo": "BGF.jpg"    
+    },
+    {
+        "token_id":"74c994dcf17ff31ad840299cf2cfb69eb3a1035334a929bd955a8f193b19d510",
+        "website":"https://french-bulldog.tk/",
+        "logo": "FB_logo.jpg",
+        "description": {
+            "en":"Created to popularize the mobile blockchain.",
+            "de":"Erstellt, um die mobile Blockchain zu verbreiten.",
+            "fr":"Créé pour populariser la blockchain mobile.",
+            "ru":"Создан для популяризации мобильного блокчейна.",
+            "pt":"Criado para popularizar a cadeia de bloqueio móvel."
+        }            
     },   
      {
         "token_id":"550b98eebed879382d0a160d1563987f0335fc5b058e358da971c2e1b6c76141",
