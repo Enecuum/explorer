@@ -65,6 +65,16 @@
             "ru":"Создан для популяризации мобильного блокчейна.",
             "pt":"Criado para popularizar a cadeia de bloqueio móvel.",
         },            
+    },   
+     {
+        "token_id":"550b98eebed879382d0a160d1563987f0335fc5b058e358da971c2e1b6c76141",
+        "website":"https://EMFtoken.com",
+        "logo": "EMF_logo.jpeg",
+         "media": {                            
+            
+            "twitter":"https://twitter.com/emf_token?s=21&t=bvUBKjFcrrYpAQSylze4Sg",
+            "telegram":"https://t.me/Enecuum_Mining_Farm"
+        }     
     },
     {
         "token_id":"some-token-id",
