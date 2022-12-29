@@ -71,6 +71,28 @@
             "fr":"Ce jeton Rock 'n' Roll a été créé pour enregistrer un tutoriel vidéo sur l'ajout d'une description à un jeton personnalisé.",
             "ru":"Этот Rock 'n' Roll токен был создан для записи обучающего видео по добавлению описания к кастомному токену"
         }        
+},
+{
+        "token_id":"74c994dcf17ff31ad840299cf2cfb69eb3a1035334a929bd955a8f193b19d510",
+        "website":"https://french-bulldog.tk/",
+        "logo": "FB_logo.jpg",
+        "description": {
+            "en":"Created to popularize the mobile blockchain.",
+            "de":"Erstellt, um die mobile Blockchain zu verbreiten.",
+            "fr":"Créé pour populariser la blockchain mobile.",
+            "ru":"Создан для популяризации мобильного блокчейна.",
+            "pt":"Criado para popularizar a cadeia de bloqueio móvel."
+        }            
+    },   
+     {
+        "token_id":"550b98eebed879382d0a160d1563987f0335fc5b058e358da971c2e1b6c76141",
+        "website":"https://EMFtoken.com",
+        "logo": "EMF_logo.jpeg",
+         "media": {                            
+            
+            "twitter":"https://twitter.com/emf_token?s=21&t=bvUBKjFcrrYpAQSylze4Sg",
+            "telegram":"https://t.me/Enecuum_Mining_Farm"
+        }     
     },
     {
         "token_id":"some-token-id",
