@@ -95,6 +95,23 @@
         }     
     },
     {
+        "token_id":"28d3c0721aca846d687de392257ea209cd27cbe4d386864129c3aae621a01af4",
+        "logo": "PUG.png",
+        "description": {
+            "en":"Pugcoin is a token on the Enecuum network based on the pug dog breed.",
+            "de":"Pugcoin ist ein Token im Enecuum-Netzwerk, das auf der Hunderasse Mops basiert.",
+            "es":"Pugcoin es un token en la red Enecuum basado en la raza de perro pug.",
+            "fr":"Pugcoin est un jeton sur le réseau Enecuum basé sur la race de chien carlin.",
+            "ru":"Pugcoin — это токен в сети Enecuum, основанный на породе мопса.",
+            "pt":"Pugcoin é um token na rede Enecuum baseado na raça pug.",
+            "ko":"Pugcoin은 퍼그 개 품종을 기반으로 하는 Enecuum 네트워크의 토큰입니다.",
+            "vi":"Pugcoin là một mã thông báo trên mạng Enecuum dựa trên giống chó pug.",
+            "jp":"Pugcoin は、パグ犬の品種に基づく Enecuum ネットワーク上のトークンです。",
+            "in":"Pugcoin adalah token di jaringan Enecuum berdasarkan jenis anjing pug.",
+            "tr":"Pugcoin, Enecuum ağındaki pug köpek ırkına dayalı bir jetondur."
+        }
+    },
+    {
         "token_id":"some-token-id",
         "website":"https://someTokenWebsite.com",
         "media": {                            
