@@ -55,6 +55,24 @@
         "logo": "BGF.jpg"    
     },
     {
+        "token_id":"819047ece11a23923551f60998769c7eb24d21d9f9a8ff373fd8f1030afde44f",
+        "website":"https://testrnrsite.com",
+        "logo": "RnR_Logo.png",
+        "media": {                            
+            "facebook":"https://www.facebook.com/testrnrtoken",
+            "twitter":"https://twitter.com/testrnrtoken",
+            "medium":"https://medium.com/testrnrtoken",
+            "youtube":"https://www.youtube.com/testrnrtoken",
+            "telegram":"https://t.me/testrnrtoken"
+        }, 
+        "description": {
+            "en":"This Rock 'n' Roll token was created to record a tutorial video on adding a description to a custom token",
+            "de":"Dieses Rock 'n' Roll-Token wurde erstellt, um ein Tutorial-Video zum Hinzufügen einer Beschreibung einem benutzerdefinierten Token aufzunehmen.",
+            "fr":"Ce jeton Rock 'n' Roll a été créé pour enregistrer un tutoriel vidéo sur l'ajout d'une description à un jeton personnalisé.",
+            "ru":"Этот Rock 'n' Roll токен был создан для записи обучающего видео по добавлению описания к кастомному токену"
+        }        
+},
+{
         "token_id":"74c994dcf17ff31ad840299cf2cfb69eb3a1035334a929bd955a8f193b19d510",
         "website":"https://french-bulldog.tk/",
         "logo": "FB_logo.jpg",
