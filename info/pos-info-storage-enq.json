@@ -126,6 +126,13 @@
       "tr": "stake2earn 🌜 - kripto stake sağlayıcınız. Daha fazla kripto kazanmak için bahis yapın! 🌜"
     }             
   },
+    {
+    "pos_id": "3a12b243dde40fffac6ec7f061d7103ffb81a410004ac315d7c0c3f9602ba475",
+    "logo": "oasis.png",
+    "media": {
+      "twitter": "https://twitter.com/EnecuumOasis",
+    }
+  },
   {
     "pos_id": "1c876fa7dfee8806b4ce005a2db9c1836d8d77ed14c5ffdf2850c0f4fd2973a3",
     "logo": "muellerwebservice.png",
