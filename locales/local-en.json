@@ -347,6 +347,7 @@
     "MINT": "Mint",
     "BURN": "Burn",
     "ACCOUNT_WAS_BANNED": "Account was banned",
+    "FROZEN_ACCOUNT": "Frozen account",
     "WARNING": "WARNING",
     "MINING_PREFORMANCE" : "Mining preformance",
     "NON_REISSUABLE":"Non-reissuable",
