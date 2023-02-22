@@ -28,6 +28,18 @@
         "tag":"KuCoin"
     },
     {
+        "account_id":"035c79f1c3f18f2a11468f53fac2dbc576fb12281cef62e66164ab9154c249f977",
+        "tag":"KuCoin 2"
+    },
+    {
+        "account_id":"0290cedb23802cd16efbbb492a80ae4943c592c116623244ffc4284bb486d74295",
+        "tag":"Trinity"
+    },
+    {
+        "account_id":"02dead000000000000000000000000000000000000000000000000000000000000",
+        "tag":"Point Nemo"
+    },
+    {
         "account_id":"some_account_id",
         "tag":"some_account_tag"
     }
