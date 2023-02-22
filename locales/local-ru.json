@@ -328,6 +328,7 @@
     "MINT": "Mint",
     "BURN": "Burn",
     "ACCOUNT_WAS_BANNED": "Аккаунт заблокирован",
+    "FROZEN_ACCOUNT": "Аккаунт заморожен",
     "WARNING": "Предупреждение",
     "NON_REISSUABLE":"Фиксированный",
     "REISSUABLE":"Нефиксированный",

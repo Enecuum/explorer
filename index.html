@@ -827,7 +827,7 @@
                                                         </thead>
                                                         <tbody style="font-size: 12px;" >
                                                         <tr ng-repeat="acc in accs.accounts ">
-                                                            <td class="text-nowrap"><span ng-if="acc.banned"><i class="fas fa-skull-crossbones" style="font-size: 18px;"></i></span><span ng-if="!acc.banned">{{acc.rank}}</span></td>
+                                                            <td class="text-nowrap">{{acc.rank}}</td>
                                                             <td>
                                                                 <a class="d-block fit responsive-hash" ng-href="#!/account/{{acc.id}}">
                                                                     {{acc.tag !== undefined ? acc.tag : acc.id}}
@@ -4039,6 +4039,7 @@
                     $scope.isLoading = true;
 
                     provider.top_accounts.get({page:page}, function(accounts){
+
                         $scope.page_count = accounts.page_count;
                         $scope.accs = accounts;
                         $scope.accs.accounts.forEach(function(acc, i) {
