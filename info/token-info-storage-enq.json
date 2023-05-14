@@ -125,30 +125,17 @@
         }
     },
     {
-        "token_id":"some-token-id",
-        "website":"https://someTokenWebsite.com",
-        "media": {                            
-            "facebook":"https://www.facebook.com/some-token",
-            "twitter":"https://twitter.com/some-token",
-            "medium":"https://medium.com/some-token",
-            "github":"https://github.com/some-token",
-            "forklog":"https://hub.forklog.com/some-token",
-            "bitcointalk":"https://bitcointalk.org/some-token",
-            "linkedin":"https://www.linkedin.com/some-token",
-            "youtube":"https://www.youtube.com/some-token",
-            "qq":"https://qm.qq.com/some-token",
-            "weixin":"https://weixin.qq.com/some-token",
-            "telegram":"https://t.me/some-token"
-        }, 
+        "token_id":"b10f80ed60dd74c9d7b8e32840794ac81f4db354ccd1e8488e652602617bddd9",
+        "logo": "BUD.jpg",
         "description": {
-            "en":"EN text about some token",
-            "de":"DE text about some token",
-            "fr":"FR text about some token",
-            "ru":"RU text about some token",
-            "pt":"PT text about some token",
-            "vi":"VI text about some token",
-            "in":"IN text about some token",
-            "tr":"TR text about some token"
+            "en":"BUD has no owner, no road map, you're the team, and it's just for fun. All transactions burn 0.1 ENQ.",
+            "de":"BUD hat keinen Eigentümer, keine Roadmap, Sie sind das Team und es macht nur Spaß.",
+            "fr":"BUD n'a pas de propriétaire, pas de feuille de route crypto, vous êtes l'équipe, et c'est juste pour le plaisir. Toutes les transactions brûlent 0,1 ENQ.",
+            "ru":"У BUD нет владельца, нет дорожной карты, вы — команда, и это просто развлечение. Все транзакции сжигают 0,1 ENQ.",
+            "pt":"BUD não tem dono, não tem roteiro, vocês são o time, e é só por diversão. Todas as transações queimam 0,1 ENQ",
+            "vi":"BUD không có chủ sở hữu, không có lộ trình, bạn là đội và nó chỉ để giải trí. Tất cả các giao dịch đốt cháy 0,1 ENQ.",
+            "in":"BUD tidak memiliki pemilik, tidak ada peta jalan, Anda adalah tim, dan ini hanya untuk bersenang-senang. Semua transaksi membakar 0,1 ENQ",
+            "tr":"BUD'un sahibi yok, yol haritası yok, takım sizsiniz ve sadece eğlence için."
         },
         "coingecko_id": "coingecko-id"             
     },
