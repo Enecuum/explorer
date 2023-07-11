@@ -74,26 +74,6 @@
     }
   },
   {
-    "pos_id": "769498f1056b10e0b8de10099b411e45e0357bdd3d8387ecaa25af5ead7b4970",
-    "logo": "deer-hunter-logo.png"
-  },
-  {
-    "pos_id": "6ae6aa98dcf68928fda8e236f709ec90133666fc746a5bbe5cba34ac7517df3c",
-    "website": "https://stakely.io",
-    "logo": "stakely_logo.jpg",
-    "media": {
-      "twitter": "https://twitter.com/Stakely_io",
-      "medium": "https://medium.com/stakely",
-      "github": "https://github.com/Stakely",
-      "linkedin": "https://www.linkedin.com/company/stakely-io",
-      "youtube": "https://www.youtube.com/channel/UC-8JruXm84AZwFWHU7wTTOg",
-      "telegram": "https://t.me/stakely"
-    },
-    "description": {
-      "en": "Stakely is a blockchain non-custodial staking service focused on giving the most value to its users by creating easy-to-follow tutorials, staking insurance protection, referral system, custom staking dashboards, and a large list of available networks."
-    }
-  },
-  {
     "pos_id": "ef7c374daaba9ca80493ba7dac5367b0adaa6c0743c5b9188fce2104458cee9c",
     "logo": "ankr.svg",
     "website": "https://www.ankr.com",
