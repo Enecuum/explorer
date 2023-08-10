@@ -33,6 +33,29 @@
         "coingecko_id": "enq-enecuum"             
     },
     {
+        "token_id": "fc1872daffd51997d2b33d544a2edabd7a41dd796ec273a40476299b06a1cb31",
+        "website": "https://enex.space",
+        "logo": "ENEX.png",
+        "media": {
+            "twitter": "https://twitter.com/ENEXSPACE",
+            "medium": "https://blog.enex.space",
+            "github": "https://github.com/TrinityLabDAO",
+            "telegram": "https://t.me/enexspace",
+            "reddit": "https://www.reddit.com/user/enex_space/"
+        },
+        "documents": {
+            "guides": "https://trinitylab.gitbook.io/enex.space/"
+        },
+        "description": {
+            "en": "ENEX.SPACE is a DeFi platform built on the Enecuum blockchain. ENEX.SPACE functions based on the ENX token. ENX benefits from overall liquidity in ENEX.SPACE and can be used to gain profit from trading operations. Trade, earn, issue and raise at ENEX.SPACE with uncompromising security and extremely low fees!",
+            "de": "ENEX.SPACE ist eine DeFi-Plattform, die auf der Enecuum-Blockchain aufbaut. ENEX.SPACE funktioniert auf der Grundlage des ENX-Tokens. ENX profitiert von der Gesamtliquidität in ENEX.SPACE und kann verwendet werden, um Gewinne aus Handelsgeschäften zu erzielen. Handeln, verdienen, emittieren und erhöhen Sie auf ENEX.SPACE mit kompromissloser Sicherheit und extrem niedrigen Gebühren!",
+            "fr": "ENEX.SPACE est une plateforme DeFi construite sur la blockchain Enecuum. ENEX.SPACE fonctionne sur la base du jeton ENX. ENX bénéficie de la liquidité globale d'ENEX.SPACE et peut être utilisé pour gagner des bénéfices sur les opérations de trading. Négociez, gagnez, émettez et levez des fonds sur ENEX.SPACE avec une sécurité sans compromis et des frais extrêmement bas !",
+            "ru": "ENEX.SPACE - это DeFi платформа, построенная на блокчейне Enecuum. ENEX.SPACE функционирует на основе токена ENX. ENX выигрывает от общей ликвидности в ENEX.SPACE и может быть использован для получения прибыли от торговых операций. Торгуйте, зарабатывайте, эмитируйте и привлекайте средства в ENEX.SPACE с бескомпромиссной безопасностью и чрезвычайно низкими комиссиями!",
+            "pt": "ENEX.SPACE é uma plataforma DeFi construída sobre a blockchain Enecuum. O ENEX.SPACE funciona com base no token ENX. O ENX beneficia da liquidez global no ENEX.SPACE e pode ser utilizado para obter lucros nas operações de negociação. Negocie, ganhe, emita e levante no ENEX.SPACE com segurança intransigente e taxas extremamente baixas!",
+            "tr": "ENEX.SPACE, Enecuum blok zinciri üzerine inşa edilmiş bir DeFi platformudur. ENEX.SPACE, ENX tokenine dayalı olarak çalışır. ENX, ENEX.SPACE'teki genel likiditeden yararlanır ve alım satım işlemlerinden kar elde etmek için kullanılabilir. ENEX.SPACE'de tavizsiz güvenlik ve son derece düşük ücretlerle ticaret yapın, kazanın, ihraç edin ve yükseltin!"
+        }
+    },
+    {
         "token_id":"bcbb425dcbd104fc1a63f37a1926bf94c989198d132b8c25db17ddc7cc096745",
         "website":"https://nayutacoin.info/",
         "logo": "nayuta.jpg",
