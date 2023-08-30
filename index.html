@@ -1563,7 +1563,7 @@
         };                
     });
 
-    app.factory('contractFormatter', function ($filter, provider, contractSchemes, commonTools) {        
+    app.factory('contractFormatter', function ($filter, provider, contractSchemes, commonTools, GLOBAL_APP_CONFIG) {        
 
         function getTxDataFormatter(contractScheme) {            
             let formatters = {
@@ -1729,7 +1729,24 @@
                         txData.parameters.token_ticker = token_info[0].ticker;
                     });
                 },
-                default : function(txData, contractScheme) {
+                bridgeLock : function(txData) {
+                    txData.dataEncode.formattedParameters = {};
+                    txData.dataEncode.formattedParameters.dst_address = txData.dataEncode.dst_address;
+                    let dstNetwork = GLOBAL_APP_CONFIG.networks.find(elem => elem.internalId === txData.dataEncode.dst_network);
+                    if (dstNetwork !== undefined) {
+                        txData.dataEncode.formattedParameters.dst_network = dstNetwork;
+                        txData.dataEncode.formattedParameters.dst_address_link = `${dstNetwork.addressPageUrl}${txData.dataEncode.dst_address}`;
+                    }
+                    txData.dataEncode.formattedParameters.token_hash = txData.dataEncode.hash;
+                    txData.dataEncode.formattedParameters.nonce = txData.dataEncode.nonce;
+                    provider.token_info.query({hash:txData.dataEncode.hash}, function(token_info) {
+                        txData.dataEncode.formattedParameters.token_ticker = token_info[0].ticker;
+                        txData.dataEncode.formattedParameters.token_decimals = token_info[0].decimals;
+                        txData.dataEncode.formattedParameters.amount = amountInUnits(txData.dataEncode.amount, token_info[0].decimals, token_info[0].decimals, token_info[0].ticker);
+                        txData.dataEncode.formattedParameters.token_link = `#!/token/${txData.dataEncode.hash}`;
+                    });
+                },
+                default : function(txData, contractScheme) {                    
                     if (!contractScheme.hasOwnProperty(txData.type)) {
                         contractScheme.paramsOrder = [];
                         for (key in txData.parameters) {
@@ -2024,6 +2041,27 @@
                 formatAs    : 'dexCmdDistribute',
                 template    : 'dex-cmd-distribute',
                 eindexer    : []                
+            },
+            bridge_lock : {
+                paramsOrder : [],
+                asToken     : [],
+                formatAs    : 'bridgeLock',
+                template    : 'tx-bridge-lock-contract',
+                eindexer    : []
+            },
+            bridge_claim_init : {
+                paramsOrder : [],
+                asToken     : ['amount'],
+                formatAs    : 'default',
+                template    : 'default',
+                eindexer    : []
+            },
+            bridge_claim_confirm : {
+                paramsOrder : [],
+                asToken     : [],
+                formatAs    : 'default',
+                template    : 'default',
+                eindexer    : []
             },
             unknown_contract : {
                 paramsOrder : [],
@@ -2337,6 +2375,9 @@
                     "farm_decrease_stake"    : "FARM_DECREASE_STAKE",
                     "farm_add_emission"      : "FARM_ADD_EMISSION",
                     "dex_cmd_distribute"     : "DEX_CMD_DISTRIBUTE",
+                    "bridge_lock"            : "BRIDGE_LOCK",
+                    "bridge_claim_init"      : "BRIDGE_CLAIM_INIT",
+                    "bridge_claim_confirm"   : "BRIDGE_CLAIM_CONFIRM",
                     "unknown_contract"       : "UNKNOWN_CONTRACT"
                 };
                 if (contractTypes.hasOwnProperty(contractType)) {
@@ -2413,40 +2454,49 @@
 
     app.factory('schema', function () {
         let schema = {
-            "root": "0000",
-            "custom": "0100",
-            "create_token": "0200",
-            "delegate": "0300",
-            "undelegate": "0400",
-            "signature": "0500",
-            "hash": "0600",
-            "string": "0700",
-            "int": "0800",
-            "bigint": "0900",
-            "float": "0a00",
-            "object": "0c00",
-            "key": "0d00",
-            "procedure_name": "0e00",
-            "parameters": "0f00",
-            "create_pos": "1000",
-            "pos_reward": "1100",
-            "transfer": "1200",
-            "mint": "1300",
-            "burn": "1400",
-            "pool_create": "1500",
-            "pool_add_liquidity": "1600",
-            "pool_remove_liquidity": "1700",
-            "pool_sell_exact": "1800",
-            "farm_create": "1900",
-            "farm_get_reward": "1a00",
-            "farm_increase_stake": "1b00",
-            "farm_close_stake": "1c00",
-            "farm_decrease_stake": "1d00",
-            "farm_add_emission": "1e00",
-            "dex_cmd_distribute": "1f00",
-            "pool_sell_exact_routed": "2000",
-            "pool_buy_exact": "2100",
-            "pool_buy_exact_routed": "2200",
+            "root" :                    "0000",
+            "custom" :                  "0100",
+            "create_token" :            "0200",
+            "delegate" :                "0300",
+            "undelegate" :              "0400",
+            "signature" :               "0500",
+            "hash" :                    "0600",
+            "string" :                  "0700",
+            "int" :                     "0800",
+            "bigint" :                  "0900",
+            "float" :                   "0a00",
+            "object" :                  "0c00",
+            "key" :                     "0d00",
+            "procedure_name" :          "0e00",
+            "parameters" :              "0f00",
+            "create_pos" :              "1000",
+            "pos_reward" :              "1100",
+            "transfer" :                "1200",
+            "mint" :                    "1300",
+            "burn" :                    "1400",
+            "pool_create" :             "1500",
+            "pool_add_liquidity" :      "1600",
+            "pool_remove_liquidity" :   "1700",
+            "pool_sell_exact" :         "1800",
+            "farm_create" :             "1900",
+            "farm_get_reward" :         "1a00",
+            "farm_increase_stake" :     "1b00",
+            "farm_close_stake" :        "1c00",
+            "farm_decrease_stake" :     "1d00",
+            "farm_add_emission" :       "1e00",
+            "dex_cmd_distribute" :      "1f00",
+            "pool_sell_exact_routed" :  "2000",
+            "pool_buy_exact" :          "2100",
+            "pool_buy_exact_routed" :   "2200",
+            "bridge_lock" :             "2300",
+            "bridge_claim_init" :       "2400",
+            "bridge_claim_confirm" :    "2500",
+            "bridge_set_owner" :        "2700",
+            "bridge_set_threshold" :    "2800",
+            "bridge_add_validator" :    "2900",
+            "bridge_remove_validator" : "2a00",
+            "bridge_add_network" :      "2b00",
+            "bridge_remove_network" :   "2c00"
         };
         return schema                
     });
@@ -2513,12 +2563,13 @@
         
         this.isContract = function(raw, txSchema = {}, contractPricelist={}) {
             schema = txSchema;
-            contract_pricelist = contractPricelist;
+            contract_pricelist = contractPricelist;            
             if(raw === undefined || raw === null)
                 return false;
             let chunk = getChunk(raw);
-            if((chunk.size === raw.length) && contract_pricelist.hasOwnProperty(chunk.key))
+            if((chunk.size === raw.length) && contract_pricelist.hasOwnProperty(chunk.key)) {
                 return chunk.key;
+            }
             return false;
         } 
 
@@ -5347,6 +5398,9 @@
                                 $scope.txData.maintoken = newValue;
                                 prettifyTxData($scope.txData);
                             }, true);
+                        } else if ($scope.txData.type === 'bridge_lock') {
+                            $scope.txData.dataEncode = tx.data_encode;
+                            prettifyTxData($scope.txData);
                         } else 
                             prettifyTxData($scope.txData);
 
@@ -5382,7 +5436,7 @@
         function prettifyTxData(txData) {            
             $scope.txContractsTemplate = $scope.contractScheme.template;            
             $scope.txContractsTemplate = $scope.contractScheme.template !== 'default' ? `${$scope.contractScheme.template}.html` : 'tx-default-contract.html';
-            contractFormatter.formatData($scope.txData);
+            contractFormatter.formatData(txData);
         }
     });
 

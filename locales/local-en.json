@@ -418,5 +418,11 @@
     "VIEW_AS_API_DATA" : "View as API data",
     "POOL":"Pool",
     "FARM":"Farm",
-    "GUIDES" : "Guides"
+    "GUIDES" : "Guides",
+    "BRIDGE_LOCK" : "Bridge lock",
+    "BRIDGE_CLAIM_INIT" : "Bridge claim init",
+    "BRIDGE_CLAIM_CONFIRM" : "Bridge claim confirm",
+    "DST_NETWORK" : "Destination network",
+    "DST_ADDRESSS" : "Destination address",
+    "ASSET" : "Asset"
 }

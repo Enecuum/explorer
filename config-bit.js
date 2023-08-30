@@ -28,6 +28,15 @@
                 github: 'https://github.com/Enecuum'
             }
         },
+        networks: [
+            {
+                internalId            : 11155111, // Number. Internal bridge id. Not Metamask hex
+                name                  : 'Sepolia', //string
+                type                  : 'eth', //'eth', 'enq'        
+                explorerURL           : 'https://sepolia.etherscan.io/', // url to explorer mainpage
+                addressPageUrl        : 'https://sepolia.etherscan.io/address/'
+            }
+        ],
         pagesSectionsVisibility: {
             showFullNodesCountCard: true,
             showSBlocks: true,
