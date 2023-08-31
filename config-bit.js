@@ -30,6 +30,13 @@
         },
         networks: [
             {
+                internalId            : 123, // Number. Internal bridge id. Not Metamask hex
+                name                  : 'BIT-DEV', //string
+                type                  : 'enq', //'eth', 'enq'        
+                explorerURL           : 'https://bit-dev.enecuum.com/', // url to explorer mainpage
+                addressPageUrl        : 'https://bit-dev.enecuum.com/#!/account/'
+            },
+            {
                 internalId            : 11155111, // Number. Internal bridge id. Not Metamask hex
                 name                  : 'Sepolia', //string
                 type                  : 'eth', //'eth', 'enq'        

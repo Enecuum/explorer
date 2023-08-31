@@ -424,5 +424,10 @@
     "BRIDGE_CLAIM_CONFIRM" : "Bridge claim confirm",
     "DST_NETWORK" : "Destination network",
     "DST_ADDRESSS" : "Destination address",
-    "ASSET" : "Asset"
+    "ASSET" : "Asset",
+    "ORIGIN_NETWORK" : "Origin network",
+    "ORIGIN_HASH" : "Origin hash",
+    "SRC_NETWORK" : "Source network",
+    "SRC_ADDRESSS" : "Source address",
+    "TICKET" : "Ticket"
 }

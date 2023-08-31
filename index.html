@@ -1746,6 +1746,49 @@
                         txData.dataEncode.formattedParameters.token_link = `#!/token/${txData.dataEncode.hash}`;
                     });
                 },
+                bridgeClaimInit : function(txData) {
+                    txData.dataEncode.formattedParameters = {};
+                    txData.dataEncode.formattedParameters.dst_address = txData.dataEncode.dst_address;
+                    txData.dataEncode.formattedParameters.token_ticker = txData.dataEncode.ticker;
+                    txData.dataEncode.formattedParameters.token_name = txData.dataEncode.name; 
+                    
+                    let originNetwork = GLOBAL_APP_CONFIG.networks.find(elem => elem.internalId === txData.dataEncode.origin_network);
+                    if (originNetwork !== undefined) {
+                        txData.dataEncode.formattedParameters.origin_network = originNetwork;
+                        txData.dataEncode.formattedParameters.origin_hash = txData.dataEncode.origin_hash;
+                        if (originNetwork.type === 'enq')
+                            txData.dataEncode.formattedParameters.origin_link = `#!/token/${txData.dataEncode.origin_hash}`;                            
+                        else
+                            txData.dataEncode.formattedParameters.origin_link = `${originNetwork.addressPageUrl}${txData.dataEncode.origin_hash}`;                          
+                    }
+
+                    txData.dataEncode.formattedParameters.src_address = txData.dataEncode.src_address;
+                    txData.dataEncode.formattedParameters.src_hash = txData.dataEncode.src_hash;
+                    let srcNetwork = GLOBAL_APP_CONFIG.networks.find(elem => elem.internalId === txData.dataEncode.src_network);
+                    txData.dataEncode.formattedParameters.src_network = srcNetwork;
+                    if (srcNetwork !== undefined) {
+                        if (srcNetwork.type === 'enq') {
+                            txData.dataEncode.formattedParameters.src_address_link = `#!/account/${txData.dataEncode.src_address}`;
+                            txData.dataEncode.formattedParameters.token_link = `#!/token/${txData.dataEncode.src_hash}`;
+                        } else {
+                            txData.dataEncode.formattedParameters.src_address_link = `${srcNetwork.addressPageUrl}${txData.dataEncode.src_address}`;
+                            txData.dataEncode.formattedParameters.token_link = `${srcNetwork.addressPageUrl}${txData.dataEncode.src_hash}`;
+                        }                       
+                    }
+
+                    let dstNetwork = GLOBAL_APP_CONFIG.networks.find(elem => elem.internalId === txData.dataEncode.dst_network);
+                    if (dstNetwork !== undefined) {
+                        txData.dataEncode.formattedParameters.dst_network = dstNetwork;
+                        txData.dataEncode.formattedParameters.dst_address_link = `${dstNetwork.addressPageUrl}${txData.dataEncode.dst_address}`;
+                    }
+                    let decimals = txData.dataEncode.origin_decimals;
+                    if (txData.dataEncode.origin_decimals > 10)
+                        decimals = 10;
+
+                    txData.dataEncode.formattedParameters.amount = amountInUnits(txData.dataEncode.amount, decimals, decimals, txData.dataEncode.ticker);
+                    txData.dataEncode.formattedParameters.nonce = txData.dataEncode.nonce;
+                    txData.dataEncode.formattedParameters.ticket_hash = txData.dataEncode.ticket_hash;
+                },
                 default : function(txData, contractScheme) {                    
                     if (!contractScheme.hasOwnProperty(txData.type)) {
                         contractScheme.paramsOrder = [];
@@ -2051,16 +2094,16 @@
             },
             bridge_claim_init : {
                 paramsOrder : [],
-                asToken     : ['amount'],
-                formatAs    : 'default',
-                template    : 'default',
+                asToken     : [],
+                formatAs    : 'bridgeClaimInit',
+                template    : 'tx-bridge-claim-init-contract',
                 eindexer    : []
             },
             bridge_claim_confirm : {
                 paramsOrder : [],
                 asToken     : [],
-                formatAs    : 'default',
-                template    : 'default',
+                formatAs    : 'bridgeClaimConfirm',
+                template    : 'tx-bridge-claim-confirm-contract',
                 eindexer    : []
             },
             unknown_contract : {
@@ -5399,6 +5442,9 @@
                                 prettifyTxData($scope.txData);
                             }, true);
                         } else if ($scope.txData.type === 'bridge_lock') {
+                            $scope.txData.dataEncode = tx.data_encode;
+                            prettifyTxData($scope.txData);
+                        } else if ($scope.txData.type === 'bridge_claim_init' || $scope.txData.type === 'bridge_claim_confirm') {
                             $scope.txData.dataEncode = tx.data_encode;
                             prettifyTxData($scope.txData);
                         } else 
