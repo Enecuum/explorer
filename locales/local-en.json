@@ -429,5 +429,7 @@
     "ORIGIN_HASH" : "Origin hash",
     "SRC_NETWORK" : "Source network",
     "SRC_ADDRESSS" : "Source address",
-    "TICKET" : "Ticket"
+    "TICKET_HASH" : "Ticket hash",
+    "VALIDATOR_ID" : "Validator ID",
+    "VALIDATOR_SIGN" : "Validator sign"
 }
