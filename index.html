@@ -1787,11 +1787,11 @@
                         txData.dataEncode.formattedParameters.dst_network = dstNetwork;
                         txData.dataEncode.formattedParameters.dst_address_link = `${dstNetwork.addressPageUrl}${txData.dataEncode.dst_address}`;
                     }
-                    let decimals = txData.mintedToken.decimals;
-                    if (txData.mintedToken.decimals > 10)
+                    let decimals = txData.tokenInfo.decimals;
+                    if (txData.tokenInfo.decimals > 10)
                         decimals = 10;
 
-                    txData.dataEncode.formattedParameters.amount = amountInUnits(txData.dataEncode.amount, decimals, decimals, txData.mintedToken.ticker);
+                    txData.dataEncode.formattedParameters.amount = amountInUnits(txData.dataEncode.amount, decimals, decimals, txData.tokenInfo.ticker);
                     txData.dataEncode.formattedParameters.nonce = txData.dataEncode.nonce;
                     txData.dataEncode.formattedParameters.ticket_hash = txData.dataEncode.ticket_hash;
                 },
@@ -1831,11 +1831,11 @@
                         txData.bridgeClaimTransfers.formattedParameters.dst_network = dstNetwork;
                         txData.bridgeClaimTransfers.formattedParameters.dst_address_link = `${dstNetwork.addressPageUrl}${txData.bridgeClaimTransfers.dst_address}`;
                     }
-                    let decimals = txData.bridgeClaimTransfers.origin_decimals;
-                    if (txData.bridgeClaimTransfers.origin_decimals > 10)
+                    let decimals = txData.tokenInfo.decimals;
+                    if (txData.tokenInfo.decimals > 10)
                         decimals = 10;
 
-                    txData.bridgeClaimTransfers.formattedParameters.amount = amountInUnits(txData.bridgeClaimTransfers.amount, decimals, decimals, txData.bridgeClaimTransfers.ticker);
+                    txData.bridgeClaimTransfers.formattedParameters.amount = amountInUnits(txData.bridgeClaimTransfers.amount, decimals, decimals, txData.tokenInfo.ticker);
                     txData.bridgeClaimTransfers.formattedParameters.nonce = txData.bridgeClaimTransfers.nonce;
                     txData.bridgeClaimTransfers.formattedParameters.ticket_hash = txData.bridgeClaimTransfers.ticket_hash;
                 },
@@ -5497,11 +5497,12 @@
                             prettifyTxData($scope.txData);
                         } else if ($scope.txData.type === 'bridge_claim_init') {
                             $scope.txData.dataEncode = tx.data_encode;
-                            $scope.txData.mintedToken = tx.minted_token;
+                            $scope.txData.tokenInfo = tx.token_info;
                             prettifyTxData($scope.txData);
                         }  else if ($scope.txData.type === 'bridge_claim_confirm') {
                             $scope.txData.dataEncode = tx.data_encode;
                             $scope.txData.bridgeClaimTransfers = tx.bridge_claim_transfers;
+                            $scope.txData.tokenInfo = tx.token_info;
                             $scope.txAdditionalDataTemplate = `${$scope.contractScheme.additionalTemlate}.html`;
                             prettifyTxData($scope.txData);
                         } else 
