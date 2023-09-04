@@ -597,6 +597,12 @@
                                             <div ng-include="'views/partials/contracts-tx/' + txEIndexDataTemplate"></div>
                                         </td>                                        
                                     </tr>
+                                    <tr ng-if="txAdditionalDataTemplate !== undefined">
+                                        <td>{{'ADDITIONAL' | translate}}</td>
+                                        <td>
+                                            <div ng-include="'views/partials/contracts-tx/' + txAdditionalDataTemplate"></div>
+                                        </td>                                        
+                                    </tr>
                                     <tr ng-if="txCurrentState === 'isInNetwork'">
                                         <td>{{'M_BLOCK_HASH' | translate}}</td>
                                         <td class="fit"><a ng-href="#!/mblock/{{tx.mblocks_hash}}">{{tx.mblocks_hash}}</a></td>
@@ -1781,13 +1787,57 @@
                         txData.dataEncode.formattedParameters.dst_network = dstNetwork;
                         txData.dataEncode.formattedParameters.dst_address_link = `${dstNetwork.addressPageUrl}${txData.dataEncode.dst_address}`;
                     }
-                    let decimals = txData.dataEncode.origin_decimals;
-                    if (txData.dataEncode.origin_decimals > 10)
+                    let decimals = txData.mintedToken.decimals;
+                    if (txData.mintedToken.decimals > 10)
                         decimals = 10;
 
-                    txData.dataEncode.formattedParameters.amount = amountInUnits(txData.dataEncode.amount, decimals, decimals, txData.dataEncode.ticker);
+                    txData.dataEncode.formattedParameters.amount = amountInUnits(txData.dataEncode.amount, decimals, decimals, txData.mintedToken.ticker);
                     txData.dataEncode.formattedParameters.nonce = txData.dataEncode.nonce;
                     txData.dataEncode.formattedParameters.ticket_hash = txData.dataEncode.ticket_hash;
+                },
+                bridgeClaimConfirm : function(txData) {
+                    //data_encode contains only validator_id, validator_sign and ticket_hash. We need claim init data. For this purpose used data from bridge_claim_transfers.
+                    txData.bridgeClaimTransfers.formattedParameters = {};
+                    txData.bridgeClaimTransfers.formattedParameters.dst_address = txData.bridgeClaimTransfers.dst_address;
+                    txData.bridgeClaimTransfers.formattedParameters.token_ticker = txData.bridgeClaimTransfers.ticker;
+                    txData.bridgeClaimTransfers.formattedParameters.token_name = txData.bridgeClaimTransfers.name; 
+                    
+                    let originNetwork = GLOBAL_APP_CONFIG.networks.find(elem => elem.internalId === txData.bridgeClaimTransfers.origin_network);
+                    if (originNetwork !== undefined) {
+                        txData.bridgeClaimTransfers.formattedParameters.origin_network = originNetwork;
+                        txData.bridgeClaimTransfers.formattedParameters.origin_hash = txData.bridgeClaimTransfers.origin_hash;
+                        if (originNetwork.type === 'enq')
+                            txData.bridgeClaimTransfers.formattedParameters.origin_link = `#!/token/${txData.bridgeClaimTransfers.origin_hash}`;                            
+                        else
+                            txData.bridgeClaimTransfers.formattedParameters.origin_link = `${originNetwork.addressPageUrl}${txData.bridgeClaimTransfers.origin_hash}`;                          
+                    }
+
+                    txData.bridgeClaimTransfers.formattedParameters.src_address = txData.bridgeClaimTransfers.src_address;
+                    txData.bridgeClaimTransfers.formattedParameters.src_hash = txData.bridgeClaimTransfers.src_hash;
+                    let srcNetwork = GLOBAL_APP_CONFIG.networks.find(elem => elem.internalId === txData.bridgeClaimTransfers.src_network);
+                    txData.bridgeClaimTransfers.formattedParameters.src_network = srcNetwork;
+                    if (srcNetwork !== undefined) {
+                        if (srcNetwork.type === 'enq') {
+                            txData.bridgeClaimTransfers.formattedParameters.src_address_link = `#!/account/${txData.bridgeClaimTransfers.src_address}`;
+                            txData.bridgeClaimTransfers.formattedParameters.token_link = `#!/token/${txData.bridgeClaimTransfers.src_hash}`;
+                        } else {
+                            txData.bridgeClaimTransfers.formattedParameters.src_address_link = `${srcNetwork.addressPageUrl}${txData.bridgeClaimTransfers.src_address}`;
+                            txData.bridgeClaimTransfers.formattedParameters.token_link = `${srcNetwork.addressPageUrl}${txData.bridgeClaimTransfers.src_hash}`;
+                        }                       
+                    }
+
+                    let dstNetwork = GLOBAL_APP_CONFIG.networks.find(elem => elem.internalId === txData.bridgeClaimTransfers.dst_network);
+                    if (dstNetwork !== undefined) {
+                        txData.bridgeClaimTransfers.formattedParameters.dst_network = dstNetwork;
+                        txData.bridgeClaimTransfers.formattedParameters.dst_address_link = `${dstNetwork.addressPageUrl}${txData.bridgeClaimTransfers.dst_address}`;
+                    }
+                    let decimals = txData.bridgeClaimTransfers.origin_decimals;
+                    if (txData.bridgeClaimTransfers.origin_decimals > 10)
+                        decimals = 10;
+
+                    txData.bridgeClaimTransfers.formattedParameters.amount = amountInUnits(txData.bridgeClaimTransfers.amount, decimals, decimals, txData.bridgeClaimTransfers.ticker);
+                    txData.bridgeClaimTransfers.formattedParameters.nonce = txData.bridgeClaimTransfers.nonce;
+                    txData.bridgeClaimTransfers.formattedParameters.ticket_hash = txData.bridgeClaimTransfers.ticket_hash;
                 },
                 default : function(txData, contractScheme) {                    
                     if (!contractScheme.hasOwnProperty(txData.type)) {
@@ -2102,9 +2152,10 @@
             bridge_claim_confirm : {
                 paramsOrder : [],
                 asToken     : [],
-                formatAs    : 'default',
+                formatAs    : 'bridgeClaimConfirm',
                 template    : 'tx-bridge-claim-confirm-contract',
-                eindexer    : []
+                eindexer    : [],
+                additionalTemlate : 'tx-bridge-claim-confirm-contract-additional'
             },
             unknown_contract : {
                 paramsOrder : [],
@@ -5444,8 +5495,14 @@
                         } else if ($scope.txData.type === 'bridge_lock') {
                             $scope.txData.dataEncode = tx.data_encode;
                             prettifyTxData($scope.txData);
-                        } else if ($scope.txData.type === 'bridge_claim_init' || $scope.txData.type === 'bridge_claim_confirm') {
+                        } else if ($scope.txData.type === 'bridge_claim_init') {
                             $scope.txData.dataEncode = tx.data_encode;
+                            $scope.txData.mintedToken = tx.minted_token;
+                            prettifyTxData($scope.txData);
+                        }  else if ($scope.txData.type === 'bridge_claim_confirm') {
+                            $scope.txData.dataEncode = tx.data_encode;
+                            $scope.txData.bridgeClaimTransfers = tx.bridge_claim_transfers;
+                            $scope.txAdditionalDataTemplate = `${$scope.contractScheme.additionalTemlate}.html`;
                             prettifyTxData($scope.txData);
                         } else 
                             prettifyTxData($scope.txData);

@@ -1,0 +1,56 @@
+<div class="mb-2">
+    <span class="font-weight-bolder">{{"PREVIOUS_CLAIM_INIT_PARAMS" | translate}}</span>
+</div>
+<table class="table table-sm tx-data-table no-border" ng-init="data=txData.bridgeClaimTransfers.formattedParameters">
+    <tbody>
+        <tr>
+            <th class="pr-md-3 text-nowrap">{{'ORIGIN_NETWORK' | translate}}</th>
+            <td class="fit">{{data.origin_network.name}}</td>
+        </tr>
+        <tr>
+            <th class="pr-md-3 text-nowrap">{{'ORIGIN_HASH' | translate}}</th>
+            <td>
+                <a ng-href="{{data.origin_link}}" target="_blank">{{data.origin_hash}}</a>
+            </td>
+        </tr>
+        <tr>
+            <th class="pr-md-3 text-nowrap">{{'SRC_NETWORK' | translate}}</th>
+            <td class="fit">{{data.src_network.name}}</td>
+        </tr>
+        <tr>
+            <th class="pr-md-3 text-nowrap">{{'SRC_ADDRESSS' | translate}}</th>
+            <td>
+                <a ng-href="{{data.src_address_link}}" target="_blank">{{data.src_address}}</a>
+            </td>
+        </tr>
+        <tr>
+            <th class="pr-md-3 text-nowrap">{{'DST_NETWORK' | translate}}</th>
+            <td class="fit">{{data.dst_network.name}}</td>
+        </tr>
+        <tr>
+            <th class="pr-md-3 text-nowrap">{{'DST_ADDRESSS' | translate}}</th>
+            <td>
+                <a ng-href="{{data.dst_address_link}}" target="_blank">{{data.dst_address}}</a>
+            </td>
+        </tr>
+        <tr>
+            <th class="pr-md-3">{{'ASSET' | translate}}</th>
+            <td>
+                <a ng-href="{{data.token_link}}" target="_blank">{{data.src_hash}}</a>
+                <span classs="mr-2">({{data.token_ticker}})</span>
+            </td>
+        </tr>
+        <tr>
+            <th class="pr-md-3">{{'AMOUNT' | translate}}</th>
+            <td class="fit">{{data.amount}}</td>
+        </tr>
+        <tr>
+            <th class="pr-md-3">{{'NONCE' | translate}}</th>
+            <td class="fit">{{data.nonce}}</td>
+        </tr>
+        <tr>
+            <th class="pr-md-3">{{'TICKET_HASH' | translate}}</th>
+            <td class="fit">{{data.ticket_hash}}</td>
+        </tr>
+    </tbody>    
+</table>

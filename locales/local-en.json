@@ -431,5 +431,6 @@
     "SRC_ADDRESSS" : "Source address",
     "TICKET_HASH" : "Ticket hash",
     "VALIDATOR_ID" : "Validator ID",
-    "VALIDATOR_SIGN" : "Validator sign"
+    "VALIDATOR_SIGN" : "Validator sign",
+    "PREVIOUS_CLAIM_INIT_PARAMS" : "Previous claim init parameters"
 }
