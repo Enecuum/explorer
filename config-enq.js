@@ -34,6 +34,51 @@
                 telegram: 'https://t.me/Enecuum_EN'
             }
         },
+        networks: [
+            {
+                internalId            : 0, // Number. Internal bridge id. Not Metamask hex
+                name                  : 'Pulse', //string
+                type                  : 'enq', //'eth', 'enq'        
+                explorerURL           : 'https://pulse.enecuum.com/', // url to explorer mainpage
+                addressPageUrl        : 'https://pulse.enecuum.com/#!/account/'
+            },            
+            {
+                internalId            : 1, // Number. Internal bridge id. Not Metamask hex
+                name                  : 'Ethereum', //string
+                type                  : 'eth', //'eth', 'enq'        
+                explorerURL           : 'https://etherscan.io/', // url to explorer mainpage
+                addressPageUrl        : 'https://etherscan.io/address/'
+            },            
+            {
+                internalId            : 137, // Number. Internal bridge id. Not Metamask hex
+                name                  : 'Polygon', //string
+                type                  : 'eth', //'eth', 'enq'        
+                explorerURL           : 'https://polygonscan.com/', // url to explorer mainpage
+                addressPageUrl        : 'https://polygonscan.com/address/'
+            },            
+            {
+                internalId            : 10, // Number. Internal bridge id. Not Metamask hex
+                name                  : 'Optimism', //string
+                type                  : 'eth', //'eth', 'enq'        
+                explorerURL           : 'https://optimistic.etherscan.io/', // url to explorer mainpage
+                addressPageUrl        : 'https://optimistic.etherscan.io/address/'
+            },            
+            {
+                internalId            : 42161, // Number. Internal bridge id. Not Metamask hex
+                name                  : 'Arbitrum One', //string
+                type                  : 'eth', //'eth', 'enq'        
+                explorerURL           : 'https://arbiscan.io/', // url to explorer mainpage
+                addressPageUrl        : 'https://arbiscan.io/address/'
+            },            
+            {
+                internalId            : 56, // Number. Internal bridge id. Not Metamask hex
+                name                  : 'BNB Smart Chain', //string
+                type                  : 'eth', //'eth', 'enq'        
+                explorerURL           : 'https://bscscan.com/', // url to explorer mainpage
+                addressPageUrl        : 'https://bscscan.com/address/'
+            }
+            
+        ],
         pagesSectionsVisibility: {
             showFullNodesCountCard: true,
             showSBlocks: true,

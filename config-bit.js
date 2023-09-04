@@ -30,6 +30,13 @@
         },
         networks: [
             {
+                internalId            : 111, // Number. Internal bridge id. Not Metamask hex
+                name                  : 'BIT', //string
+                type                  : 'enq', //'eth', 'enq'        
+                explorerURL           : 'https://bit.enecuum.com/', // url to explorer mainpage
+                addressPageUrl        : 'https://bit.enecuum.com/#!/account/'
+            },
+            {
                 internalId            : 123, // Number. Internal bridge id. Not Metamask hex
                 name                  : 'BIT-DEV', //string
                 type                  : 'enq', //'eth', 'enq'        
@@ -42,6 +49,27 @@
                 type                  : 'eth', //'eth', 'enq'        
                 explorerURL           : 'https://sepolia.etherscan.io/', // url to explorer mainpage
                 addressPageUrl        : 'https://sepolia.etherscan.io/address/'
+            },
+            {
+                internalId            : 97, // Number. Internal bridge id. Not Metamask hex
+                name                  : 'BNB Smart Chain Testnet', //string
+                type                  : 'eth', //'eth', 'enq'        
+                explorerURL           : 'https://testnet.bscscan.com/', // url to explorer mainpage
+                addressPageUrl        : 'https://testnet.bscscan.com/address/'
+            },
+            {
+                internalId            : 80001, // Number. Internal bridge id. Not Metamask hex
+                name                  : 'Mumbai', //string
+                type                  : 'eth', //'eth', 'enq'        
+                explorerURL           : 'https://mumbai.polygonscan.com/', // url to explorer mainpage
+                addressPageUrl        : 'https://mumbai.polygonscan.com/address/'
+            },
+            {
+                internalId            : 5, // Number. Internal bridge id. Not Metamask hex
+                name                  : 'Goerli', //string
+                type                  : 'eth', //'eth', 'enq'        
+                explorerURL           : 'https://goerli.etherscan.io/', // url to explorer mainpage
+                addressPageUrl        : 'https://goerli.etherscan.io/address/'
             }
         ],
         pagesSectionsVisibility: {
