@@ -20,14 +20,12 @@
             "guides": "https://guides.enecuum.com/"
         },     
         "description": {
-            "en": "ENQ is used in Pulse Network and can be mined in Enecuum's mobile mining application utilizing the Proof-of-Activity algorithm.",
-            "de": "ENQ is used in Pulse Network and can be mined in Enecuum's mobile mining application utilizing the Proof-of-Activity algorithm.",
-            "fr": "ENQ is used in Pulse Network and can be mined in Enecuum's mobile mining application utilizing the Proof-of-Activity algorithm.",
-            "ru": "ENQ is used in Pulse Network and can be mined in Enecuum's mobile mining application utilizing the Proof-of-Activity algorithm.",
-            "pt": "ENQ is used in Pulse Network and can be mined in Enecuum's mobile mining application utilizing the Proof-of-Activity algorithm.",
-            "vi": "ENQ is used in Pulse Network and can be mined in Enecuum's mobile mining application utilizing the Proof-of-Activity algorithm.",
-            "in": "ENQ is used in Pulse Network and can be mined in Enecuum's mobile mining application utilizing the Proof-of-Activity algorithm.",
-            "tr": "ENQ is used in Pulse Network and can be mined in Enecuum's mobile mining application utilizing the Proof-of-Activity algorithm."
+            "en": "AST token was created for administration and management of the site https://astfork.com.",
+            "de": "AST token wurde für die Verwaltung und Verwaltung der Website https://astfork.com.",
+            "fr": "AST token a été créé pour l'administration et la gestion du site https://astfork.com.",
+            "ru": "AST Токен создан для администрирования и упрравления сайтом https://astfork.com.",
+            "pt": "AST token foi criado para administração e gerenciamento do site https://astfork.com.",
+            "tr": "AST belirteci, https://astfork.com sitesinin yönetimi ve yönetimi için oluşturuldu."
         },
         "coingecko_id": "ast-astfork"             
     },
