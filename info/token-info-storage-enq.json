@@ -9,7 +9,6 @@
             "github": "https://github.com/Enecuum",
             "forklog": "https://hub.forklog.com/companies/enecuum/",
             "bitcointalk": "https://bitcointalk.org/index.php?topic=2939909.0;topicseen",
-            "linkedin": "https://www.linkedin.com/company/enecuum-limited/",
             "youtube": "https://www.youtube.com/channel/UCyZqNfzK_PP82nkAVOlmN4Q",
             "qq": "https://qm.qq.com/cgi-bin/qm/qr?k=YfdokyjJnlKl0eAuhVXEc6JtVsoKnxvI&authKey=6WpHwP4Cu/kAAyPyVuBWZeQCjhEyijvLyGf6Jj6P7f9LVCe/9ZZC7YIfRtudjD23&noverify=0",
             "weixin": "https://weixin.qq.com/g/AwYAAJdSThUYHIJmetSinRGfcwtrkRovBmLZZr5moi0UXRIW56Me4ts56gByaeYU",
@@ -30,7 +29,7 @@
             "in": "ENQ is used in Pulse Network and can be mined in Enecuum's mobile mining application utilizing the Proof-of-Activity algorithm.",
             "tr": "ENQ is used in Pulse Network and can be mined in Enecuum's mobile mining application utilizing the Proof-of-Activity algorithm."
         },
-        "coingecko_id": "enq-enecuum"             
+        "coingecko_id": "ast-astfork"             
     },
     {
         "token_id": "fc1872daffd51997d2b33d544a2edabd7a41dd796ec273a40476299b06a1cb31",
