@@ -4,16 +4,8 @@
         "website":"https://astfork.com",
         "logo": "https://share.icloud.com/photos/03aDYcxOEBggaOCfKo8BLXBHA",
         "media": {                            
-            "twitter": "https://twitter.com/enq_enecuum",
-            "medium": "https://blog.enecuum.com/",
-            "github": "https://github.com/Enecuum",
-            "forklog": "https://hub.forklog.com/companies/enecuum/",
-            "bitcointalk": "https://bitcointalk.org/index.php?topic=2939909.0;topicseen",
+            "twitter": "https://twitter.com/astfork",
             "youtube": "https://www.youtube.com/channel/UCyZqNfzK_PP82nkAVOlmN4Q",
-            "qq": "https://qm.qq.com/cgi-bin/qm/qr?k=YfdokyjJnlKl0eAuhVXEc6JtVsoKnxvI&authKey=6WpHwP4Cu/kAAyPyVuBWZeQCjhEyijvLyGf6Jj6P7f9LVCe/9ZZC7YIfRtudjD23&noverify=0",
-            "weixin": "https://weixin.qq.com/g/AwYAAJdSThUYHIJmetSinRGfcwtrkRovBmLZZr5moi0UXRIW56Me4ts56gByaeYU",
-            "telegram": "https://t.me/Enecuum_EN",
-            "reddit": "https://www.reddit.com/r/EnecuumDev/"
         },
         "documents": {
             "whitepaper": "https://astfork.com/whitepapper-astfork",
@@ -26,7 +18,5 @@
             "ru": "AST Токен создан для администрирования и упрравления сайтом https://astfork.com.",
             "pt": "AST token foi criado para administração e gerenciamento do site https://astfork.com.",
             "tr": "AST belirteci, https://astfork.com sitesinin yönetimi ve yönetimi için oluşturuldu."
-        },
-        "coingecko_id": "ast-astfork"             
     }
 ]    
