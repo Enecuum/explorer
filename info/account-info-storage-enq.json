@@ -32,6 +32,18 @@
         "tag":"KuCoin 2"
     },
     {
+        "account_id":"02fe8d8d7efda083a5826d179a5802df2ef90e3480280ff7384651c1c12bdaba56",
+        "tag":"KuCoin 3"
+    },
+    {
+        "account_id":"03bcaf6a4e402b0e7c2770f0dc5ece45b7a0cc5f8f97459eb70ed32034d4bb9b51",
+        "tag":"Probit"
+    },
+    {
+        "account_id":"03282e7b2fcea805dd0690f391ce335eadc275fdbfd2c5f76d671ef4cdfcea15e4",
+        "tag":"Probit 2"
+    },
+    {
         "account_id":"0290cedb23802cd16efbbb492a80ae4943c592c116623244ffc4284bb486d74295",
         "tag":"Trinity"
     },
@@ -44,4 +56,3 @@
         "tag":"some_account_tag"
     }
 ]
-
