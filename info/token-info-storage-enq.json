@@ -162,6 +162,27 @@
         }        
     },
     {
+        "token_id":"6eeadae7510325fabb20e7fe5819cd081448bc3a117f62a745c1572167b71ee2",
+        "website":"https://astfork.com",
+        "logo": "ASTFORK.jpg",
+        "media": {                            
+            "twitter": "https://twitter.com/astfork",
+            "youtube": "https://www.youtube.com/channel/UCkVtVbf_sh_mXtB-469xhyg",
+        },
+        "documents": {
+            "whitepaper": "https://astfork.com/whitepapper-astfork",
+            "guides": "https://astfork.com/guides"
+        },     
+        "description": {
+            "en": "AST token was created for administration and management of the site https://astfork.com.",
+            "de": "AST token wurde für die Verwaltung und Verwaltung der Website https://astfork.com.",
+            "fr": "AST token a été créé pour l'administration et la gestion du site https://astfork.com.",
+            "ru": "AST Токен создан для администрирования и упрравления сайтом https://astfork.com.",
+            "pt": "AST token foi criado para administração e gerenciamento do site https://astfork.com.",
+            "tr": "AST belirteci, https://astfork.com sitesinin yönetimi ve yönetimi için oluşturuldu."
+        }
+     },
+    {
         "token_id":"some-token-id",
         "website":"https://someTokenWebsite.com",
         "media": {                            
