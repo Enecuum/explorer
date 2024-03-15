@@ -162,6 +162,14 @@
         }        
     },
     {
+        "token_id":"4c94fc6c2406eea555bea3298760a5bbc51551c4850501cd9f46f8ac4ce250a3",
+        "logo": "ECN.jpg",
+        "description": {
+            "en":"EnecuumNEON - The first coin that uses non-fixed and mining tokens.  Non-Fixed ECN coins can be exchanged for ECNM (minable) and vice versa.  Initially, on the ENEX trading platform, both of these coins are equal.",
+            "ru":"EnecuumNEON — Первая монета которая использует нефиксированые и майнинговые токены. Нефиксированые монеты ECN можно обменять на ECNM (майнинговые) и наоборот. Изначально на торговой площадке ENEX обе этих монеты равны.",
+        }        
+    },
+    {
         "token_id":"some-token-id",
         "website":"https://someTokenWebsite.com",
         "media": {                            
